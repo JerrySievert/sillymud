@@ -4,10 +4,10 @@
   See license.doc for distribution terms.   SillyMUD is based on DIKUMUD
 */
 
-#include <stdio.h>
-#include <string.h>
 #include <assert.h>
 #include <ctype.h>
+#include <stdio.h>
+#include <string.h>
 
 #include "protos.h"
 
@@ -16,25 +16,24 @@
 extern struct str_app_type str_app[];
 extern struct descriptor_data *descriptor_list;
 extern char *drinks[];
-extern int drink_aff[][3];
+extern int drink_aff[][ 3 ];
 extern struct skill_data skill_info[];
 
-
-void weight_change_object(struct obj_data *obj, int weight)
-{
+void weight_change_object(struct obj_data *obj, int weight) {
   struct obj_data *tmp_obj;
   struct char_data *tmp_ch;
-  char buf[255];
+  char buf[ 255 ];
 
   if (GET_OBJ_WEIGHT(obj) + weight < 1) {
-      weight = 0 - (GET_OBJ_WEIGHT(obj) -1);
-      if (obj->carried_by) {
-	sprintf(buf,"Bad weight change on %s, carried by %s.",obj->name,obj->carried_by->player.name);
-	debug(buf);
-      } else {
-	sprintf(buf,"Bad weight change on %s.",obj->name);
-	debug(buf);
-      }
+    weight = 0 - (GET_OBJ_WEIGHT(obj) - 1);
+    if (obj->carried_by) {
+      sprintf(buf, "Bad weight change on %s, carried by %s.", obj->name,
+              obj->carried_by->player.name);
+      debug(buf);
+    } else {
+      sprintf(buf, "Bad weight change on %s.", obj->name);
+      debug(buf);
+    }
   }
 
   if (obj->in_room != NOWHERE) {
@@ -52,358 +51,347 @@ void weight_change_object(struct obj_data *obj, int weight)
   }
 }
 
-
-
-void name_from_drinkcon(struct obj_data *obj)
-{
+void name_from_drinkcon(struct obj_data *obj) {
   int i;
   char *new_name;
 
-  for(i=0; (*((obj->name)+i)!=' ') && (*((obj->name)+i)!='\0'); i++)  ;
+  for (i = 0; (*((obj->name) + i) != ' ') && (*((obj->name) + i) != '\0'); i++)
+    ;
 
-  if (*((obj->name)+i)==' ') {
-    new_name=strdup((obj->name)+i+1);
+  if (*((obj->name) + i) == ' ') {
+    new_name = strdup((obj->name) + i + 1);
     free(obj->name);
-    obj->name=new_name;
+    obj->name = new_name;
   }
 }
 
-
-
-void name_to_drinkcon(struct obj_data *obj,int type)
-{
+void name_to_drinkcon(struct obj_data *obj, int type) {
   char *new_name;
   extern char *drinknames[];
 
-  CREATE(new_name,char,strlen(obj->name)+strlen(drinknames[type])+2);
-  sprintf(new_name,"%s %s",drinknames[type],obj->name);
+  CREATE(new_name, char, strlen(obj->name) + strlen(drinknames[ type ]) + 2);
+  sprintf(new_name, "%s %s", drinknames[ type ], obj->name);
   free(obj->name);
-  obj->name=new_name;
+  obj->name = new_name;
 }
 
-
-
-void do_drink(struct char_data *ch, char *argument, int cmd)
-{
-  char buf[255];
+void do_drink(struct char_data *ch, char *argument, int cmd) {
+  char buf[ 255 ];
   struct obj_data *temp;
   struct affected_type af;
   int amount;
 
+  only_argument(argument, buf);
 
-  only_argument(argument,buf);
-
-  if(!(temp = get_obj_in_list_vis(ch,buf,ch->carrying))) {
-    act("You can't find it!",FALSE,ch,0,0,TO_CHAR);
+  if (!(temp = get_obj_in_list_vis(ch, buf, ch->carrying))) {
+    act("You can't find it!", FALSE, ch, 0, 0, TO_CHAR);
     return;
   }
 
-  if (temp->obj_flags.type_flag!=ITEM_DRINKCON)	{
-    act("You can't drink from that!",FALSE,ch,0,0,TO_CHAR);
+  if (temp->obj_flags.type_flag != ITEM_DRINKCON) {
+    act("You can't drink from that!", FALSE, ch, 0, 0, TO_CHAR);
     return;
   }
 
-  if((GET_COND(ch,DRUNK)>15)&&(GET_COND(ch,THIRST)>0)) {
+  if ((GET_COND(ch, DRUNK) > 15) && (GET_COND(ch, THIRST) > 0)) {
     /* The pig is drunk */
     act("You're just sloshed.", FALSE, ch, 0, 0, TO_CHAR);
     act("$n is looks really drunk.", TRUE, ch, 0, 0, TO_ROOM);
     return;
   }
 
-  if((GET_COND(ch,FULL)>20)&&(GET_COND(ch,THIRST)>0)) /* Stomach full */ {
-      act("Your stomach can't contain anymore!",FALSE,ch,0,0,TO_CHAR);
-      return;
-    }
-
-  if (temp->obj_flags.type_flag==ITEM_DRINKCON){
-    if (temp->obj_flags.value[1]>0)  /* Not empty */ {
-      sprintf(buf,"$n drinks %s from $p",drinks[temp->obj_flags.value[2]]);
-      act(buf, TRUE, ch, temp, 0, TO_ROOM);
-      sprintf(buf,"You drink the %s.\n\r",drinks[temp->obj_flags.value[2]]);
-      send_to_char(buf,ch);
-
-      if (drink_aff[temp->obj_flags.value[2]][DRUNK] > 0 )
-	amount = (25-GET_COND(ch,THIRST))/
-	  drink_aff[temp->obj_flags.value[2]][DRUNK];
-      else
-	amount = number(3,10);
-
-      amount = MIN(amount,temp->obj_flags.value[1]);
-      /* Subtract amount, if not a never-emptying container */
-      if (!IS_SET(temp->obj_flags.value[3],DRINK_PERM) &&
-	  (temp->obj_flags.value[0] > 20))
-	weight_change_object(temp, -amount);
-
-      gain_condition(ch,DRUNK,(int)((int)drink_aff
-		 [temp->obj_flags.value[2]][DRUNK]*amount)/4);
-
-      gain_condition(ch,FULL,(int)((int)drink_aff
-			   [temp->obj_flags.value[2]][FULL]*amount)/4);
-
-      gain_condition(ch,THIRST,(int)((int)drink_aff
-		     [temp->obj_flags.value[2]][THIRST]*amount)/4);
-
-      if(GET_COND(ch,DRUNK)>10)
-	act("You feel drunk.",FALSE,ch,0,0,TO_CHAR);
-
-      if(GET_COND(ch,THIRST)>20)
-	act("You do not feel thirsty.",FALSE,ch,0,0,TO_CHAR);
-
-      if(GET_COND(ch,FULL)>20)
-	act("You are full.",FALSE,ch,0,0,TO_CHAR);
-
-      /* The shit was poisoned ! */
-      if(IS_SET(temp->obj_flags.value[3],DRINK_POISON))	{
-	  act("Oops, it tasted rather strange ?!!?",FALSE,ch,0,0,TO_CHAR);
-	  act("$n chokes and utters some strange sounds.",
-	      TRUE,ch,0,0,TO_ROOM);
-	  af.type = SPELL_POISON;
-	  af.duration = amount*3;
-	  af.modifier = 0;
-	  af.location = APPLY_NONE;
-	  af.bitvector = AFF_POISON;
-	  affect_join(ch,&af, FALSE, FALSE);
-	}
-
-      /* empty the container, and no longer poison. */
-      if(!IS_SET(temp->obj_flags.value[3],DRINK_PERM))
-	temp->obj_flags.value[1]-= amount;
-      if(!temp->obj_flags.value[1]) {  /* The last bit */
-	temp->obj_flags.value[2]=0;
-	temp->obj_flags.value[3]=0;
-	name_from_drinkcon(temp);
-      }
-      if (temp->obj_flags.value[1] < 1) {  /* its empty */
-	if (temp->obj_flags.value[0] < 20) {
-	  extract_obj(temp);  /* get rid of it */
-	}
-      }
-      return;
-
-    }
-    act("It's empty already.",FALSE,ch,0,0,TO_CHAR);
-
+  if ((GET_COND(ch, FULL) > 20) &&
+      (GET_COND(ch, THIRST) > 0)) /* Stomach full */ {
+    act("Your stomach can't contain anymore!", FALSE, ch, 0, 0, TO_CHAR);
     return;
-
   }
 
+  if (temp->obj_flags.type_flag == ITEM_DRINKCON) {
+    if (temp->obj_flags.value[ 1 ] > 0) /* Not empty */ {
+      sprintf(buf, "$n drinks %s from $p",
+              drinks[ temp->obj_flags.value[ 2 ] ]);
+      act(buf, TRUE, ch, temp, 0, TO_ROOM);
+      sprintf(buf, "You drink the %s.\n\r",
+              drinks[ temp->obj_flags.value[ 2 ] ]);
+      send_to_char(buf, ch);
+
+      if (drink_aff[ temp->obj_flags.value[ 2 ] ][ DRUNK ] > 0)
+        amount = (25 - GET_COND(ch, THIRST)) /
+                 drink_aff[ temp->obj_flags.value[ 2 ] ][ DRUNK ];
+      else
+        amount = number(3, 10);
+
+      amount = MIN(amount, temp->obj_flags.value[ 1 ]);
+      /* Subtract amount, if not a never-emptying container */
+      if (!IS_SET(temp->obj_flags.value[ 3 ], DRINK_PERM) &&
+          (temp->obj_flags.value[ 0 ] > 20))
+        weight_change_object(temp, -amount);
+
+      gain_condition(
+          ch, DRUNK,
+          (int)((int)drink_aff[ temp->obj_flags.value[ 2 ] ][ DRUNK ] *
+                amount) /
+              4);
+
+      gain_condition(
+          ch, FULL,
+          (int)((int)drink_aff[ temp->obj_flags.value[ 2 ] ][ FULL ] * amount) /
+              4);
+
+      gain_condition(
+          ch, THIRST,
+          (int)((int)drink_aff[ temp->obj_flags.value[ 2 ] ][ THIRST ] *
+                amount) /
+              4);
+
+      if (GET_COND(ch, DRUNK) > 10)
+        act("You feel drunk.", FALSE, ch, 0, 0, TO_CHAR);
+
+      if (GET_COND(ch, THIRST) > 20)
+        act("You do not feel thirsty.", FALSE, ch, 0, 0, TO_CHAR);
+
+      if (GET_COND(ch, FULL) > 20)
+        act("You are full.", FALSE, ch, 0, 0, TO_CHAR);
+
+      /* The shit was poisoned ! */
+      if (IS_SET(temp->obj_flags.value[ 3 ], DRINK_POISON)) {
+        act("Oops, it tasted rather strange ?!!?", FALSE, ch, 0, 0, TO_CHAR);
+        act("$n chokes and utters some strange sounds.", TRUE, ch, 0, 0,
+            TO_ROOM);
+        af.type      = SPELL_POISON;
+        af.duration  = amount * 3;
+        af.modifier  = 0;
+        af.location  = APPLY_NONE;
+        af.bitvector = AFF_POISON;
+        affect_join(ch, &af, FALSE, FALSE);
+      }
+
+      /* empty the container, and no longer poison. */
+      if (!IS_SET(temp->obj_flags.value[ 3 ], DRINK_PERM))
+        temp->obj_flags.value[ 1 ] -= amount;
+      if (!temp->obj_flags.value[ 1 ]) { /* The last bit */
+        temp->obj_flags.value[ 2 ] = 0;
+        temp->obj_flags.value[ 3 ] = 0;
+        name_from_drinkcon(temp);
+      }
+      if (temp->obj_flags.value[ 1 ] < 1) { /* its empty */
+        if (temp->obj_flags.value[ 0 ] < 20) {
+          extract_obj(temp); /* get rid of it */
+        }
+      }
+      return;
+    }
+    act("It's empty already.", FALSE, ch, 0, 0, TO_CHAR);
+
+    return;
+  }
 }
 
+void do_eat(struct char_data *ch, char *argument, int cmd) {
+  char buf[ 100 ];
+  int j, num;
+  struct obj_data *temp;
+  struct affected_type af;
 
+  one_argument(argument, buf);
 
-void do_eat(struct char_data *ch, char *argument, int cmd)
-{
-	char buf[100];
-	int j, num;
-	struct obj_data *temp;
-	struct affected_type af;
+  if (!(temp = get_obj_in_list_vis(ch, buf, ch->carrying))) {
+    act("You can't find it!", FALSE, ch, 0, 0, TO_CHAR);
+    return;
+  }
 
-	one_argument(argument,buf);
+  if ((temp->obj_flags.type_flag != ITEM_FOOD) && (GetMaxLevel(ch) < DEMIGOD)) {
+    act("Your stomach refuses to eat that!?!", FALSE, ch, 0, 0, TO_CHAR);
+    return;
+  }
 
-	if(!(temp = get_obj_in_list_vis(ch,buf,ch->carrying)))	{
-		act("You can't find it!",FALSE,ch,0,0,TO_CHAR);
-		return;
-	}
+  if (GET_COND(ch, FULL) > 20) /* Stomach full */ {
+    act("You are to full to eat more!", FALSE, ch, 0, 0, TO_CHAR);
+    return;
+  }
 
-	if((temp->obj_flags.type_flag != ITEM_FOOD) &&
-	   (GetMaxLevel(ch) < DEMIGOD))	{
-       	    act("Your stomach refuses to eat that!?!",FALSE,ch,0,0,TO_CHAR);
-		return;
-	}
+  act("$n eats $p.", TRUE, ch, temp, 0, TO_ROOM);
+  act("You eat the $o.", FALSE, ch, temp, 0, TO_CHAR);
 
-	if(GET_COND(ch,FULL)>20) /* Stomach full */	{
-		act("You are to full to eat more!",FALSE,ch,0,0,TO_CHAR);
-		return;
-	}
+  if (GET_RACE(ch) == RACE_VAMPIRE) {
+    send_to_char("It does not seem to alleviate your hunger.\n\r", ch);
+  } else {
+    gain_condition(ch, FULL, temp->obj_flags.value[ 0 ]);
+  }
 
-	act("$n eats $p.",TRUE,ch,temp,0,TO_ROOM);
-	act("You eat the $o.",FALSE,ch,temp,0,TO_CHAR);
+  if (GET_COND(ch, FULL) > 20)
+    act("You are full.", FALSE, ch, 0, 0, TO_CHAR);
 
-	if(GET_RACE(ch) == RACE_VAMPIRE) {
-	  send_to_char("It does not seem to alleviate your hunger.\n\r", ch);
-	} else {
-	  gain_condition(ch,FULL,temp->obj_flags.value[0]);
-	}
+  for (j = 0; j < MAX_OBJ_AFFECT; j++)
+    if (temp->affected[ j ].location == APPLY_EAT_SPELL) {
+      num = temp->affected[ j ].modifier;
 
-	if(GET_COND(ch,FULL)>20)
-		act("You are full.",FALSE,ch,0,0,TO_CHAR);
+      /* hit 'em with the spell */
 
-        for(j=0; j<MAX_OBJ_AFFECT; j++)
-	  if (temp->affected[j].location == APPLY_EAT_SPELL) {
-	    num = temp->affected[j].modifier;
+      ((*skill_info[ num ].spell_pointer)(6, ch, "", SPELL_TYPE_POTION, ch, 0));
+    }
 
-	    /* hit 'em with the spell */
+  if (temp->obj_flags.value[ 3 ] && (GetMaxLevel(ch) < LOW_IMMORTAL)) {
+    act("That tasted rather strange!!", FALSE, ch, 0, 0, TO_CHAR);
+    act("$n coughs and utters some strange sounds.", FALSE, ch, 0, 0, TO_ROOM);
 
-	    ((*skill_info[num].spell_pointer)
-	     (6, ch, "", SPELL_TYPE_POTION, ch, 0));
-	  }
+    af.type      = SPELL_POISON;
+    af.duration  = temp->obj_flags.value[ 0 ] * 2;
+    af.modifier  = 0;
+    af.location  = APPLY_NONE;
+    af.bitvector = AFF_POISON;
+    affect_join(ch, &af, FALSE, FALSE);
+  }
 
-	if(temp->obj_flags.value[3] && (GetMaxLevel(ch) < LOW_IMMORTAL)) {
-       	   act("That tasted rather strange!!",FALSE,ch,0,0,TO_CHAR);
-	   act("$n coughs and utters some strange sounds.",
-	       FALSE,ch,0,0,TO_ROOM);
-
-		af.type = SPELL_POISON;
-		af.duration = temp->obj_flags.value[0]*2;
-		af.modifier = 0;
-		af.location = APPLY_NONE;
-		af.bitvector = AFF_POISON;
-		affect_join(ch,&af, FALSE, FALSE);
-	 }
-
-	extract_obj(temp);
+  extract_obj(temp);
 }
 
-
-void do_pour(struct char_data *ch, char *argument, int cmd)
-{
-  char arg1[132];
-  char arg2[132];
-  char buf[256];
+void do_pour(struct char_data *ch, char *argument, int cmd) {
+  char arg1[ 132 ];
+  char arg2[ 132 ];
+  char buf[ 256 ];
   struct obj_data *from_obj;
   struct obj_data *to_obj;
   int temp;
 
   argument_interpreter(argument, arg1, arg2);
 
-  if(!*arg1) /* No arguments */	{
-    act("What do you want to pour from?",FALSE,ch,0,0,TO_CHAR);
+  if (!*arg1) /* No arguments */ {
+    act("What do you want to pour from?", FALSE, ch, 0, 0, TO_CHAR);
     return;
   }
 
-  if(!(from_obj = get_obj_in_list_vis(ch,arg1,ch->carrying)))	{
-    act("You can't find it!",FALSE,ch,0,0,TO_CHAR);
+  if (!(from_obj = get_obj_in_list_vis(ch, arg1, ch->carrying))) {
+    act("You can't find it!", FALSE, ch, 0, 0, TO_CHAR);
     return;
   }
 
-  if(from_obj->obj_flags.type_flag!=ITEM_DRINKCON)	{
-    act("You can't pour from that!",FALSE,ch,0,0,TO_CHAR);
+  if (from_obj->obj_flags.type_flag != ITEM_DRINKCON) {
+    act("You can't pour from that!", FALSE, ch, 0, 0, TO_CHAR);
     return;
   }
 
-  if(from_obj->obj_flags.value[1]==0)	{
-    act("The $p is empty.",FALSE, ch,from_obj, 0,TO_CHAR);
+  if (from_obj->obj_flags.value[ 1 ] == 0) {
+    act("The $p is empty.", FALSE, ch, from_obj, 0, TO_CHAR);
     return;
   }
 
-  if(!*arg2)	{
-    act("Where do you want it? Out or in what?",FALSE,ch,0,0,TO_CHAR);
+  if (!*arg2) {
+    act("Where do you want it? Out or in what?", FALSE, ch, 0, 0, TO_CHAR);
     return;
   }
 
-  if(!str_cmp(arg2,"out")) {
-    act("$n empties $p", TRUE, ch,from_obj,0,TO_ROOM);
-    act("You empty the $p.", FALSE, ch,from_obj,0,TO_CHAR);
+  if (!str_cmp(arg2, "out")) {
+    act("$n empties $p", TRUE, ch, from_obj, 0, TO_ROOM);
+    act("You empty the $p.", FALSE, ch, from_obj, 0, TO_CHAR);
 
-    weight_change_object(from_obj, -from_obj->obj_flags.value[1]);
+    weight_change_object(from_obj, -from_obj->obj_flags.value[ 1 ]);
 
-    from_obj->obj_flags.value[1]=0;
-    from_obj->obj_flags.value[2]=0;
-    from_obj->obj_flags.value[3]=0;
+    from_obj->obj_flags.value[ 1 ] = 0;
+    from_obj->obj_flags.value[ 2 ] = 0;
+    from_obj->obj_flags.value[ 3 ] = 0;
     name_from_drinkcon(from_obj);
 
     return;
-
   }
 
-  if(!(to_obj = get_obj_in_list_vis(ch,arg2,ch->carrying)))  {
-    act("You can't find it!",FALSE,ch,0,0,TO_CHAR);
+  if (!(to_obj = get_obj_in_list_vis(ch, arg2, ch->carrying))) {
+    act("You can't find it!", FALSE, ch, 0, 0, TO_CHAR);
     return;
   }
 
-  if(to_obj->obj_flags.type_flag!=ITEM_DRINKCON)	{
-    act("You can't pour anything into that.",FALSE,ch,0,0,TO_CHAR);
+  if (to_obj->obj_flags.type_flag != ITEM_DRINKCON) {
+    act("You can't pour anything into that.", FALSE, ch, 0, 0, TO_CHAR);
     return;
   }
 
-  if((to_obj->obj_flags.value[1]!=0)&&
-     (to_obj->obj_flags.value[2]!=from_obj->obj_flags.value[2])) {
-    act("There is already another liquid in it!",FALSE,ch,0,0,TO_CHAR);
+  if ((to_obj->obj_flags.value[ 1 ] != 0) &&
+      (to_obj->obj_flags.value[ 2 ] != from_obj->obj_flags.value[ 2 ])) {
+    act("There is already another liquid in it!", FALSE, ch, 0, 0, TO_CHAR);
     return;
   }
 
-  if(!(to_obj->obj_flags.value[1]<to_obj->obj_flags.value[0]))	{
-    act("There is no room for more.",FALSE,ch,0,0,TO_CHAR);
+  if (!(to_obj->obj_flags.value[ 1 ] < to_obj->obj_flags.value[ 0 ])) {
+    act("There is no room for more.", FALSE, ch, 0, 0, TO_CHAR);
     return;
   }
 
-  sprintf(buf,"You pour the %s into the %s.",
-	  drinks[from_obj->obj_flags.value[2]],arg2);
-  send_to_char(buf,ch);
+  sprintf(buf, "You pour the %s into the %s.",
+          drinks[ from_obj->obj_flags.value[ 2 ] ], arg2);
+  send_to_char(buf, ch);
 
   /* New alias */
-  if (to_obj->obj_flags.value[1]==0)
-    name_to_drinkcon(to_obj,from_obj->obj_flags.value[2]);
+  if (to_obj->obj_flags.value[ 1 ] == 0)
+    name_to_drinkcon(to_obj, from_obj->obj_flags.value[ 2 ]);
 
   /* First same type liq. */
-  to_obj->obj_flags.value[2]=from_obj->obj_flags.value[2];
+  to_obj->obj_flags.value[ 2 ] = from_obj->obj_flags.value[ 2 ];
 
   /*
     the new, improved way of doing this...
   */
-  temp = from_obj->obj_flags.value[1];
-  from_obj->obj_flags.value[1] = 0;
-  to_obj->obj_flags.value[1] += temp;
-  temp = to_obj->obj_flags.value[1] - to_obj->obj_flags.value[0];
+  temp                           = from_obj->obj_flags.value[ 1 ];
+  from_obj->obj_flags.value[ 1 ] = 0;
+  to_obj->obj_flags.value[ 1 ] += temp;
+  temp = to_obj->obj_flags.value[ 1 ] - to_obj->obj_flags.value[ 0 ];
 
-  if (temp>0) {
-    from_obj->obj_flags.value[1] = temp;
+  if (temp > 0) {
+    from_obj->obj_flags.value[ 1 ] = temp;
   } else {
     name_from_drinkcon(from_obj);
   }
 
-  if (from_obj->obj_flags.value[1] > from_obj->obj_flags.value[0])
-    from_obj->obj_flags.value[1] = from_obj->obj_flags.value[0];
+  if (from_obj->obj_flags.value[ 1 ] > from_obj->obj_flags.value[ 0 ])
+    from_obj->obj_flags.value[ 1 ] = from_obj->obj_flags.value[ 0 ];
 
   /* Then the poison boogie */
-  to_obj->obj_flags.value[3]=
-    (to_obj->obj_flags.value[3]||from_obj->obj_flags.value[3]);
+  to_obj->obj_flags.value[ 3 ] =
+      (to_obj->obj_flags.value[ 3 ] || from_obj->obj_flags.value[ 3 ]);
 
   return;
 }
 
-void do_sip(struct char_data *ch, char *argument, int cmd)
-{
+void do_sip(struct char_data *ch, char *argument, int cmd) {
   struct affected_type af;
-  char arg[MAX_STRING_LENGTH];
-  char buf[MAX_STRING_LENGTH];
+  char arg[ MAX_STRING_LENGTH ];
+  char buf[ MAX_STRING_LENGTH ];
   struct obj_data *temp;
 
-  one_argument(argument,arg);
+  one_argument(argument, arg);
 
-  if(!(temp = get_obj_in_list_vis(ch,arg,ch->carrying)))    {
-      act("You can't find it!",FALSE,ch,0,0,TO_CHAR);
-      return;
-    }
+  if (!(temp = get_obj_in_list_vis(ch, arg, ch->carrying))) {
+    act("You can't find it!", FALSE, ch, 0, 0, TO_CHAR);
+    return;
+  }
 
-  if(temp->obj_flags.type_flag!=ITEM_DRINKCON)    {
-      act("You can't sip from that!",FALSE,ch,0,0,TO_CHAR);
-      return;
-    }
+  if (temp->obj_flags.type_flag != ITEM_DRINKCON) {
+    act("You can't sip from that!", FALSE, ch, 0, 0, TO_CHAR);
+    return;
+  }
 
-  if(GET_COND(ch,DRUNK)>10) /* The pig is drunk ! */    {
-      act("You simply fail to reach your mouth!",FALSE,ch,0,0,TO_CHAR);
-      act("$n tries to sip, but fails!",TRUE,ch,0,0,TO_ROOM);
-      return;
-    }
+  if (GET_COND(ch, DRUNK) > 10) /* The pig is drunk ! */ {
+    act("You simply fail to reach your mouth!", FALSE, ch, 0, 0, TO_CHAR);
+    act("$n tries to sip, but fails!", TRUE, ch, 0, 0, TO_ROOM);
+    return;
+  }
 
-  if(!temp->obj_flags.value[1])  /* Empty */    {
-      act("But there is nothing in it?",FALSE,ch,0,0,TO_CHAR);
-      return;
-    }
+  if (!temp->obj_flags.value[ 1 ]) /* Empty */ {
+    act("But there is nothing in it?", FALSE, ch, 0, 0, TO_CHAR);
+    return;
+  }
 
-  act("$n sips from the $o",TRUE,ch,temp,0,TO_ROOM);
-  sprintf(buf,"It tastes like %s.\n\r",drinks[temp->obj_flags.value[2]]);
-  send_to_char(buf,ch);
+  act("$n sips from the $o", TRUE, ch, temp, 0, TO_ROOM);
+  sprintf(buf, "It tastes like %s.\n\r", drinks[ temp->obj_flags.value[ 2 ] ]);
+  send_to_char(buf, ch);
 
-  gain_condition(ch,DRUNK,(int)(drink_aff[temp->obj_flags.value[2]]
-				[DRUNK]/4));
+  gain_condition(ch, DRUNK,
+                 (int)(drink_aff[ temp->obj_flags.value[ 2 ] ][ DRUNK ] / 4));
 
-  gain_condition(ch,FULL,(int)(drink_aff[temp->obj_flags.value[2]][FULL]/4));
+  gain_condition(ch, FULL,
+                 (int)(drink_aff[ temp->obj_flags.value[ 2 ] ][ FULL ] / 4));
 
-  gain_condition(ch,THIRST,(int)(drink_aff[temp->obj_flags.value[2]]
-				 [THIRST]/4)
-);
+  gain_condition(ch, THIRST,
+                 (int)(drink_aff[ temp->obj_flags.value[ 2 ] ][ THIRST ] / 4));
 
 #if 0
   if(!IS_SET(temp->obj_flags.value[3],DRINK_PERM) ||
@@ -411,152 +399,143 @@ void do_sip(struct char_data *ch, char *argument, int cmd)
     weight_change_object(temp, -1); /* Subtract one unit, unless permanent */
 #endif
 
-  if(GET_COND(ch,DRUNK)>10)
-    act("You feel drunk.",FALSE,ch,0,0,TO_CHAR);
+  if (GET_COND(ch, DRUNK) > 10)
+    act("You feel drunk.", FALSE, ch, 0, 0, TO_CHAR);
 
-  if(GET_COND(ch,THIRST)>20)
-    act("You do not feel thirsty.",FALSE,ch,0,0,TO_CHAR);
+  if (GET_COND(ch, THIRST) > 20)
+    act("You do not feel thirsty.", FALSE, ch, 0, 0, TO_CHAR);
 
-  if(GET_COND(ch,FULL)>20)
-    act("You are full.",FALSE,ch,0,0,TO_CHAR);
+  if (GET_COND(ch, FULL) > 20)
+    act("You are full.", FALSE, ch, 0, 0, TO_CHAR);
 
-  if(IS_SET(temp->obj_flags.value[3],DRINK_POISON)
-     && !IS_AFFECTED(ch,AFF_POISON)) /* The shit was poisoned ! */    {
-      act("But it also had a strange taste!",FALSE,ch,0,0,TO_CHAR);
+  if (IS_SET(temp->obj_flags.value[ 3 ], DRINK_POISON) &&
+      !IS_AFFECTED(ch, AFF_POISON)) /* The shit was poisoned ! */ {
+    act("But it also had a strange taste!", FALSE, ch, 0, 0, TO_CHAR);
 
-      af.type = SPELL_POISON;
-      af.duration = 3;
-      af.modifier = 0;
-      af.location = APPLY_NONE;
-      af.bitvector = AFF_POISON;
-      affect_to_char(ch,&af);
-    }
+    af.type      = SPELL_POISON;
+    af.duration  = 3;
+    af.modifier  = 0;
+    af.location  = APPLY_NONE;
+    af.bitvector = AFF_POISON;
+    affect_to_char(ch, &af);
+  }
 
-  if(!IS_SET(temp->obj_flags.value[3],DRINK_PERM))
-    temp->obj_flags.value[1]--;
+  if (!IS_SET(temp->obj_flags.value[ 3 ], DRINK_PERM))
+    temp->obj_flags.value[ 1 ]--;
 
-  if(!temp->obj_flags.value[1])  /* The last bit */    {
-      temp->obj_flags.value[2]=0;
-      temp->obj_flags.value[3]=0;
-      name_from_drinkcon(temp);
-    }
+  if (!temp->obj_flags.value[ 1 ]) /* The last bit */ {
+    temp->obj_flags.value[ 2 ] = 0;
+    temp->obj_flags.value[ 3 ] = 0;
+    name_from_drinkcon(temp);
+  }
 
   return;
-
 }
 
-
-void do_taste(struct char_data *ch, char *argument, int cmd)
-{
+void do_taste(struct char_data *ch, char *argument, int cmd) {
   struct affected_type af;
-  char arg[80];
+  char arg[ 80 ];
   struct obj_data *temp;
 
-  one_argument(argument,arg);
+  one_argument(argument, arg);
 
-  if(!(temp = get_obj_in_list_vis(ch,arg,ch->carrying)))    {
-      act("You can't find it!",FALSE,ch,0,0,TO_CHAR);
-      return;
-    }
+  if (!(temp = get_obj_in_list_vis(ch, arg, ch->carrying))) {
+    act("You can't find it!", FALSE, ch, 0, 0, TO_CHAR);
+    return;
+  }
 
-  if(temp->obj_flags.type_flag==ITEM_DRINKCON)    {
-      do_sip(ch,argument,0);
-      return;
-    }
+  if (temp->obj_flags.type_flag == ITEM_DRINKCON) {
+    do_sip(ch, argument, 0);
+    return;
+  }
 
-  if(!(temp->obj_flags.type_flag==ITEM_FOOD))    {
-      act("Taste that?!? Your stomach refuses!",FALSE,ch,0,0,TO_CHAR);
-      return;
-    }
+  if (!(temp->obj_flags.type_flag == ITEM_FOOD)) {
+    act("Taste that?!? Your stomach refuses!", FALSE, ch, 0, 0, TO_CHAR);
+    return;
+  }
 
   act("$n tastes the $o", FALSE, ch, temp, 0, TO_ROOM);
   act("You taste the $o", FALSE, ch, temp, 0, TO_CHAR);
 
-  gain_condition(ch,FULL,1);
+  gain_condition(ch, FULL, 1);
 
-  if(GET_COND(ch,FULL)>20)
-    act("You are full.",FALSE,ch,0,0,TO_CHAR);
+  if (GET_COND(ch, FULL) > 20)
+    act("You are full.", FALSE, ch, 0, 0, TO_CHAR);
 
-  if(temp->obj_flags.value[3]&&!IS_AFFECTED(ch,AFF_POISON))     {
-      act("Ooups, it did not taste good at all!",FALSE,ch,0,0,TO_CHAR);
+  if (temp->obj_flags.value[ 3 ] && !IS_AFFECTED(ch, AFF_POISON)) {
+    act("Ooups, it did not taste good at all!", FALSE, ch, 0, 0, TO_CHAR);
 
-      af.type = SPELL_POISON;
-      af.duration = 2;
-      af.modifier = 0;
-      af.location = APPLY_NONE;
-      af.bitvector = AFF_POISON;
-      affect_to_char(ch,&af);
-    }
+    af.type      = SPELL_POISON;
+    af.duration  = 2;
+    af.modifier  = 0;
+    af.location  = APPLY_NONE;
+    af.bitvector = AFF_POISON;
+    affect_to_char(ch, &af);
+  }
 
-  temp->obj_flags.value[0]--;
+  temp->obj_flags.value[ 0 ]--;
 
-  if(!temp->obj_flags.value[0]) {	/* Nothing left */
-      act("There is nothing left now.",FALSE,ch,0,0,TO_CHAR);
-      extract_obj(temp);
-    }
+  if (!temp->obj_flags.value[ 0 ]) { /* Nothing left */
+    act("There is nothing left now.", FALSE, ch, 0, 0, TO_CHAR);
+    extract_obj(temp);
+  }
 
   return;
-
 }
-
-
 
 /* functions related to wear */
 
-perform_wear(struct char_data *ch, struct obj_data *obj_object, int keyword)
-{
-  switch(keyword) {
-  case 0 :
-    act("$n lights $p and holds it.", FALSE, ch, obj_object,0,TO_ROOM);
+perform_wear(struct char_data *ch, struct obj_data *obj_object, int keyword) {
+  switch (keyword) {
+  case 0:
+    act("$n lights $p and holds it.", FALSE, ch, obj_object, 0, TO_ROOM);
     break;
-  case 1 :
-    act("$n wears $p on $s finger.", TRUE, ch, obj_object,0,TO_ROOM);
+  case 1:
+    act("$n wears $p on $s finger.", TRUE, ch, obj_object, 0, TO_ROOM);
     break;
-  case 2 :
-    act("$n wears $p around $s neck.", TRUE, ch, obj_object,0,TO_ROOM);
+  case 2:
+    act("$n wears $p around $s neck.", TRUE, ch, obj_object, 0, TO_ROOM);
     break;
-  case 3 :
-    act("$n wears $p on $s body.", TRUE, ch, obj_object,0,TO_ROOM);
+  case 3:
+    act("$n wears $p on $s body.", TRUE, ch, obj_object, 0, TO_ROOM);
     break;
-  case 4 :
-    act("$n wears $p on $s head.",TRUE, ch, obj_object,0,TO_ROOM);
+  case 4:
+    act("$n wears $p on $s head.", TRUE, ch, obj_object, 0, TO_ROOM);
     break;
-  case 5 :
-    act("$n wears $p on $s legs.",TRUE, ch, obj_object,0,TO_ROOM);
+  case 5:
+    act("$n wears $p on $s legs.", TRUE, ch, obj_object, 0, TO_ROOM);
     break;
-  case 6 :
-    act("$n wears $p on $s feet.",TRUE, ch, obj_object,0,TO_ROOM);
+  case 6:
+    act("$n wears $p on $s feet.", TRUE, ch, obj_object, 0, TO_ROOM);
     break;
-  case 7 :
-    act("$n wears $p on $s hands.",TRUE, ch, obj_object,0,TO_ROOM);
+  case 7:
+    act("$n wears $p on $s hands.", TRUE, ch, obj_object, 0, TO_ROOM);
     break;
-  case 8 :
-    act("$n wears $p on $s arms.",TRUE, ch, obj_object,0,TO_ROOM);
+  case 8:
+    act("$n wears $p on $s arms.", TRUE, ch, obj_object, 0, TO_ROOM);
     break;
-  case 9 :
-    act("$n wears $p about $s body.",TRUE, ch, obj_object,0,TO_ROOM);
+  case 9:
+    act("$n wears $p about $s body.", TRUE, ch, obj_object, 0, TO_ROOM);
     break;
-  case 10 :
-    act("$n wears $p about $s waist.",TRUE, ch, obj_object,0,TO_ROOM);
+  case 10:
+    act("$n wears $p about $s waist.", TRUE, ch, obj_object, 0, TO_ROOM);
     break;
-  case 11 :
-    act("$n wears $p around $s wrist.",TRUE, ch, obj_object,0,TO_ROOM);
+  case 11:
+    act("$n wears $p around $s wrist.", TRUE, ch, obj_object, 0, TO_ROOM);
     break;
-  case 12 :
-    act("$n wields $p.",TRUE, ch, obj_object,0,TO_ROOM);
+  case 12:
+    act("$n wields $p.", TRUE, ch, obj_object, 0, TO_ROOM);
     break;
-  case 13 :
-    act("$n grabs $p.",TRUE, ch, obj_object,0,TO_ROOM);
+  case 13:
+    act("$n grabs $p.", TRUE, ch, obj_object, 0, TO_ROOM);
     break;
-  case 14 :
-    act("$n starts using $p as a shield.", TRUE, ch, obj_object,0,TO_ROOM);
+  case 14:
+    act("$n starts using $p as a shield.", TRUE, ch, obj_object, 0, TO_ROOM);
     break;
   }
 }
 
-
-int IsRestricted(int Mask, int Class)
-{
+int IsRestricted(int Mask, int Class) {
   int i;
 
   /*
@@ -565,31 +544,28 @@ int IsRestricted(int Mask, int Class)
     Mask indicates classes that are restricted with '1's
     */
 
-
   /*
      monks are special cases
     */
 
   if (IS_SET(Class, CLASS_MONK)) {
     if (Mask != 0)
-      return(TRUE);
+      return (TRUE);
   }
 
-  for (i = CLASS_MAGIC_USER; i<= CLASS_THIEF; i*=2) {
+  for (i = CLASS_MAGIC_USER; i <= CLASS_THIEF; i *= 2) {
     if (IS_SET(i, Mask) && (!IS_SET(i, Class))) {
       Mask -= i;
     }
   }
 
   if (Mask == Class)
-    return(TRUE);
+    return (TRUE);
 
-  return(FALSE);
-
+  return (FALSE);
 }
 
-int GetMobClassRestrictions(struct char_data *ch)
-{
+int GetMobClassRestrictions(struct char_data *ch) {
   int tmp;
   tmp = ch->player.class;
 
@@ -597,22 +573,19 @@ int GetMobClassRestrictions(struct char_data *ch)
     SET_BIT(tmp, CLASS_CLERIC);
     REMOVE_BIT(tmp, CLASS_DRUID);
   }
-  return(tmp);
+  return (tmp);
 }
 
-void wear(struct char_data *ch, struct obj_data *obj_object, int keyword)
-{
-  char buffer[MAX_STRING_LENGTH];
+void wear(struct char_data *ch, struct obj_data *obj_object, int keyword) {
+  char buffer[ MAX_STRING_LENGTH ];
   int BitMask, ClMask;
   struct room_data *rp;
-
 
   if (!IS_IMMORTAL(ch)) {
 
     BitMask = GetItemClassRestrictions(obj_object);
-    ClMask = GetMobClassRestrictions(ch);
-    if (IsRestricted(BitMask, ClMask) &&
-	IS_PC(ch)) {
+    ClMask  = GetMobClassRestrictions(ch);
+    if (IsRestricted(BitMask, ClMask) && IS_PC(ch)) {
       send_to_char("You are forbidden to do that.\n\r", ch);
       return;
     }
@@ -632,11 +605,11 @@ void wear(struct char_data *ch, struct obj_data *obj_object, int keyword)
     }
   }
 
-  if(IS_PC(ch)) {
+  if (IS_PC(ch)) {
     if (IS_SET(obj_object->obj_flags.extra_flags, ITEM_METAL)) {
       if (OnlyClass(ch, CLASS_DRUID)) {
-	send_to_char("You can not use metal.\n\r", ch);
-	return;
+        send_to_char("You can not use metal.\n\r", ch);
+        return;
       }
     }
   }
@@ -644,215 +617,218 @@ void wear(struct char_data *ch, struct obj_data *obj_object, int keyword)
   rp = real_roomp(ch->in_room);
 
   if (!IsHumanoid(ch)) {
-    if( (keyword == 14 || keyword == 13 || keyword == 12 || keyword == 1) &&
-       !HasHands(ch)) {
-      send_to_char("You can't wear that without having hands!\n\r",ch);
+    if ((keyword == 14 || keyword == 13 || keyword == 12 || keyword == 1) &&
+        !HasHands(ch)) {
+      send_to_char("You can't wear that without having hands!\n\r", ch);
       return;
     }
   }
 
-  switch(keyword) {
-  case 0: {  /* LIGHT SOURCE */
-    if (ch->equipment[WEAR_LIGHT]) {
+  switch (keyword) {
+  case 0: { /* LIGHT SOURCE */
+    if (ch->equipment[ WEAR_LIGHT ]) {
       send_to_char("You are already holding a light source.\n\r", ch);
-    } else if (ch->equipment[WIELD] && ch->equipment[WIELD]->obj_flags.weight>
-	  str_app[STRENGTH_APPLY_INDEX(ch)].wield_w) {
-        send_to_char("You cannot wield a two handed weapon, and hold a light source.\n\r", ch);
-    } else if ((ch->equipment[WIELD] && ch->equipment[HOLD])) {
-	send_to_char("Sorry, you only have two hands.\n\r", ch);
+    } else if (ch->equipment[ WIELD ] &&
+               ch->equipment[ WIELD ]->obj_flags.weight >
+                   str_app[ STRENGTH_APPLY_INDEX(ch) ].wield_w) {
+      send_to_char(
+          "You cannot wield a two handed weapon, and hold a light source.\n\r",
+          ch);
+    } else if ((ch->equipment[ WIELD ] && ch->equipment[ HOLD ])) {
+      send_to_char("Sorry, you only have two hands.\n\r", ch);
     } else if (rp->sector_type == SECT_UNDERWATER &&
-	       obj_object->obj_flags.value[2] != -1) {
+               obj_object->obj_flags.value[ 2 ] != -1) {
       send_to_char("You can't light that underwater!\n\r", ch);
-      if (strcmp(GET_NAME(ch), "Excavator")==0) {
-	send_to_char("Fuck you, paul :-)\n\r", ch);
-	return;
+      if (strcmp(GET_NAME(ch), "Excavator") == 0) {
+        send_to_char("Fuck you, paul :-)\n\r", ch);
+        return;
       }
     } else {
-      if (obj_object->obj_flags.value[2])
-	real_roomp(ch->in_room)->light++;
+      if (obj_object->obj_flags.value[ 2 ])
+        real_roomp(ch->in_room)->light++;
       send_to_char("Ok.\n\r", ch);
-      perform_wear(ch,obj_object,keyword);
+      perform_wear(ch, obj_object, keyword);
       obj_from_char(obj_object);
-      equip_char(ch,obj_object, WEAR_LIGHT);
+      equip_char(ch, obj_object, WEAR_LIGHT);
     }
   } break;
 
   case 1: {
-    if (CAN_WEAR(obj_object,ITEM_WEAR_FINGER)) {
-      if ((ch->equipment[WEAR_FINGER_L]) && (ch->equipment[WEAR_FINGER_R])) {
-	send_to_char(
-	    "You are already wearing something on your fingers.\n\r", ch);
+    if (CAN_WEAR(obj_object, ITEM_WEAR_FINGER)) {
+      if ((ch->equipment[ WEAR_FINGER_L ]) &&
+          (ch->equipment[ WEAR_FINGER_R ])) {
+        send_to_char("You are already wearing something on your fingers.\n\r",
+                     ch);
       } else {
-	perform_wear(ch,obj_object,keyword);
-	if (ch->equipment[WEAR_FINGER_L]) {
-	  sprintf(buffer, "You put %s on your right finger.\n\r",
-		  obj_object->short_description);
-	  send_to_char(buffer, ch);
-	  obj_from_char(obj_object);
-	  equip_char(ch, obj_object, WEAR_FINGER_R);
-	} else {
-	  sprintf(buffer, "You put %s on your left finger.\n\r",
-		  obj_object->short_description);
-	  send_to_char(buffer, ch);
-	  obj_from_char(obj_object);
-	  equip_char(ch, obj_object, WEAR_FINGER_L);
-	}
+        perform_wear(ch, obj_object, keyword);
+        if (ch->equipment[ WEAR_FINGER_L ]) {
+          sprintf(buffer, "You put %s on your right finger.\n\r",
+                  obj_object->short_description);
+          send_to_char(buffer, ch);
+          obj_from_char(obj_object);
+          equip_char(ch, obj_object, WEAR_FINGER_R);
+        } else {
+          sprintf(buffer, "You put %s on your left finger.\n\r",
+                  obj_object->short_description);
+          send_to_char(buffer, ch);
+          obj_from_char(obj_object);
+          equip_char(ch, obj_object, WEAR_FINGER_L);
+        }
       }
     } else {
       send_to_char("You can't wear that on your finger.\n\r", ch);
     }
   } break;
   case 2: {
-    if (CAN_WEAR(obj_object,ITEM_WEAR_NECK)) {
-      if ((ch->equipment[WEAR_NECK_1]) && (ch->equipment[WEAR_NECK_2])) {
-	send_to_char("You can't wear any more around your neck.\n\r", ch);
+    if (CAN_WEAR(obj_object, ITEM_WEAR_NECK)) {
+      if ((ch->equipment[ WEAR_NECK_1 ]) && (ch->equipment[ WEAR_NECK_2 ])) {
+        send_to_char("You can't wear any more around your neck.\n\r", ch);
       } else {
-	send_to_char("OK.\n\r", ch);
-	perform_wear(ch,obj_object,keyword);
-	if (ch->equipment[WEAR_NECK_1]) {
-	  obj_from_char(obj_object);
-	  equip_char(ch, obj_object, WEAR_NECK_2);
-	} else {
-	  obj_from_char(obj_object);
-	  equip_char(ch, obj_object, WEAR_NECK_1);
-	}
+        send_to_char("OK.\n\r", ch);
+        perform_wear(ch, obj_object, keyword);
+        if (ch->equipment[ WEAR_NECK_1 ]) {
+          obj_from_char(obj_object);
+          equip_char(ch, obj_object, WEAR_NECK_2);
+        } else {
+          obj_from_char(obj_object);
+          equip_char(ch, obj_object, WEAR_NECK_1);
+        }
       }
     } else {
       send_to_char("You can't wear that around your neck.\n\r", ch);
     }
   } break;
   case 3: {
-    if (CAN_WEAR(obj_object,ITEM_WEAR_BODY)) {
-      if (ch->equipment[WEAR_BODY]) {
-	send_to_char("You already wear something on your body.\n\r", ch);
+    if (CAN_WEAR(obj_object, ITEM_WEAR_BODY)) {
+      if (ch->equipment[ WEAR_BODY ]) {
+        send_to_char("You already wear something on your body.\n\r", ch);
       } else {
-	send_to_char("OK.\n\r", ch);
-	perform_wear(ch,obj_object,keyword);
-	obj_from_char(obj_object);
-	equip_char(ch,  obj_object, WEAR_BODY);
+        send_to_char("OK.\n\r", ch);
+        perform_wear(ch, obj_object, keyword);
+        obj_from_char(obj_object);
+        equip_char(ch, obj_object, WEAR_BODY);
       }
     } else {
       send_to_char("You can't wear that on your body.\n\r", ch);
     }
   } break;
   case 4: {
-    if (CAN_WEAR(obj_object,ITEM_WEAR_HEAD)) {
-      if (ch->equipment[WEAR_HEAD]) {
-	send_to_char("You already wear something on your head.\n\r", ch);
+    if (CAN_WEAR(obj_object, ITEM_WEAR_HEAD)) {
+      if (ch->equipment[ WEAR_HEAD ]) {
+        send_to_char("You already wear something on your head.\n\r", ch);
       } else {
-	send_to_char("OK.\n\r", ch);
-	perform_wear(ch,obj_object,keyword);
-	obj_from_char(obj_object);
-	equip_char(ch, obj_object, WEAR_HEAD);
+        send_to_char("OK.\n\r", ch);
+        perform_wear(ch, obj_object, keyword);
+        obj_from_char(obj_object);
+        equip_char(ch, obj_object, WEAR_HEAD);
       }
     } else {
       send_to_char("You can't wear that on your head.\n\r", ch);
     }
   } break;
   case 5: {
-    if (CAN_WEAR(obj_object,ITEM_WEAR_LEGS)) {
-      if (ch->equipment[WEAR_LEGS]) {
-	send_to_char("You already wear something on your legs.\n\r", ch);
+    if (CAN_WEAR(obj_object, ITEM_WEAR_LEGS)) {
+      if (ch->equipment[ WEAR_LEGS ]) {
+        send_to_char("You already wear something on your legs.\n\r", ch);
       } else {
-	send_to_char("OK.\n\r", ch);
-	perform_wear(ch,obj_object,keyword);
-	obj_from_char(obj_object);
-	equip_char(ch, obj_object, WEAR_LEGS);
+        send_to_char("OK.\n\r", ch);
+        perform_wear(ch, obj_object, keyword);
+        obj_from_char(obj_object);
+        equip_char(ch, obj_object, WEAR_LEGS);
       }
     } else {
       send_to_char("You can't wear that on your legs.\n\r", ch);
     }
   } break;
   case 6: {
-    if (CAN_WEAR(obj_object,ITEM_WEAR_FEET)) {
-      if (ch->equipment[WEAR_FEET]) {
-	send_to_char("You already wear something on your feet.\n\r", ch);
+    if (CAN_WEAR(obj_object, ITEM_WEAR_FEET)) {
+      if (ch->equipment[ WEAR_FEET ]) {
+        send_to_char("You already wear something on your feet.\n\r", ch);
       } else {
-	send_to_char("OK.\n\r", ch);
-	perform_wear(ch,obj_object,keyword);
-	obj_from_char(obj_object);
-	equip_char(ch, obj_object, WEAR_FEET);
+        send_to_char("OK.\n\r", ch);
+        perform_wear(ch, obj_object, keyword);
+        obj_from_char(obj_object);
+        equip_char(ch, obj_object, WEAR_FEET);
       }
     } else {
       send_to_char("You can't wear that on your feet.\n\r", ch);
     }
   } break;
   case 7: {
-    if (CAN_WEAR(obj_object,ITEM_WEAR_HANDS)) {
-      if (ch->equipment[WEAR_HANDS]) {
-	send_to_char("You already wear something on your hands.\n\r", ch);
+    if (CAN_WEAR(obj_object, ITEM_WEAR_HANDS)) {
+      if (ch->equipment[ WEAR_HANDS ]) {
+        send_to_char("You already wear something on your hands.\n\r", ch);
       } else {
-	send_to_char("OK.\n\r", ch);
-	perform_wear(ch,obj_object,keyword);
-	obj_from_char(obj_object);
-	equip_char(ch, obj_object, WEAR_HANDS);
+        send_to_char("OK.\n\r", ch);
+        perform_wear(ch, obj_object, keyword);
+        obj_from_char(obj_object);
+        equip_char(ch, obj_object, WEAR_HANDS);
       }
     } else {
       send_to_char("You can't wear that on your hands.\n\r", ch);
     }
   } break;
   case 8: {
-    if (CAN_WEAR(obj_object,ITEM_WEAR_ARMS)) {
-      if (ch->equipment[WEAR_ARMS]) {
-	send_to_char("You already wear something on your arms.\n\r", ch);
+    if (CAN_WEAR(obj_object, ITEM_WEAR_ARMS)) {
+      if (ch->equipment[ WEAR_ARMS ]) {
+        send_to_char("You already wear something on your arms.\n\r", ch);
       } else {
-	send_to_char("OK.\n\r", ch);
-	perform_wear(ch,obj_object,keyword);
-	obj_from_char(obj_object);
-	equip_char(ch, obj_object, WEAR_ARMS);
+        send_to_char("OK.\n\r", ch);
+        perform_wear(ch, obj_object, keyword);
+        obj_from_char(obj_object);
+        equip_char(ch, obj_object, WEAR_ARMS);
       }
     } else {
       send_to_char("You can't wear that on your arms.\n\r", ch);
     }
   } break;
   case 9: {
-    if (CAN_WEAR(obj_object,ITEM_WEAR_ABOUT)) {
-      if (ch->equipment[WEAR_ABOUT]) {
-	send_to_char("You already wear something about your body.\n\r", ch);
+    if (CAN_WEAR(obj_object, ITEM_WEAR_ABOUT)) {
+      if (ch->equipment[ WEAR_ABOUT ]) {
+        send_to_char("You already wear something about your body.\n\r", ch);
       } else {
-	send_to_char("OK.\n\r", ch);
-	perform_wear(ch,obj_object,keyword);
-	obj_from_char(obj_object);
-	equip_char(ch, obj_object, WEAR_ABOUT);
+        send_to_char("OK.\n\r", ch);
+        perform_wear(ch, obj_object, keyword);
+        obj_from_char(obj_object);
+        equip_char(ch, obj_object, WEAR_ABOUT);
       }
     } else {
       send_to_char("You can't wear that about your body.\n\r", ch);
     }
   } break;
   case 10: {
-    if (CAN_WEAR(obj_object,ITEM_WEAR_WAISTE)) {
-      if (ch->equipment[WEAR_WAISTE]) {
-	send_to_char("You already wear something about your waiste.\n\r",
-		     ch);
+    if (CAN_WEAR(obj_object, ITEM_WEAR_WAISTE)) {
+      if (ch->equipment[ WEAR_WAISTE ]) {
+        send_to_char("You already wear something about your waiste.\n\r", ch);
       } else {
-	send_to_char("OK.\n\r", ch);
-	perform_wear(ch,obj_object,keyword);
-	obj_from_char(obj_object);
-	equip_char(ch,  obj_object, WEAR_WAISTE);
+        send_to_char("OK.\n\r", ch);
+        perform_wear(ch, obj_object, keyword);
+        obj_from_char(obj_object);
+        equip_char(ch, obj_object, WEAR_WAISTE);
       }
     } else {
       send_to_char("You can't wear that about your waist.\n\r", ch);
     }
   } break;
   case 11: {
-    if (CAN_WEAR(obj_object,ITEM_WEAR_WRIST)) {
-      if ((ch->equipment[WEAR_WRIST_L]) && (ch->equipment[WEAR_WRIST_R])) {
-	send_to_char(
-	     "You already wear something around both your wrists.\n\r", ch);
+    if (CAN_WEAR(obj_object, ITEM_WEAR_WRIST)) {
+      if ((ch->equipment[ WEAR_WRIST_L ]) && (ch->equipment[ WEAR_WRIST_R ])) {
+        send_to_char("You already wear something around both your wrists.\n\r",
+                     ch);
       } else {
-	perform_wear(ch,obj_object,keyword);
-	obj_from_char(obj_object);
-	if (ch->equipment[WEAR_WRIST_L]) {
-	  sprintf(buffer, "You wear %s around your right wrist.\n\r",
-		  obj_object->short_description);
-	  send_to_char(buffer, ch);
-	  equip_char(ch,  obj_object, WEAR_WRIST_R);
-	} else {
-	  sprintf(buffer, "You wear %s around your left wrist.\n\r",
-		  obj_object->short_description);
-	  send_to_char(buffer, ch);
-	  equip_char(ch, obj_object, WEAR_WRIST_L);
-	}
+        perform_wear(ch, obj_object, keyword);
+        obj_from_char(obj_object);
+        if (ch->equipment[ WEAR_WRIST_L ]) {
+          sprintf(buffer, "You wear %s around your right wrist.\n\r",
+                  obj_object->short_description);
+          send_to_char(buffer, ch);
+          equip_char(ch, obj_object, WEAR_WRIST_R);
+        } else {
+          sprintf(buffer, "You wear %s around your left wrist.\n\r",
+                  obj_object->short_description);
+          send_to_char(buffer, ch);
+          equip_char(ch, obj_object, WEAR_WRIST_L);
+        }
       }
     } else {
       send_to_char("You can't wear that around your wrist.\n\r", ch);
@@ -860,36 +836,38 @@ void wear(struct char_data *ch, struct obj_data *obj_object, int keyword)
   } break;
 
   case 12:
-    if (CAN_WEAR(obj_object,ITEM_WIELD)) {
-      if (ch->equipment[WIELD]) {
-	send_to_char("You are already wielding something.\n\r", ch);
-      } else if (ch->equipment[WEAR_LIGHT] && ch->equipment[HOLD]) {
-	send_to_char("You must first remove something from one of your hands.\n\r", ch);
-      } else if(IS_SET(ch->specials.affected_by2, AFF2_FEEDING)) {
-	send_to_char("And mutilate lunch? Never!\n\r",ch);
+    if (CAN_WEAR(obj_object, ITEM_WIELD)) {
+      if (ch->equipment[ WIELD ]) {
+        send_to_char("You are already wielding something.\n\r", ch);
+      } else if (ch->equipment[ WEAR_LIGHT ] && ch->equipment[ HOLD ]) {
+        send_to_char(
+            "You must first remove something from one of your hands.\n\r", ch);
+      } else if (IS_SET(ch->specials.affected_by2, AFF2_FEEDING)) {
+        send_to_char("And mutilate lunch? Never!\n\r", ch);
       } else {
-	if (GET_OBJ_WEIGHT(obj_object) >
-	    str_app[STRENGTH_APPLY_INDEX(ch)].wield_w) {
-	  send_to_char("It is too heavy for you to use single-handedly.\n\r",ch);
-	  if (GET_OBJ_WEIGHT(obj_object) <
-	      (3*str_app[STRENGTH_APPLY_INDEX(ch)].wield_w)/2) {
-	    send_to_char("But, you can use it two handed.\n\r", ch);
-	    if (ch->equipment[WEAR_SHIELD]) {
-	      send_to_char("If you removed your shield.\n\r", ch);
-	    } else if (ch->equipment[HOLD] || ch->equipment[WEAR_LIGHT]) {
-	      send_to_char("If you removed what was in your hands.\n\r", ch);
-	    } else {
-	      perform_wear(ch,obj_object,keyword);
-	      obj_from_char(obj_object);
-	      equip_char(ch, obj_object, WIELD);
-	    }
-	  }
-	} else {
-	  send_to_char("OK.\n\r", ch);
-	  perform_wear(ch,obj_object,keyword);
-	  obj_from_char(obj_object);
-	  equip_char(ch, obj_object, WIELD);
-	}
+        if (GET_OBJ_WEIGHT(obj_object) >
+            str_app[ STRENGTH_APPLY_INDEX(ch) ].wield_w) {
+          send_to_char("It is too heavy for you to use single-handedly.\n\r",
+                       ch);
+          if (GET_OBJ_WEIGHT(obj_object) <
+              (3 * str_app[ STRENGTH_APPLY_INDEX(ch) ].wield_w) / 2) {
+            send_to_char("But, you can use it two handed.\n\r", ch);
+            if (ch->equipment[ WEAR_SHIELD ]) {
+              send_to_char("If you removed your shield.\n\r", ch);
+            } else if (ch->equipment[ HOLD ] || ch->equipment[ WEAR_LIGHT ]) {
+              send_to_char("If you removed what was in your hands.\n\r", ch);
+            } else {
+              perform_wear(ch, obj_object, keyword);
+              obj_from_char(obj_object);
+              equip_char(ch, obj_object, WIELD);
+            }
+          }
+        } else {
+          send_to_char("OK.\n\r", ch);
+          perform_wear(ch, obj_object, keyword);
+          obj_from_char(obj_object);
+          equip_char(ch, obj_object, WIELD);
+        }
       }
     } else {
       send_to_char("You can't wield that.\n\r", ch);
@@ -897,168 +875,183 @@ void wear(struct char_data *ch, struct obj_data *obj_object, int keyword)
     break;
 
   case 13:
-    if (CAN_WEAR(obj_object,ITEM_HOLD)) {
-      if (ch->equipment[HOLD]) {
-	send_to_char("You are already holding something.\n\r", ch);
-      } else if (ch->equipment[WIELD] && ch->equipment[WIELD]->obj_flags.weight
-	          > str_app[STRENGTH_APPLY_INDEX(ch)].wield_w) {
-	send_to_char("You cannot wield a two handed weapon and hold something also.\n\r", ch);
-      } else if (ch->equipment[WEAR_LIGHT] && ch->equipment[WIELD]) {
-	  send_to_char("Sorry, both hands are full!\n\r", ch);
+    if (CAN_WEAR(obj_object, ITEM_HOLD)) {
+      if (ch->equipment[ HOLD ]) {
+        send_to_char("You are already holding something.\n\r", ch);
+      } else if (ch->equipment[ WIELD ] &&
+                 ch->equipment[ WIELD ]->obj_flags.weight >
+                     str_app[ STRENGTH_APPLY_INDEX(ch) ].wield_w) {
+        send_to_char(
+            "You cannot wield a two handed weapon and hold something also.\n\r",
+            ch);
+      } else if (ch->equipment[ WEAR_LIGHT ] && ch->equipment[ WIELD ]) {
+        send_to_char("Sorry, both hands are full!\n\r", ch);
       } else {
 
-	if (ITEM_TYPE(obj_object)==ITEM_WEAPON) {
+        if (ITEM_TYPE(obj_object) == ITEM_WEAPON) {
 
-	  if (ch->equipment[WEAR_SHIELD]) {
-	    send_to_char("You can't wear a shield and hold a weapon!\n\r", ch);
-	    return;
-	  }
+          if (ch->equipment[ WEAR_SHIELD ]) {
+            send_to_char("You can't wear a shield and hold a weapon!\n\r", ch);
+            return;
+          }
 
-	  if (GET_OBJ_WEIGHT(obj_object) >
-	    str_app[STRENGTH_APPLY_INDEX(ch)].wield_w/2) {
-	    send_to_char("That weapon is too heavy for you to hold\n\r", ch);
-	    return;
-	  }
-	} else if (ch->equipment[WIELD]) {
-	  if (GET_OBJ_WEIGHT(obj_object) >
-		   str_app[STRENGTH_APPLY_INDEX(ch)].wield_w) {
-	    send_to_char("That item is too heavy for you to hold\n\r", ch);
-	    return;
-	  }
-	}
+          if (GET_OBJ_WEIGHT(obj_object) >
+              str_app[ STRENGTH_APPLY_INDEX(ch) ].wield_w / 2) {
+            send_to_char("That weapon is too heavy for you to hold\n\r", ch);
+            return;
+          }
+        } else if (ch->equipment[ WIELD ]) {
+          if (GET_OBJ_WEIGHT(obj_object) >
+              str_app[ STRENGTH_APPLY_INDEX(ch) ].wield_w) {
+            send_to_char("That item is too heavy for you to hold\n\r", ch);
+            return;
+          }
+        }
 
-	send_to_char("OK.\n\r", ch);
-	perform_wear(ch,obj_object,keyword);
-	obj_from_char(obj_object);
-	equip_char(ch, obj_object, HOLD);
+        send_to_char("OK.\n\r", ch);
+        perform_wear(ch, obj_object, keyword);
+        obj_from_char(obj_object);
+        equip_char(ch, obj_object, HOLD);
       }
     } else {
       send_to_char("You can't hold this.\n\r", ch);
     }
     break;
   case 14: {
-    if (CAN_WEAR(obj_object,ITEM_WEAR_SHIELD)) {
-      if ((ch->equipment[WEAR_SHIELD])) {
-	send_to_char("You are already using a shield\n\r", ch);
-      } else if (ch->equipment[WIELD] && ch->equipment[WIELD]->obj_flags.weight >
-              str_app[STRENGTH_APPLY_INDEX(ch)].wield_w) {
-	    send_to_char("You cannot wield a two handed weapon and wear a shield.\n\r", ch);
+    if (CAN_WEAR(obj_object, ITEM_WEAR_SHIELD)) {
+      if ((ch->equipment[ WEAR_SHIELD ])) {
+        send_to_char("You are already using a shield\n\r", ch);
+      } else if (ch->equipment[ WIELD ] &&
+                 ch->equipment[ WIELD ]->obj_flags.weight >
+                     str_app[ STRENGTH_APPLY_INDEX(ch) ].wield_w) {
+        send_to_char(
+            "You cannot wield a two handed weapon and wear a shield.\n\r", ch);
       } else {
-	perform_wear(ch,obj_object,keyword);
-	sprintf(buffer, "You start using %s.\n\r",
-		obj_object->short_description);
-	send_to_char(buffer, ch);
-	obj_from_char(obj_object);
-	equip_char(ch, obj_object, WEAR_SHIELD);
+        perform_wear(ch, obj_object, keyword);
+        sprintf(buffer, "You start using %s.\n\r",
+                obj_object->short_description);
+        send_to_char(buffer, ch);
+        obj_from_char(obj_object);
+        equip_char(ch, obj_object, WEAR_SHIELD);
       }
     } else {
       send_to_char("You can't use that as a shield.\n\r", ch);
     }
   } break;
   case -1: {
-    sprintf(buffer,"Wear %s where?.\n\r", obj_object->short_description);
+    sprintf(buffer, "Wear %s where?.\n\r", obj_object->short_description);
     send_to_char(buffer, ch);
   } break;
   case -2: {
-    sprintf(buffer,"You can't wear %s.\n\r", obj_object->short_description);
+    sprintf(buffer, "You can't wear %s.\n\r", obj_object->short_description);
     send_to_char(buffer, ch);
   } break;
-  default: {
-    debug("Unknown type called in wear.");
-  } break;
+  default: { debug("Unknown type called in wear."); } break;
   }
 }
 
-
-void do_wear(struct char_data *ch, char *argument, int cmd)
-{
-  char arg1[MAX_INPUT_LENGTH];
-  char arg2[MAX_INPUT_LENGTH];
-  char buf[256];
-  char buffer[MAX_INPUT_LENGTH];
+void do_wear(struct char_data *ch, char *argument, int cmd) {
+  char arg1[ MAX_INPUT_LENGTH ];
+  char arg2[ MAX_INPUT_LENGTH ];
+  char buf[ 256 ];
+  char buffer[ MAX_INPUT_LENGTH ];
   struct obj_data *obj_object, *next_obj;
   int keyword;
-  static char *keywords[] = {
-    "finger",
-    "neck",
-    "body",
-    "head",
-    "legs",
-    "feet",
-    "hands",
-    "arms",
-    "about",
-    "waist",
-    "wrist",
-    "shield",
-    "\n"
-    };
+  static char *keywords[] = { "finger", "neck",   "body", "head",  "legs",
+                              "feet",   "hands",  "arms", "about", "waist",
+                              "wrist",  "shield", "\n" };
 
   argument_interpreter(argument, arg1, arg2);
   if (*arg1) {
-    if (!strcmp(arg1,"all")) {
+    if (!strcmp(arg1, "all")) {
 
       for (obj_object = ch->carrying; obj_object; obj_object = next_obj) {
-	next_obj = obj_object->next_content;
-	keyword = -2;
+        next_obj = obj_object->next_content;
+        keyword  = -2;
 
-	if (CAN_WEAR(obj_object,ITEM_WEAR_SHIELD)) keyword = 14;
-	if (CAN_WEAR(obj_object,ITEM_WEAR_FINGER)) keyword = 1;
-	if (CAN_WEAR(obj_object,ITEM_WEAR_NECK)) keyword = 2;
-	if (CAN_WEAR(obj_object,ITEM_WEAR_WRIST)) keyword = 11;
-	if (CAN_WEAR(obj_object,ITEM_WEAR_WAISTE)) keyword = 10;
-	if (CAN_WEAR(obj_object,ITEM_WEAR_ARMS)) keyword = 8;
-	if (CAN_WEAR(obj_object,ITEM_WEAR_HANDS)) keyword = 7;
-	if (CAN_WEAR(obj_object,ITEM_WEAR_FEET)) keyword = 6;
-	if (CAN_WEAR(obj_object,ITEM_WEAR_LEGS)) keyword = 5;
-	if (CAN_WEAR(obj_object,ITEM_WEAR_ABOUT)) keyword = 9;
-	if (CAN_WEAR(obj_object,ITEM_WEAR_HEAD)) keyword = 4;
-	if (CAN_WEAR(obj_object,ITEM_WEAR_BODY)) keyword = 3;
-	if (CAN_WEAR(obj_object,ITEM_WIELD)) keyword = 12;
-	if (CAN_WEAR(obj_object,ITEM_HOLD)) keyword = 13;
+        if (CAN_WEAR(obj_object, ITEM_WEAR_SHIELD))
+          keyword = 14;
+        if (CAN_WEAR(obj_object, ITEM_WEAR_FINGER))
+          keyword = 1;
+        if (CAN_WEAR(obj_object, ITEM_WEAR_NECK))
+          keyword = 2;
+        if (CAN_WEAR(obj_object, ITEM_WEAR_WRIST))
+          keyword = 11;
+        if (CAN_WEAR(obj_object, ITEM_WEAR_WAISTE))
+          keyword = 10;
+        if (CAN_WEAR(obj_object, ITEM_WEAR_ARMS))
+          keyword = 8;
+        if (CAN_WEAR(obj_object, ITEM_WEAR_HANDS))
+          keyword = 7;
+        if (CAN_WEAR(obj_object, ITEM_WEAR_FEET))
+          keyword = 6;
+        if (CAN_WEAR(obj_object, ITEM_WEAR_LEGS))
+          keyword = 5;
+        if (CAN_WEAR(obj_object, ITEM_WEAR_ABOUT))
+          keyword = 9;
+        if (CAN_WEAR(obj_object, ITEM_WEAR_HEAD))
+          keyword = 4;
+        if (CAN_WEAR(obj_object, ITEM_WEAR_BODY))
+          keyword = 3;
+        if (CAN_WEAR(obj_object, ITEM_WIELD))
+          keyword = 12;
+        if (CAN_WEAR(obj_object, ITEM_HOLD))
+          keyword = 13;
 
-	if (keyword != -2) {
-	  sprintf(buf,"%s :", obj_object->short_description);
-	  send_to_char(buf,ch);
-	  wear(ch, obj_object, keyword);
-	}
+        if (keyword != -2) {
+          sprintf(buf, "%s :", obj_object->short_description);
+          send_to_char(buf, ch);
+          wear(ch, obj_object, keyword);
+        }
       }
 
     } else {
       obj_object = get_obj_in_list_vis(ch, arg1, ch->carrying);
       if (obj_object) {
-	if (*arg2) {
-	  keyword = search_block(arg2, keywords, FALSE); /* Partial Match */
-	  if (keyword == -1) {
-	    sprintf(buf, "%s is an unknown body location.\n\r", arg2);
-	    send_to_char(buf, ch);
-	  } else {
-	  sprintf(buf,"%s :", obj_object->short_description);
-	  send_to_char(buf,ch);
-	    wear(ch, obj_object, keyword+1);
-	  }
-	} else {
-	  keyword = -2;
-	  if (CAN_WEAR(obj_object,ITEM_WEAR_SHIELD)) keyword = 14;
-	  if (CAN_WEAR(obj_object,ITEM_WEAR_FINGER)) keyword = 1;
-	  if (CAN_WEAR(obj_object,ITEM_WEAR_NECK)) keyword = 2;
-	  if (CAN_WEAR(obj_object,ITEM_WEAR_WRIST)) keyword = 11;
-	  if (CAN_WEAR(obj_object,ITEM_WEAR_WAISTE)) keyword = 10;
-	  if (CAN_WEAR(obj_object,ITEM_WEAR_ARMS)) keyword = 8;
-	  if (CAN_WEAR(obj_object,ITEM_WEAR_HANDS)) keyword = 7;
-	  if (CAN_WEAR(obj_object,ITEM_WEAR_FEET)) keyword = 6;
-	  if (CAN_WEAR(obj_object,ITEM_WEAR_LEGS)) keyword = 5;
-	  if (CAN_WEAR(obj_object,ITEM_WEAR_ABOUT)) keyword = 9;
-	  if (CAN_WEAR(obj_object,ITEM_WEAR_HEAD)) keyword = 4;
-	  if (CAN_WEAR(obj_object,ITEM_WEAR_BODY)) keyword = 3;
+        if (*arg2) {
+          keyword = search_block(arg2, keywords, FALSE); /* Partial Match */
+          if (keyword == -1) {
+            sprintf(buf, "%s is an unknown body location.\n\r", arg2);
+            send_to_char(buf, ch);
+          } else {
+            sprintf(buf, "%s :", obj_object->short_description);
+            send_to_char(buf, ch);
+            wear(ch, obj_object, keyword + 1);
+          }
+        } else {
+          keyword = -2;
+          if (CAN_WEAR(obj_object, ITEM_WEAR_SHIELD))
+            keyword = 14;
+          if (CAN_WEAR(obj_object, ITEM_WEAR_FINGER))
+            keyword = 1;
+          if (CAN_WEAR(obj_object, ITEM_WEAR_NECK))
+            keyword = 2;
+          if (CAN_WEAR(obj_object, ITEM_WEAR_WRIST))
+            keyword = 11;
+          if (CAN_WEAR(obj_object, ITEM_WEAR_WAISTE))
+            keyword = 10;
+          if (CAN_WEAR(obj_object, ITEM_WEAR_ARMS))
+            keyword = 8;
+          if (CAN_WEAR(obj_object, ITEM_WEAR_HANDS))
+            keyword = 7;
+          if (CAN_WEAR(obj_object, ITEM_WEAR_FEET))
+            keyword = 6;
+          if (CAN_WEAR(obj_object, ITEM_WEAR_LEGS))
+            keyword = 5;
+          if (CAN_WEAR(obj_object, ITEM_WEAR_ABOUT))
+            keyword = 9;
+          if (CAN_WEAR(obj_object, ITEM_WEAR_HEAD))
+            keyword = 4;
+          if (CAN_WEAR(obj_object, ITEM_WEAR_BODY))
+            keyword = 3;
 
-	  sprintf(buf,"%s :", obj_object->short_description);
-	  send_to_char(buf,ch);
-	  wear(ch, obj_object, keyword);
-	}
+          sprintf(buf, "%s :", obj_object->short_description);
+          send_to_char(buf, ch);
+          wear(ch, obj_object, keyword);
+        }
       } else {
-	sprintf(buffer, "You do not seem to have the '%s'.\n\r",arg1);
-	send_to_char(buffer,ch);
+        sprintf(buffer, "You do not seem to have the '%s'.\n\r", arg1);
+        send_to_char(buffer, ch);
       }
     }
   } else {
@@ -1066,12 +1059,10 @@ void do_wear(struct char_data *ch, char *argument, int cmd)
   }
 }
 
-
-void do_wield(struct char_data *ch, char *argument, int cmd)
-{
-  char arg1[MAX_INPUT_LENGTH];
-  char arg2[MAX_INPUT_LENGTH];
-  char buffer[MAX_INPUT_LENGTH];
+void do_wield(struct char_data *ch, char *argument, int cmd) {
+  char arg1[ MAX_INPUT_LENGTH ];
+  char arg2[ MAX_INPUT_LENGTH ];
+  char buffer[ MAX_INPUT_LENGTH ];
   struct obj_data *obj_object;
   int keyword = 12;
 
@@ -1081,20 +1072,18 @@ void do_wield(struct char_data *ch, char *argument, int cmd)
     if (obj_object) {
       wear(ch, obj_object, keyword);
     } else {
-      sprintf(buffer, "You do not seem to have the '%s'.\n\r",arg1);
-      send_to_char(buffer,ch);
+      sprintf(buffer, "You do not seem to have the '%s'.\n\r", arg1);
+      send_to_char(buffer, ch);
     }
   } else {
     send_to_char("Wield what?\n\r", ch);
   }
 }
 
-
-void do_grab(struct char_data *ch, char *argument, int cmd)
-{
-  char arg1[128];
-  char arg2[128];
-  char buffer[256];
+void do_grab(struct char_data *ch, char *argument, int cmd) {
+  char arg1[ 128 ];
+  char arg2[ 128 ];
+  char buffer[ 256 ];
   struct obj_data *obj_object;
 
   argument_interpreter(argument, arg1, arg2);
@@ -1103,128 +1092,123 @@ void do_grab(struct char_data *ch, char *argument, int cmd)
     obj_object = get_obj_in_list(arg1, ch->carrying);
     if (obj_object) {
       if (obj_object->obj_flags.type_flag == ITEM_LIGHT)
-	wear(ch, obj_object, WEAR_LIGHT);
+        wear(ch, obj_object, WEAR_LIGHT);
       else
-	wear(ch, obj_object, 13);
+        wear(ch, obj_object, 13);
     } else {
-      sprintf(buffer, "You do not seem to have the '%s'.\n\r",arg1);
-      send_to_char(buffer,ch);
+      sprintf(buffer, "You do not seem to have the '%s'.\n\r", arg1);
+      send_to_char(buffer, ch);
     }
   } else {
     send_to_char("Hold what?\n\r", ch);
   }
 }
 
-
-void do_remove(struct char_data *ch, char *argument, int cmd)
-{
-  char arg1[128],*T,*P;
-  char buffer[256];
-  int Rem_List[20],Num_Equip;
+void do_remove(struct char_data *ch, char *argument, int cmd) {
+  char arg1[ 128 ], *T, *P;
+  char buffer[ 256 ];
+  int Rem_List[ 20 ], Num_Equip;
   struct obj_data *obj_object;
   int j;
 
   one_argument(argument, arg1);
 
   if (*arg1) {
-    if (!strcmp(arg1,"all")) {
-      for (j=0;j<MAX_WEAR;j++) {
-	if (CAN_CARRY_N(ch) != IS_CARRYING_N(ch)) {
-	  if (ch->equipment[j]) {
-	    if ((obj_object = unequip_char(ch,j))!=NULL) {
-	      obj_to_char(obj_object, ch);
+    if (!strcmp(arg1, "all")) {
+      for (j = 0; j < MAX_WEAR; j++) {
+        if (CAN_CARRY_N(ch) != IS_CARRYING_N(ch)) {
+          if (ch->equipment[ j ]) {
+            if ((obj_object = unequip_char(ch, j)) != NULL) {
+              obj_to_char(obj_object, ch);
 
-	      act("You stop using $p.",FALSE,ch,obj_object,0,TO_CHAR);
-	      if (obj_object->obj_flags.type_flag == ITEM_LIGHT)
-		if (obj_object->obj_flags.value[2])
-		  real_roomp(ch->in_room)->light--;
-
-	    }
-	  }
-	} else {
-	  send_to_char("You can't carry any more stuff.\n\r",ch);
-	  j = MAX_WEAR;
-	}
+              act("You stop using $p.", FALSE, ch, obj_object, 0, TO_CHAR);
+              if (obj_object->obj_flags.type_flag == ITEM_LIGHT)
+                if (obj_object->obj_flags.value[ 2 ])
+                  real_roomp(ch->in_room)->light--;
+            }
+          }
+        } else {
+          send_to_char("You can't carry any more stuff.\n\r", ch);
+          j = MAX_WEAR;
+        }
       }
-      act("$n stops using $s equipment.",TRUE,ch,obj_object,0,TO_ROOM);
+      act("$n stops using $s equipment.", TRUE, ch, obj_object, 0, TO_ROOM);
       return;
     }
-    if (isdigit(arg1[0])) 	    {
+    if (isdigit(arg1[ 0 ])) {
       /* PAT-PAT-PAT */
 
       /* Make a list of item numbers for stuff to remove */
 
-      for (Num_Equip = j=0;j<MAX_WEAR;j++) 	    {
-	if (CAN_CARRY_N(ch) != IS_CARRYING_N(ch)) 		{
-	  if (ch->equipment[j]) Rem_List[Num_Equip++] = j;
-	}
+      for (Num_Equip = j = 0; j < MAX_WEAR; j++) {
+        if (CAN_CARRY_N(ch) != IS_CARRYING_N(ch)) {
+          if (ch->equipment[ j ])
+            Rem_List[ Num_Equip++ ] = j;
+        }
       }
 
       T = arg1;
 
-      while (isdigit(*T) && (*T != '\0'))	    {
-	P = T;
-	if (strchr(T,','))		{
-	  P = strchr(T,',');
-	  *P = '\0';
-	}
-	if (atoi(T) > 0 && atoi(T) <= Num_Equip)		{
-	  if (CAN_CARRY_N(ch) != IS_CARRYING_N(ch)) 		    {
-	    j = Rem_List[atoi(T) - 1];
-	    if (ch->equipment[j]) 			{
-	      if ((obj_object = unequip_char(ch,j))!=NULL)   {
-		obj_to_char(obj_object, ch);
+      while (isdigit(*T) && (*T != '\0')) {
+        P = T;
+        if (strchr(T, ',')) {
+          P  = strchr(T, ',');
+          *P = '\0';
+        }
+        if (atoi(T) > 0 && atoi(T) <= Num_Equip) {
+          if (CAN_CARRY_N(ch) != IS_CARRYING_N(ch)) {
+            j = Rem_List[ atoi(T) - 1 ];
+            if (ch->equipment[ j ]) {
+              if ((obj_object = unequip_char(ch, j)) != NULL) {
+                obj_to_char(obj_object, ch);
 
+                act("You stop using $p.", FALSE, ch, obj_object, 0, TO_CHAR);
+                act("$n stops using $p.", TRUE, ch, obj_object, 0, TO_ROOM);
 
-		act("You stop using $p.",FALSE,ch,obj_object,0,TO_CHAR);
-		act("$n stops using $p.",TRUE,ch,obj_object,0,TO_ROOM);
-
-		if (obj_object->obj_flags.type_flag == ITEM_LIGHT)
-		  if (obj_object->obj_flags.value[2])
-		    real_roomp(ch->in_room)->light--;
-
-	      }
-	    }
-	  }
-	  else 		     {
-	    send_to_char("You can't carry any more stuff.\n\r",ch);
-	    j = MAX_WEAR;
-	  }
-	} else 	{
-	  sprintf(buffer,"You dont seem to have the %s\n\r",T);
-	  send_to_char(buffer,ch);
-	}
-	if (T != P) T = P + 1;
-	else *T = '\0';
+                if (obj_object->obj_flags.type_flag == ITEM_LIGHT)
+                  if (obj_object->obj_flags.value[ 2 ])
+                    real_roomp(ch->in_room)->light--;
+              }
+            }
+          } else {
+            send_to_char("You can't carry any more stuff.\n\r", ch);
+            j = MAX_WEAR;
+          }
+        } else {
+          sprintf(buffer, "You dont seem to have the %s\n\r", T);
+          send_to_char(buffer, ch);
+        }
+        if (T != P)
+          T = P + 1;
+        else
+          *T = '\0';
       }
-    }  else {
+    } else {
       obj_object = get_object_in_equip_vis(ch, arg1, ch->equipment, &j);
       if (obj_object) {
-	 if (IS_OBJ_STAT(obj_object,ITEM_NODROP)) {
-	      send_to_char
-		("You can't let go of it, it must be CURSED!\n\r", ch);
-	      return;
-	 }
-	if (CAN_CARRY_N(ch) != IS_CARRYING_N(ch)) {
+        if (IS_OBJ_STAT(obj_object, ITEM_NODROP)) {
+          send_to_char("You can't let go of it, it must be CURSED!\n\r", ch);
+          return;
+        }
+        if (CAN_CARRY_N(ch) != IS_CARRYING_N(ch)) {
 
-	  obj_to_char(unequip_char(ch, j), ch);
+          obj_to_char(unequip_char(ch, j), ch);
 
-	  if (obj_object->obj_flags.type_flag == ITEM_LIGHT)
-	    if (obj_object->obj_flags.value[2])
-	      real_roomp(ch->in_room)->light--;
+          if (obj_object->obj_flags.type_flag == ITEM_LIGHT)
+            if (obj_object->obj_flags.value[ 2 ])
+              real_roomp(ch->in_room)->light--;
 
-	  act("You stop using $p.",FALSE,ch,obj_object,0,TO_CHAR);
-	  act("$n stops using $p.",TRUE,ch,obj_object,0,TO_ROOM);
+          act("You stop using $p.", FALSE, ch, obj_object, 0, TO_CHAR);
+          act("$n stops using $p.", TRUE, ch, obj_object, 0, TO_ROOM);
 
-	} else {
-	  send_to_char("You can't carry that many items.\n\r", ch);
-	}
+        } else {
+          send_to_char("You can't carry that many items.\n\r", ch);
+        }
       } else {
-	send_to_char("You are not using it.\n\r", ch);
+        send_to_char("You are not using it.\n\r", ch);
       }
     }
-  }
-  else {
+  } else {
     send_to_char("Remove what?\n\r", ch);
   }
 

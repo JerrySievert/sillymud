@@ -1,6 +1,6 @@
 /*
   SillyMUD Distribution V1.1b             (c) 1993 SillyMUD Developement
- 
+
   See license.doc for distribution terms.   SillyMUD is based on DIKUMUD
 */
 
@@ -55,14 +55,14 @@ static int list_top = -1;
 char *fread_action(FILE *fl)
 {
   char buf[MAX_STRING_LENGTH], *rslt;
-  
+
   for (;;)	{
     fgets(buf, MAX_STRING_LENGTH, fl);
     if (feof(fl))		{
-      log("Fread_action - unexpected EOF.");
+      debug("Fread_action - unexpected EOF.");
       exit(0);
     }
-    
+
     if (*buf == '#')
       return(0);
     else {
@@ -74,7 +74,7 @@ char *fread_action(FILE *fl)
   }
   return(0);
 }
-	
+
 
 
 
@@ -82,19 +82,19 @@ void boot_social_messages()
 {
   FILE *fl;
   int tmp, hide, min_pos;
-  
+
   if (!(fl = fopen(SOCMESS_FILE, "r"))) {
     perror("boot_social_messages");
     assert(0);
   }
-  
+
   for (;;)    {
       fscanf(fl, " %d ", &tmp);
       if (tmp < 0)
 	break;
       fscanf(fl, " %d ", &hide);
       fscanf(fl, " %d \n", &min_pos);
-      
+
       /* alloc a new cell */
       if (!soc_mess_list) {
 	CREATE(soc_mess_list, struct social_messg, 1);
@@ -106,28 +106,28 @@ void boot_social_messages()
 	    perror("boot_social_messages. realloc");
 	    exit(0);
 	  }
-      
+
       /* read the stuff */
       soc_mess_list[list_top].act_nr = tmp;
       soc_mess_list[list_top].hide = hide;
       soc_mess_list[list_top].min_victim_position = min_pos;
-      
+
       soc_mess_list[list_top].char_no_arg = fread_action(fl);
       soc_mess_list[list_top].others_no_arg = fread_action(fl);
-      
+
       soc_mess_list[list_top].char_found = fread_action(fl);
-      
+
       /* if no char_found, the rest is to be ignored */
       if (!soc_mess_list[list_top].char_found)
 	continue;
-      
-      soc_mess_list[list_top].others_found = fread_action(fl);	
+
+      soc_mess_list[list_top].others_found = fread_action(fl);
       soc_mess_list[list_top].vict_found = fread_action(fl);
-      
+
       soc_mess_list[list_top].not_found = fread_action(fl);
-      
+
       soc_mess_list[list_top].char_auto = fread_action(fl);
-      
+
       soc_mess_list[list_top].others_auto = fread_action(fl);
     }
   fclose(fl);
@@ -139,21 +139,21 @@ void boot_social_messages()
 int find_action(int cmd)
 {
   int bot, top, mid;
-  
+
   bot = 0;
   top = list_top;
-  
+
   if (top < 0)
     return(-1);
-  
+
   for(;;)    {
       mid = (bot + top) / 2;
-      
+
       if (soc_mess_list[mid].act_nr == cmd)
 	return(mid);
       if (bot >= top)
 	return(-1);
-      
+
       if (soc_mess_list[mid].act_nr > cmd)
 	top = --mid;
       else
@@ -171,26 +171,26 @@ void do_action(struct char_data *ch, char *argument, int cmd)
   char buf[MAX_INPUT_LENGTH], tmp[MAX_STRING_LENGTH];
   struct social_messg *action;
   struct char_data *vict;
-  
+
   if ((act_nr = find_action(cmd)) < 0)   {
       send_to_char("That action is not supported.\n\r", ch);
       return;
     }
-  
+
   action = &soc_mess_list[act_nr];
-  
+
   if (action->char_found)
     only_argument(argument, buf);
   else
     *buf = '\0';
-  
+
   if (!*buf)    {
       send_to_char(action->char_no_arg, ch);
       send_to_char("\n\r", ch);
       act(action->others_no_arg, action->hide, ch, 0, 0, TO_ROOM);
       return;
     }
-  
+
   if (!(vict = get_char_room_vis(ch, buf)))    {
       send_to_char(action->not_found, ch);
       send_to_char("\n\r", ch);
@@ -203,9 +203,9 @@ void do_action(struct char_data *ch, char *argument, int cmd)
 	act("$N is not in a proper position for that.",FALSE,ch,0,vict,TO_CHAR);
       } else {
 	act(action->char_found, 0, ch, 0, vict, TO_CHAR);
-	
+
 	act(action->others_found, action->hide, ch, 0, vict, TO_NOTVICT);
-	
+
 	act(action->vict_found, action->hide, ch, 0, vict, TO_VICT);
       }
     }
@@ -225,7 +225,7 @@ void do_insult(struct char_data *ch, char *argument, int cmd)
 		if(!(victim = get_char_room_vis(ch, arg))) {
 			send_to_char("Can't hear you!\n\r", ch);
 		} else {
-			if(victim != ch) { 
+			if(victim != ch) {
 				sprintf(buf, "You insult %s.\n\r",GET_NAME(victim) );
 				send_to_char(buf,ch);
 
@@ -300,7 +300,7 @@ void do_pose(struct char_data *ch, char *argument, int cmd)
   if (IS_IMMORTAL(ch)) {
     lev = LOW_IMMORTAL-1;
   }
-  
+
   if ((lev < pose_messages[0].level) || !IS_PC(ch)) {
     send_to_char("Pardon?\n\r", ch);
     return;
@@ -315,11 +315,11 @@ void do_pose(struct char_data *ch, char *argument, int cmd)
           class = number(0, OLD_MAX_CLASS-1);
   } while((lev = GET_LEVEL(ch, class)) < pose_messages[0].level);
 
-  
-  for (counter = 0; (pose_messages[counter].level < lev) && 
+
+  for (counter = 0; (pose_messages[counter].level < lev) &&
        (pose_messages[counter].level > 0); counter++);
   counter--;
-  
+
   to_pose = number(0, counter);
 
   act(pose_messages[to_pose].poser_msg[class], 0, ch, 0, 0, TO_CHAR);

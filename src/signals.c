@@ -1,6 +1,6 @@
 /*
   SillyMUD Distribution V1.1b             (c) 1993 SillyMUD Developement
- 
+
   See license.doc for distribution terms.   SillyMUD is based on DIKUMUD
 */
 
@@ -47,10 +47,10 @@ void signal_setup()
 int checkpointing()
 {
   extern int tics;
-	
+
   if (!tics)
     {
-      log("CHECKPOINT shutdown: tics not updated");
+      debug("CHECKPOINT shutdown: tics not updated");
       abort();
     }
   else
@@ -64,7 +64,7 @@ int shutdown_request()
 {
 	extern int mudshutdown;
 
-	log("Received USR2 - shutdown request");
+	debug("Received USR2 - shutdown request");
 	mudshutdown = 1;
 }
 
@@ -75,7 +75,7 @@ int hupsig()
   int i;
   extern int mudshutdown, reboot;
 
-  log("Received SIGHUP, SIGINT, or SIGTERM. Shutting down");
+  debug("Received SIGHUP, SIGINT, or SIGTERM. Shutting down");
 
   raw_force_all("return");
   raw_force_all("save");
@@ -87,5 +87,5 @@ int hupsig()
 
 int logsig()
 {
-	log("Signal received. Ignoring.");
+	debug("Signal received. Ignoring.");
 }

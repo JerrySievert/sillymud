@@ -1,18 +1,18 @@
 /*
   SillyMUD Distribution V1.1b             (c) 1993 SillyMUD Developement
- 
+
   See license.doc for distribution terms.   SillyMUD is based on DIKUMUD
 */
 
 #include <stdio.h>
-#include <malloc.h>
+#include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
 
 #include "protos.h"
 
-void log (char *s) { log_sev(s, 1); } /*thought this was a prototype - heheh */
+void debug (char *s) { log_sev(s, 1); } /*thought this was a prototype - heheh */
 
 extern char *article_list[];
 extern struct time_data time_info;
@@ -25,7 +25,7 @@ extern struct hash_header room_db;	                  /* In db.c */
 #else
 extern struct room_data *room_db[];	                  /* In db.c */
 #endif
-extern char *dirs[]; 
+extern char *dirs[];
 extern int  RacialMax[][6];
 
 
@@ -33,7 +33,7 @@ extern int  RacialMax[][6];
 int EgoBladeSave(struct char_data *ch)
 {
    int total;
-   
+
    if (GetMaxLevel(ch) <= 10) return(FALSE);
    total = (GetMaxLevel(ch) + GET_STR(ch) + GET_CON(ch));
    if (GET_HIT(ch) == 0) return(FALSE);
@@ -82,7 +82,7 @@ int CAN_SEE(struct char_data *s, struct char_data *o)
   if (!o || s->in_room < 0 || o->in_room < 0)
     return(FALSE);
 
-  if (IS_IMMORTAL(s)) 
+  if (IS_IMMORTAL(s))
     return(TRUE);
 
   if (o->invis_level > GetMaxLevel(s))  /* change this if you want multiple*/
@@ -140,7 +140,7 @@ int CAN_SEE_OBJ( struct char_data *ch, struct obj_data *obj)
 
   if (IS_IMMORTAL(ch))
     return(1);
-  
+
   if (IS_AFFECTED(ch, AFF_TRUE_SIGHT))
     return(1);
 
@@ -200,7 +200,7 @@ int ObjVnum( struct obj_data *o)
 }
 
 
-void Zwrite (FILE *fp, char cmd, int tf, int arg1, int arg2, int arg3, 
+void Zwrite (FILE *fp, char cmd, int tf, int arg1, int arg2, int arg3,
 	     char *desc)
 {
    char buf[100];
@@ -209,7 +209,7 @@ void Zwrite (FILE *fp, char cmd, int tf, int arg1, int arg2, int arg3,
      sprintf(buf, "%c %d %d %d %d   ; %s\n", cmd, tf, arg1, arg2, arg3, desc);
      fputs(buf, fp);
    } else {
-     sprintf(buf, "%c %d %d %d %d\n", cmd, tf, arg1, arg2, arg3); 
+     sprintf(buf, "%c %d %d %d %d\n", cmd, tf, arg1, arg2, arg3);
      fputs(buf, fp);
    }
 }
@@ -220,7 +220,7 @@ void RecZwriteObj(FILE *fp, struct obj_data *o)
 
    if (ITEM_TYPE(o) == ITEM_CONTAINER) {
      for (t = o->contains; t; t=t->next_content) {
-       Zwrite(fp, 'P', 1, ObjVnum(t), obj_index[t->item_number].number, ObjVnum(o), 
+       Zwrite(fp, 'P', 1, ObjVnum(t), obj_index[t->item_number].number, ObjVnum(o),
 	      t->short_description);
        RecZwriteObj(fp, t);
      }
@@ -272,7 +272,7 @@ unsigned IsSusc(struct char_data *ch, int bit)
 }
 
 /* creates a random number in interval [from;to] */
-int number(int from, int to) 
+int number(int from, int to)
 {
    if (to - from + 1 )
 	return((random() % (to - from + 1)) + from);
@@ -283,7 +283,7 @@ int number(int from, int to)
 
 
 /* simulates dice roll */
-int dice(int number, int size) 
+int dice(int number, int size)
 {
   int r;
   int sum = 0;
@@ -333,7 +333,7 @@ int str_cmp(char *arg1, char *arg2)
     if (chk = LOWER(*(arg1 + i)) - LOWER(*(arg2 + i)))
       if (chk < 0)
 	return (-1);
-      else 
+      else
 	return (1);
   return(0);
 }
@@ -345,14 +345,14 @@ int str_cmp(char *arg1, char *arg2)
 int strn_cmp(char *arg1, char *arg2, int n)
 {
   int chk, i;
-  
+
   for (i = 0; (*(arg1 + i) || *(arg2 + i)) && (n>0); i++, n--)
     if (chk = LOWER(*(arg1 + i)) - LOWER(*(arg2 + i)))
       if (chk < 0)
 	return (-1);
-      else 
+      else
 	return (1);
-  
+
   return(0);
 }
 
@@ -365,14 +365,14 @@ void log_sev(char *str,int sev)
   char *tmstr;
   static char buf[500];
   struct descriptor_data *i;
-  
-  
+
+
   ct = time(0);
   tmstr = asctime(localtime(&ct));
   *(tmstr + strlen(tmstr) - 1) = '\0';
-  fprintf(stderr, "%s :: %s\n", tmstr, str);
-  
-  
+  fprintf(stdout, "%s :: %s\n", tmstr, str);
+
+
   if (str)
     sprintf(buf,"/* %s */\n\r",str);
   for (i = descriptor_list; i; i = i->next)
@@ -393,15 +393,15 @@ void slog(char *str)
 	fprintf(stderr, "%s :: %s\n", tmstr, str);
 
 }
-	
+
 
 
 void sprintbit(unsigned long vektor, char *names[], char *result)
 {
   long nr;
-  
+
   *result = '\0';
-  
+
   for(nr=0; vektor; vektor>>=1)
     {
       if (IS_SET(1, vektor))
@@ -415,7 +415,7 @@ void sprintbit(unsigned long vektor, char *names[], char *result)
       if (*names[nr] != '\n')
 	nr++;
     }
-  
+
   if (!*result)
     strcat(result, "NOBITS");
 }
@@ -466,14 +466,14 @@ struct time_info_data mud_time_passed(time_t t2, time_t t1)
 /* eld (6-9-93) -- Hopefully, this will fix the negative month, day, etc.  */
 /*                 problems...                                             */
 
-  if(t2 >= t1) { 
+  if(t2 >= t1) {
     secs = (long) (t2 - t1);
 
     now.year = secs/SECS_PER_MUD_YEAR;
 
     monthsecs = secs % SECS_PER_MUD_YEAR;
     now.month = monthsecs/SECS_PER_MUD_MONTH;
-    
+
     daysecs = monthsecs % SECS_PER_MUD_MONTH;
     now.day = daysecs/SECS_PER_MUD_DAY;
 
@@ -486,7 +486,7 @@ struct time_info_data mud_time_passed(time_t t2, time_t t1)
 
     monthsecs = secs % SECS_PER_MUD_YEAR;
     now.month = monthsecs/SECS_PER_MUD_MONTH;
-    
+
     daysecs = monthsecs % SECS_PER_MUD_MONTH;
     now.day = daysecs/SECS_PER_MUD_DAY;
 
@@ -506,7 +506,7 @@ struct time_info_data mud_time_passed(time_t t2, time_t t1)
       now.year = now.year + 1;
     }
     if(now.year)
-      now.year = -now.year;                
+      now.year = -now.year;
   }
   return(now);
 
@@ -522,7 +522,7 @@ void mud_time_passed2(time_t t2, time_t t1, struct time_info_data *t)
 
   if(t2 >= t1) {
     secs = (long) (t2 - t1);
-  
+
     t->year = secs/SECS_PER_MUD_YEAR;
 
     monthsecs = secs % SECS_PER_MUD_YEAR;
@@ -536,7 +536,7 @@ void mud_time_passed2(time_t t2, time_t t1, struct time_info_data *t)
   }else {
 
     secs = (long) (t1 - t2);
-  
+
     t->year = secs/SECS_PER_MUD_YEAR;
 
     monthsecs = secs % SECS_PER_MUD_YEAR;
@@ -561,7 +561,7 @@ void mud_time_passed2(time_t t2, time_t t1, struct time_info_data *t)
       t->year = t->year + 1;
     }
     if(t->year)
-      t->year = -t->year;                
+      t->year = -t->year;
   }
 }
 
@@ -570,19 +570,19 @@ void age2(struct char_data *ch, struct time_info_data *g)
 {
 
   mud_time_passed2(time(0),ch->player.time.birth, g);
-  
+
   g->year += 17;   /* All players start at 17 */
-  
+
 }
 
 struct time_info_data age(struct char_data *ch)
 {
   struct time_info_data player_age;
-  
+
   player_age = mud_time_passed(time(0),ch->player.time.birth);
-  
+
   player_age.year += 17;   /* All players start at 17 */
-  
+
   return(player_age);
 }
 
@@ -592,7 +592,7 @@ char in_group ( struct char_data *ch1, struct char_data *ch2)
 
 
 
-/* 
+/*
    possibilities ->
    1.  char is char2's master
    2.  char2 is char's master
@@ -601,7 +601,7 @@ char in_group ( struct char_data *ch1, struct char_data *ch2)
    5.. char2 rides char
 
     otherwise not true.
- 
+
 */
    if (ch1 == ch2)
       return(TRUE);
@@ -630,7 +630,7 @@ char in_group ( struct char_data *ch1, struct char_data *ch2)
 
 
 /*
-  more new procedures 
+  more new procedures
 */
 
 
@@ -657,7 +657,7 @@ char getall(char *name, char *newname)
 
    if (prd != '.')
      return(FALSE);
-   if (tmpname == NULL) 
+   if (tmpname == NULL)
       return(FALSE);
    if (strcmp(arg,"all"))
       return(FALSE);
@@ -707,14 +707,14 @@ int phit;
 int sab;
 char buf[200];
 
-   if (exp_flags > 100) { 
+   if (exp_flags > 100) {
      sprintf(buf, "Exp flags on %s are > 100 (%d)", GET_NAME(mob), exp_flags);
-     log(buf);
+     debug(buf);
    }
 
-/* 
-reads in the monster, and adds the flags together 
-for simplicity, 1 exceptional ability is 2 special abilities 
+/*
+reads in the monster, and adds the flags together
+for simplicity, 1 exceptional ability is 2 special abilities
 */
 
     if (GetMaxLevel(mob) < 0)
@@ -881,14 +881,14 @@ for simplicity, 1 exceptional ability is 2 special abilities
     case 32:
     case 33:
     case 34:
-    case 31: 
+    case 31:
     default:
       base = 22000;
       phit = 120;
       sab  = 12000;
       break;
     }
-#ifdef 0			/* removed 6/13, this was ridiculous */
+#if 0			/* removed 6/13, this was ridiculous */
     case 35:			/* higher level people can allready clear */
     case 36:			/* the mud. -keith */
     case 37:
@@ -968,7 +968,7 @@ void down_river( int pulse )
    char buf[80];
    struct room_data *rp;
 
-   if (pulse < 0) 
+   if (pulse < 0)
       return;
 
    for (ch = character_list; ch; ch = tmp) {
@@ -994,12 +994,12 @@ void down_river( int pulse )
                    if (!IS_AFFECTED(ch,AFF_FLYING) && !MOUNTED(ch)) {
 		     rp = real_roomp(ch->in_room);
 		     if (rp && rp->dir_option[rd] &&
-			 rp->dir_option[rd]->to_room && 
+			 rp->dir_option[rd]->to_room &&
 			(EXIT(ch, rd)->to_room != NOWHERE)) {
       		         if (ch->specials.fighting) {
                                stop_fighting(ch);
 			  }
-		         if(IS_IMMORTAL(ch) && 
+		         if(IS_IMMORTAL(ch) &&
 			    IS_SET(ch->specials.act, PLR_NOHASSLE)) {
 			   send_to_char("The waters swirl beneath your feet.\n\r",ch);
 			 } else {
@@ -1007,21 +1007,21 @@ void down_river( int pulse )
 			   send_to_char(buf,ch);
 			   if (RIDDEN(ch))
 			     send_to_char(buf,RIDDEN(ch));
-			   
+
 			   or = ch->in_room;
 			   char_from_room(ch);
 			   if (RIDDEN(ch))  {
 			     char_from_room(RIDDEN(ch));
-			     char_to_room(RIDDEN(ch), (real_roomp(or))->dir_option[rd]->to_room);			 
+			     char_to_room(RIDDEN(ch), (real_roomp(or))->dir_option[rd]->to_room);
 			   }
 			   char_to_room(ch,(real_roomp(or))->dir_option[rd]->to_room);
-			   
+
 			   do_look(ch, "\0",15);
 			   if (RIDDEN(ch)) {
 			     do_look(RIDDEN(ch), "\0",15);
 			   }
 			 }
-			 if (IS_SET(RM_FLAGS(ch->in_room), DEATH) && 
+			 if (IS_SET(RM_FLAGS(ch->in_room), DEATH) &&
 			     GetMaxLevel(ch) < LOW_IMMORTAL) {
 			   if (RIDDEN(ch))
 			     NailThisSucker(RIDDEN(ch));
@@ -1056,7 +1056,7 @@ void RoomSave(struct char_data *ch, int start, int end)
    rstart = start;
    rend = end;
 
-   if (((rstart <= -1) || (rend <= -1)) || 
+   if (((rstart <= -1) || (rend <= -1)) ||
        ((rstart > 40000) || (rend > 40000))){
     send_to_char("I don't know those room #s.  make sure they are all\n\r",ch);
     send_to_char("contiguous.\n\r",ch);
@@ -1066,7 +1066,7 @@ void RoomSave(struct char_data *ch, int start, int end)
 
    send_to_char("Saving\n",ch);
    strcpy(dots, "\0");
-   
+
    for (i=rstart;i<=rend;i++) {
 
      rp = real_roomp(i);
@@ -1102,23 +1102,23 @@ void RoomSave(struct char_data *ch, int start, int end)
       } else {
 	if (!IS_SET(TELE_COUNT, rp->tele_mask)) {
 	   fprintf(fp, "%d %d -1 %d %d %d %d", rp->zone, rp->room_flags,
-		rp->tele_time, rp->tele_targ, 
+		rp->tele_time, rp->tele_targ,
 		rp->tele_mask, rp->sector_type);
 	} else {
 	   fprintf(fp, "%d %d -1 %d %d %d %d %d", rp->zone, rp->room_flags,
-		rp->tele_time, rp->tele_targ, 
+		rp->tele_time, rp->tele_targ,
 		rp->tele_mask, rp->tele_cnt, rp->sector_type);
-	} 
+	}
       }
      if (rp->sector_type == SECT_WATER_NOSWIM) {
         fprintf(fp," %d %d",rp->river_speed,rp->river_dir);
-     } 
+     }
 
      if (rp->room_flags & TUNNEL) {
        fprintf(fp, " %d ", (int)rp->moblim);
      }
 
-     fprintf(fp,"\n");     
+     fprintf(fp,"\n");
 
      for (j=0;j<6;j++) {
        rdd = rp->dir_option[j];
@@ -1129,13 +1129,13 @@ void RoomSave(struct char_data *ch, int start, int end)
 	    if (strlen(rdd->general_description) > 0) {
 	      temp[0] = '\0';
               x = 0;
-	      
+
               for (k = 0; k <= strlen(rdd->general_description); k++) {
 		if (rdd->general_description[k] != 13)
 		  temp[x++] = rdd->general_description[k];
               }
 	      temp[x] = '\0';
-	      
+
 	      fprintf(fp,"%s~\n", temp);
 	    } else {
 	      fprintf(fp,"~\n");
@@ -1149,13 +1149,13 @@ void RoomSave(struct char_data *ch, int start, int end)
 	     fprintf(fp, "%s~\n",rdd->keyword);
 	   else
 	     fprintf(fp, "~\n");
-	  } else { 
+	  } else {
 	    fprintf(fp, "~\n");
 	  }
 
 	  /* changed 6/20 - keith */
 
-	  
+
           if( IS_SET( (rdd->exit_info), EX_CLOSED))
             rdd->exit_info -= EX_CLOSED; /* this bit will fuck our if's */
 
@@ -1197,7 +1197,7 @@ void RoomSave(struct char_data *ch, int start, int end)
 	  }
 
 #endif
-	  fprintf(fp," %d ", 
+	  fprintf(fp," %d ",
 		  rdd->key);
 
 	  fprintf(fp,"%d\n", rdd->to_room);
@@ -1244,16 +1244,16 @@ void RoomLoad( struct char_data *ch, int start, int end)
     send_to_char("You don't appear to have an area...\n\r",ch);
     return;
   }
-  
+
   send_to_char("Searching and loading rooms\n\r",ch);
-  
+
   while ((!found) && ((x = feof(fp)) != TRUE)) {
-    
+
     fscanf(fp, "#%d\n",&vnum);
     if ((vnum >= start) && (vnum <= end)) {
       if (vnum == end)
 	found = TRUE;
-      
+
       if ((rp=real_roomp(vnum)) == 0) {  /* empty room */
 	rp = (void*)malloc(sizeof(struct room_data));
 	bzero(rp, sizeof(struct room_data));
@@ -1267,10 +1267,10 @@ void RoomLoad( struct char_data *ch, int start, int end)
 	cleanout_room(rp);
 	send_to_char("-",ch);
       }
-      
+
       rp->number = vnum;
       load_one_room(fp, rp);
-      
+
     } else {
       send_to_char(".",ch);
       /*  read w/out loading */
@@ -1280,14 +1280,14 @@ void RoomLoad( struct char_data *ch, int start, int end)
     }
   }
   fclose(fp);
-  
+
   if (!found) {
     send_to_char("\n\rThe room number(s) that you specified could not all be found.\n\r",ch);
   } else {
     send_to_char("\n\rDone.\n\r",ch);
   }
-  
-}    
+
+}
 
 void fake_setup_dir(FILE *fl, int room, int dir)
 {
@@ -1301,7 +1301,7 @@ void fake_setup_dir(FILE *fl, int room, int dir)
 	if (temp)
 	  free(temp);
 
-	fscanf(fl, " %d ", &tmp); 
+	fscanf(fl, " %d ", &tmp);
 	fscanf(fl, " %d ", &tmp);
 	fscanf(fl, " %d ", &tmp);
 }
@@ -1418,7 +1418,7 @@ int IsUndead( struct char_data *ch)
 {
 
   switch(GET_RACE(ch)) {
-  case RACE_UNDEAD: 
+  case RACE_UNDEAD:
   case RACE_GHOST:
   case RACE_VAMPIRE:
     return(TRUE);
@@ -1481,9 +1481,9 @@ int HasHands( struct char_data *ch)
 
   if (IsHumanoid(ch))
     return(TRUE);
-  if (IsUndead(ch)) 
+  if (IsUndead(ch))
     return(TRUE);
-  if (IsLycanthrope(ch)) 
+  if (IsLycanthrope(ch))
     return(TRUE);
   if (IsDiabolic(ch))
     return(TRUE);
@@ -1501,7 +1501,7 @@ int IsPerson( struct char_data *ch)
   case RACE_HALFLING:
   case RACE_GNOME:
   case RACE_HUMANTWO:
-  case RACE_VEGMAN: 
+  case RACE_VEGMAN:
   case RACE_MFLAYER:
   case RACE_DROW:
   case RACE_SKEXIE:
@@ -1531,7 +1531,7 @@ int IsGiantish( struct char_data *ch)
     return(TRUE);
   default:
     return(FALSE);
-    break;      
+    break;
   }
 }
 
@@ -1620,7 +1620,7 @@ void SetHunting( struct char_data *ch, struct char_data *tch)
 #if NOTRACK
 return;
 #endif
- 
+
    persist =  GetMaxLevel(ch);
    persist *= (int) GET_ALIGNMENT(ch) / 100;
 
@@ -1639,7 +1639,7 @@ return;
    ch->old_room = ch->in_room;
 #if 0
     if (GetMaxLevel(tch) >= IMMORTAL) {
-        sprintf(buf, ">>%s is hunting you from %s\n\r", 
+        sprintf(buf, ">>%s is hunting you from %s\n\r",
        	   (ch->player.short_descr[0]?ch->player.short_descr:"(null)"),
        	   (real_roomp(ch->in_room)->name[0]?real_roomp(ch->in_room)->name:"(null)"));
         send_to_char(buf, tch);
@@ -1654,7 +1654,7 @@ void CallForGuard
 {
   struct char_data *i;
   int type1, type2;
-  
+
   switch(area) {
   case MIDGAARD:
     type1 = 3060;
@@ -1716,13 +1716,13 @@ void CallForGuard
 
 void StandUp (struct char_data *ch)
 {
-   if ((GET_POS(ch)<POSITION_STANDING) && 
+   if ((GET_POS(ch)<POSITION_STANDING) &&
        (GET_POS(ch)>POSITION_STUNNED)) {
        if (ch->points.hit > (ch->points.max_hit / 2))
          act("$n quickly stands up.", 1, ch,0,0,TO_ROOM);
        else if (ch->points.hit > (ch->points.max_hit / 6))
          act("$n slowly stands up.", 1, ch,0,0,TO_ROOM);
-       else 
+       else
          act("$n gets to $s feet very slowly.", 1, ch,0,0,TO_ROOM);
        GET_POS(ch)=POSITION_STANDING;
    }
@@ -1777,7 +1777,7 @@ void FighterMove( struct char_data *ch)
     } else {
       /* rescue on a 1 or 2, other on a 3 or 4 */
       if (GET_RACE(friend) == (GET_RACE(ch))) {
-	 if (GET_HIT(friend) < GET_HIT(ch)) { 
+	 if (GET_HIT(friend) < GET_HIT(ch)) {
 	   if (!ch->skills[SKILL_RESCUE].learned)
 	     ch->skills[SKILL_RESCUE].learned = GetMaxLevel(ch)*3+30;
 	   do_rescue(ch, GET_NAME(friend), 0);
@@ -1807,7 +1807,7 @@ void MonkMove( struct char_data *ch)
   if (!ch->specials.fighting) return;
 
   if (GET_POS(ch) < POSITION_FIGHTING) {
-    if (!ch->skills[SKILL_SPRING_LEAP].learned) 
+    if (!ch->skills[SKILL_SPRING_LEAP].learned)
       ch->skills[SKILL_SPRING_LEAP].learned = (GetMaxLevel(ch)*3)/2+25;
     do_springleap(ch, GET_NAME(ch->specials.fighting), 0);
     return;
@@ -1817,11 +1817,11 @@ void MonkMove( struct char_data *ch)
     /* Commented out as a temporary fix to monks fleeing challenges. */
     /* Was easier than rooting around in the spec_proc for the monk */
     /* challenge for it, which is proobably what should be done. */
-    /* jdb - was commented back in with the change to use 
+    /* jdb - was commented back in with the change to use
        command_interpreter */
 
     if (GET_HIT(ch) < GET_MAX_HIT(ch)/20) {
-      if (!ch->skills[SKILL_RETREAT].learned)  
+      if (!ch->skills[SKILL_RETREAT].learned)
 	ch->skills[SKILL_RETREAT].learned = GetMaxLevel(ch)*2+10;
       strcpy(buf, "flee");
       command_interpreter(ch, buf);
@@ -1832,7 +1832,7 @@ void MonkMove( struct char_data *ch)
 	if (GetMaxLevel(ch->specials.fighting) <= GetMaxLevel(ch)) {
 	  if (GET_MAX_HIT(ch->specials.fighting) < 2*GET_MAX_HIT(ch)) {
 	    if ((!affected_by_spell(ch->specials.fighting, SKILL_QUIV_PALM)) &&
-		(!affected_by_spell(ch, SKILL_QUIV_PALM)) && 
+		(!affected_by_spell(ch, SKILL_QUIV_PALM)) &&
 		ch->in_room == 551) {
 	      if(ch->specials.fighting->skills[SKILL_QUIV_PALM].learned &&
 		 ch->in_room == 551) {
@@ -1870,7 +1870,7 @@ void DevelopHatred( struct char_data *ch, struct char_data *v)
 
   diff = GET_ALIGNMENT(ch) - GET_ALIGNMENT(v);
   if (diff < 0) diff = -diff;
-  
+
   diff /= 20;
 
   if (GET_MAX_HIT(ch)) {
@@ -1966,7 +1966,7 @@ void RestoreChar(struct char_data *ch)
 
   GET_MANA(ch) = GET_MAX_MANA(ch);
   GET_HIT(ch) = GET_MAX_HIT(ch);
-  GET_MOVE(ch) = GET_MAX_MOVE(ch); 
+  GET_MOVE(ch) = GET_MAX_MOVE(ch);
   if (GetMaxLevel(ch) < LOW_IMMORTAL) {
     GET_COND(ch,THIRST) = 24;
     GET_COND(ch,FULL) = 24;
@@ -1987,15 +1987,15 @@ void RemAllAffects( struct char_data *ch)
 int CheckForBlockedMove
   (struct char_data *ch, int cmd, char *arg, int room, int dir, int class)
 {
-  
+
   char buf[256], buf2[256];
-  
+
   if (cmd>6 || cmd<1)
     return(FALSE);
-  
+
   strcpy(buf,  "The guard humiliates you, and block your way.\n\r");
   strcpy(buf2, "The guard humiliates $n, and blocks $s way.");
-  
+
   if ((IS_NPC(ch) && (IS_POLICE(ch))) || (GetMaxLevel(ch) >= DEMIGOD) ||
       (IS_AFFECTED(ch, AFF_SNEAK)))
     return(FALSE);
@@ -2006,7 +2006,7 @@ int CheckForBlockedMove
       act(buf2, FALSE, ch, 0, 0, TO_ROOM);
       send_to_char(buf, ch);
       return TRUE;
-    }  
+    }
   }
   return FALSE;
 
@@ -2015,20 +2015,20 @@ int CheckForBlockedMove
 
 void TeleportPulseStuff(int pulse)
 {
-  
+
   /*
     check_mobile_activity(pulse);
     Teleport(pulse);
     */
-  
+
   register struct char_data *ch;
   struct char_data *next, *tmp, *bk, *n2;
   int tick, tm;
   struct room_data *rp, *dest;
   struct obj_data *obj_object, *temp_obj;
-  
+
   tm = pulse % PULSE_MOBILE;    /* this is dependent on P_M = 3*P_T */
-  
+
   if (tm == 0) {
     tick = 0;
   } else if (tm == PULSE_TELEPORT) {
@@ -2036,7 +2036,7 @@ void TeleportPulseStuff(int pulse)
   } else if (tm == PULSE_TELEPORT*2) {
     tick = 2;
   }
-  
+
   for (ch = character_list; ch; ch = next) {
     next = ch->next;
     if (IS_MOB(ch)) {
@@ -2050,13 +2050,13 @@ void TeleportPulseStuff(int pulse)
 	  rp->tele_targ != rp->number &&
 	  (rp)->tele_time > 0 &&
 	  (pulse % (rp)->tele_time)==0) {
-	
+
 	dest = real_roomp(rp->tele_targ);
 	if (!dest) {
-	  log("invalid tele_targ");
+	  debug("invalid tele_targ");
 	  continue;
 	}
-	
+
 	obj_object = (rp)->contents;
 	while (obj_object) {
 	  temp_obj = obj_object->next_content;
@@ -2064,11 +2064,11 @@ void TeleportPulseStuff(int pulse)
 	  obj_to_room(obj_object, (rp)->tele_targ);
 	  obj_object = temp_obj;
 	}
-	
+
 	bk = 0;
 
 	while(rp->people/* should never fail */) {
-	  
+
 	  tmp = rp->people;   /* work through the list of people */
 	  if (!tmp) break;
 
@@ -2084,14 +2084,14 @@ void TeleportPulseStuff(int pulse)
 	  }
 
        	  if (IS_SET(dest->room_flags, DEATH) && (!IS_IMMORTAL(tmp))) {
-	    if (tmp == next) 
+	    if (tmp == next)
 	      next = tmp->next;
 	    NailThisSucker(tmp);
 	    continue;
 	  }
 	  if (dest->sector_type == SECT_AIR) {
 	    n2 = tmp->next;
-	    if (check_falling(tmp)) {	      
+	    if (check_falling(tmp)) {
 	      if (tmp == next)
 		next = n2;
 	    }
@@ -2123,14 +2123,14 @@ void RiverPulseStuff(int pulse)
   int rd, or;
   char buf[80], buffer[100];
   struct room_data *rp;
-  
-  if (pulse < 0) 
+
+  if (pulse < 0)
     return;
 
   for (i = descriptor_list; i; i=i->next) {
     if (!i->connected) {
       ch = i->character;
-      
+
       if (IS_PC(ch) || RIDDEN(ch)) {
 	if (ch->in_room != NOWHERE) {
 	  if ((real_roomp(ch->in_room)->sector_type == SECT_WATER_NOSWIM) ||
@@ -2145,7 +2145,7 @@ void RiverPulseStuff(int pulse)
 		  next_obj = obj_object->next_content;
 		  if ((real_roomp(ch->in_room))->dir_option[rd]) {
 		    obj_from_room(obj_object);
-		    obj_to_room(obj_object, 
+		    obj_to_room(obj_object,
 				(real_roomp(ch->in_room))->dir_option[rd]->to_room);
 		  }
 		}
@@ -2161,7 +2161,7 @@ void RiverPulseStuff(int pulse)
 		    if (!MOUNTED(ch)) {
 		      rp = real_roomp(ch->in_room);
 		      if (rp && rp->dir_option[rd] &&
-			  rp->dir_option[rd]->to_room && 
+			  rp->dir_option[rd]->to_room &&
 			  (EXIT(ch, rd)->to_room != NOWHERE)) {
 			if (ch->specials.fighting) {
 			  stop_fighting(ch);
@@ -2183,9 +2183,9 @@ void RiverPulseStuff(int pulse)
 			if (RIDDEN(ch)) {
 			  do_look(RIDDEN(ch), "\0",15);
 			}
-			
-			
-			if (IS_SET(RM_FLAGS(ch->in_room), DEATH) && 
+
+
+			if (IS_SET(RM_FLAGS(ch->in_room), DEATH) &&
 			    GetMaxLevel(ch) < LOW_IMMORTAL) {
 			  NailThisSucker(ch);
 			  if (RIDDEN(ch))
@@ -2206,35 +2206,35 @@ void RiverPulseStuff(int pulse)
   if (!number(0,4)) {
     for (ch = character_list; ch; ch = tmp) {
       tmp = ch->next;
-      
+
       /*
        *   mobiles
-       */	
+       */
       if (!IS_PC(ch) && (ch->player.sounds) && (number(0,5)==0)) {
 	if (ch->specials.default_pos > POSITION_SLEEPING) {
 	  if (GET_POS(ch) > POSITION_SLEEPING) {
 	    /*
 	     *  Make the sound;
 	     */
-	    MakeNoise(ch->in_room, ch->player.sounds, 
+	    MakeNoise(ch->in_room, ch->player.sounds,
 		      ch->player.distant_snds);
 	  } else if (GET_POS(ch) == POSITION_SLEEPING) {
 	    /*
-	     * snore 
-	     */	 
-	    sprintf(buffer, "%s snores loudly.\n\r", 
+	     * snore
+	     */
+	    sprintf(buffer, "%s snores loudly.\n\r",
 		    ch->player.short_descr);
-	    MakeNoise(ch->in_room, buffer, 
+	    MakeNoise(ch->in_room, buffer,
 		      "You hear a loud snore nearby.\n\r");
 	  }
 	} else if (GET_POS(ch) == ch->specials.default_pos) {
 	  /*
 	   * Make the sound
-	   */       
+	   */
 	  MakeNoise(ch->in_room, ch->player.sounds, ch->player.distant_snds);
 	}
       }
-    }      
+    }
   }
 }
 
@@ -2252,7 +2252,7 @@ int apply_soundproof(struct char_data *ch)
 
   rp = real_roomp(ch->in_room);
 
-  if (!rp) return(FALSE);  
+  if (!rp) return(FALSE);
 
   if (IS_SET(rp->room_flags, SILENCE)) {
      send_to_char("You are in a silence zone, you can't make a sound!\n\r",ch);
@@ -2280,7 +2280,7 @@ int check_soundproof(struct char_data *ch)
 
   rp = real_roomp(ch->in_room);
 
-  if (!rp) return(FALSE);  
+  if (!rp) return(FALSE);
 
   if (IS_SET(rp->room_flags, SILENCE)) {
      return(TRUE);   /* for shouts, emotes, etc */
@@ -2349,7 +2349,7 @@ char *lower(char *s)
   static char c[1000];
   static char *p;
   int i=0;
-  
+
   strcpy(c, s);
 
   while (c[i]) {
@@ -2387,7 +2387,7 @@ void SetRacialStuff( struct char_data *mob)
     SET_BIT(mob->specials.intrinsics, AFF_INFRAVISION);
     SET_BIT(mob->immune, IMM_ELEC);
     SET_BIT(mob->susc,   IMM_FIRE);
-    break; 
+    break;
   case RACE_MFLAYER:
     SET_BIT(mob->specials.intrinsics, AFF_INFRAVISION);
     SET_BIT(mob->specials.intrinsics, AFF_DETECT_INVISIBLE);
@@ -2401,11 +2401,11 @@ void SetRacialStuff( struct char_data *mob)
     SET_BIT(mob->susc,   IMM_FIRE);
     break;
   case RACE_BIRD:
-    SET_BIT(mob->specials.intrinsics, AFF_FLYING);    
+    SET_BIT(mob->specials.intrinsics, AFF_FLYING);
     break;
   case RACE_ELVEN:
     SET_BIT(mob->M_immune, IMM_HOLD);
-    SET_BIT(mob->M_immune, IMM_SLEEP); 
+    SET_BIT(mob->M_immune, IMM_SLEEP);
     SET_BIT(mob->specials.intrinsics, AFF_INFRAVISION);
    break;
   case RACE_DRAAGDIM:
@@ -2446,7 +2446,7 @@ void SetRacialStuff( struct char_data *mob)
   case RACE_PATRYN:
     SET_BIT(mob->specials.intrinsics, AFF_DETECT_MAGIC);
     break;
-    
+
   default:
     break;
   }
@@ -2526,7 +2526,7 @@ void SetRacialStuff( struct char_data *mob)
   case RACE_GIANT:
   case RACE_DEMON:
   case RACE_DEVIL:
-  case RACE_PLANAR:    
+  case RACE_PLANAR:
     mob->player.height = 200+GetMaxLevel(mob)*15;
     mob->player.weight = (int)mob->player.height*1.5;
     break;
@@ -2689,16 +2689,16 @@ int MountEgoCheck(struct char_data *ch, struct char_data *horse)
       drag_ego += align;
       if (GET_HIT(horse) > 0)
 	drag_ego -= GET_MAX_HIT(horse)/GET_HIT(horse);
-      else 
+      else
 	    drag_ego = 0;
       if (GET_HIT(ch) > 0)
 	ride_ego -= GET_MAX_HIT(ch)/GET_HIT(ch);
-      else 
+      else
 	ride_ego = 0;
-      
+
       check = drag_ego+number(1,10)-(ride_ego+number(1,10));
       return(check);
-      
+
     } else {
       return(-GetMaxLevel(horse));
     }
@@ -2707,7 +2707,7 @@ int MountEgoCheck(struct char_data *ch, struct char_data *horse)
 
     drag_ego = GetMaxLevel(horse);
 
-    if (drag_ego > 15) 
+    if (drag_ego > 15)
       drag_ego *= 2;
 
     ride_ego = ch->skills[SKILL_RIDE].learned/10 +
@@ -2718,8 +2718,8 @@ int MountEgoCheck(struct char_data *ch, struct char_data *horse)
     }
     check = drag_ego+number(1,5)-(ride_ego+number(1,10));
     return(check);
-  }    
-} 
+  }
+}
 
 int RideCheck( struct char_data *ch, int mod)
 {
@@ -2820,13 +2820,13 @@ int IsOnPmp(int room_nr)
   } else {
     return(FALSE);
   }
-  
+
 }
 
-int IsOnSamePlane(struct char_data *ch, struct char_data *v) 
+int IsOnSamePlane(struct char_data *ch, struct char_data *v)
 {
   extern struct zone_data *zone_table;
-  
+
   if(real_roomp(ch->in_room) && real_roomp(v->in_room)) {
     if(GetPlane(ch) == GetPlane(v))
        return(TRUE);
@@ -2837,17 +2837,17 @@ int IsOnSamePlane(struct char_data *ch, struct char_data *v)
   }
 }
 
-int GetPlane(struct char_data *ch) 
+int GetPlane(struct char_data *ch)
 {
   extern struct zone_data *zone_table;
   int i;
 
   if(real_roomp(ch->in_room)) {
     i=zone_table[real_roomp(ch->in_room)->zone].reset_mode;
-    
+
     /* need to establish some sort of hierarchy in case of multiple */
     /* multiple bits, will have to be updated for new planes. */
-    
+
     if(IS_SET(i,ZONE_ASTRAL))
       return(ZONE_ASTRAL);
     else if(IS_SET(i,ZONE_HADES))
@@ -2893,16 +2893,16 @@ int GetSumRaceMaxLevInRoom( struct char_data *ch)
   return(sum);
 }
 
-int too_many_followers(struct char_data *ch) 
+int too_many_followers(struct char_data *ch)
 {
   struct follow_type *k;
   int max_followers,actual_fol;
   char buf[80];
 
   max_followers = (int) chr_apply[GET_CHR(ch)].num_fol;
-  
-  for(k=ch->followers,actual_fol=0; k; k=k->next) 
-    if (IS_AFFECTED(k->follower, AFF_CHARM)) 
+
+  for(k=ch->followers,actual_fol=0; k; k=k->next)
+    if (IS_AFFECTED(k->follower, AFF_CHARM))
       actual_fol++;
 
   if(actual_fol < max_followers)
@@ -2942,14 +2942,14 @@ int ItemEgoClash(struct char_data *ch, struct obj_data *obj, int bon)
     }
 
     obj_ego = MIN(obj_ego, 600);  /* jdb addendum (temporary) */
-    
+
     p_ego = GET_EGO(ch);
-    
+
     return((p_ego + bon + number(1,12))-(obj_ego+number(1,12)));
   }
-  
+
   return(1);			/* ego is not checked. */
-  
+
 }
 
 
@@ -2957,17 +2957,17 @@ int ItemEgoClash(struct char_data *ch, struct obj_data *obj, int bon)
   obj_ego = obj->obj_flags.cost_per_day;
 
   if (obj_ego >= MAX(LIM_ITEM_COST_MIN,14000) || obj_ego < 0) {
-    
+
     if (obj_ego < 0)
       obj_ego = 50000;
 
     obj_ego /= 666;
 
-/*    
+/*
   alignment stuff
-    */    
+    */
 
-    if (IS_OBJ_STAT(obj, ITEM_ANTI_GOOD) || 
+    if (IS_OBJ_STAT(obj, ITEM_ANTI_GOOD) ||
 	(IS_OBJ_STAT(obj, ITEM_ANTI_EVIL))) {
       if (IS_NEUTRAL(ch))
 	obj_ego += obj_ego/4;
@@ -2981,7 +2981,7 @@ int ItemEgoClash(struct char_data *ch, struct obj_data *obj, int bon)
       } else if (p_ego > 20) {
 	p_ego += (p_ego -20);
       }
-      
+
     } else {
       p_ego = 10000;
     }
@@ -2996,7 +2996,7 @@ int ItemEgoClash(struct char_data *ch, struct obj_data *obj, int bon)
 
     return((p_ego + tmp + bon + number(1,6))-(obj_ego+number(1,6)));
   }
-  
+
   return(1);
 #endif
 
@@ -3046,7 +3046,7 @@ int GET_EGO(struct char_data *ch)
 	!IS_IMMORTAL(ch)) {
       p_ego += 5;
     }
-    
+
     if (p_ego > 65)
       p_ego *= 20;
     else if(p_ego > 36)
@@ -3065,14 +3065,14 @@ int GET_EGO(struct char_data *ch)
   if (!IS_IMMORTAL(ch)) {
     tmp = GET_INT(ch)+GET_WIS(ch)+GET_CHR(ch);
     tmp /= 3;
-    
+
     tmp *= 2.0;                    /* bonus for stats */
-    
+
     tmp *= MAX(1,(GetMaxLevel(ch) / 10));
-    
+
     tmp *= GET_HIT(ch);
     tmp /= GET_MAX_HIT(ch);
-    
+
     if( tmp + p_ego < 0)
       return(1);
   } else {
@@ -3101,7 +3101,7 @@ void IncrementZoneNr(int nr)
     for (c = character_list;c;c=c->next) {
       if (c->specials.zone >= nr)
 	c->specials.zone--;
-    }    
+    }
   }
 }
 
@@ -3171,7 +3171,7 @@ void ImprovePreferedStat(struct char_data *ch, int num, bool onelifer)
       GET_RCON(ch)+=1;
       num--;
     }
-  }  
+  }
 
   if (num > 0) {		/* humans here allready have an 18 str */
 				/* and con, what more do they want? */
@@ -3186,18 +3186,18 @@ void ImprovePreferedStat(struct char_data *ch, int num, bool onelifer)
       }
     }
   }
-  if(!onelifer) 
+  if(!onelifer)
     return;
 
   GET_RCHR(ch) += number(1,4);
-  
+
   GET_RCHR(ch) = MIN(GET_RCHR(ch), 18);
-  
+
   do_save(ch, 0, 0);
-  
+
 }
 
-int IsGoblinoid(struct char_data *ch) 
+int IsGoblinoid(struct char_data *ch)
 {
   switch(GET_RACE(ch)) {
   case RACE_ORC:
@@ -3213,7 +3213,7 @@ int IsGoblinoid(struct char_data *ch)
 int IsArticle(char *c)
 {
   register i;
-  
+
   for(i=0;article_list[i][0] != '\n'; i++)
     if(!str_cmp(article_list[i],c))
       return(TRUE);
@@ -3226,7 +3226,7 @@ int IsArticle(char *c)
 /* Gecko STR */
 
 /*  Table of strength equivalents
-  
+
     Strength    internal str
     --------    ------------
     3                 3
@@ -3249,7 +3249,7 @@ int IsArticle(char *c)
     ...             ...
     25               35
 */
-    
+
 void ChangeStrength(struct char_data *ch, int delta)
 {
   int str;
@@ -3269,11 +3269,11 @@ void ChangeStrength(struct char_data *ch, int delta)
     ex = 0;
     str += 10;
   }
-  
+
   str += delta;
   str = MAX(3, str);
   str = MIN(35, str);
-  
+
   if (str < 18) {
     ex = 0;
   } else if (str > 28) {
@@ -3284,10 +3284,10 @@ void ChangeStrength(struct char_data *ch, int delta)
     ex = MAX(0, ex);
     ex = MIN(100, ex);
     str = 18;
-  }    
+  }
 
   ch->tmpabilities.str = str;
-  ch->tmpabilities.str_add = ex;    
+  ch->tmpabilities.str_add = ex;
 
 }
 
@@ -3350,7 +3350,7 @@ char *MovementType(struct char_data *ch, bool enter)
   case RACE_ROO:
     return(enter ? "bounces in" : "bounces");
     break;
-    
+
   case RACE_HORSE:
     return(enter ? "lopes in" : "lopes");
     break;
@@ -3372,7 +3372,7 @@ char *MovementType(struct char_data *ch, bool enter)
   case RACE_VEGMAN:
     return(enter ? "plods in" : "plods");
     break;
-   
+
   case RACE_TROGMAN:
   case RACE_PRIMATE:
     return( enter ? "charges in" : "charges");

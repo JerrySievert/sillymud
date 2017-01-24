@@ -1,6 +1,6 @@
 /*
   SillyMUD Distribution V1.1b             (c) 1993 SillyMUD Developement
- 
+
   See license.doc for distribution terms.   SillyMUD is based on DIKUMUD
 */
 
@@ -27,7 +27,7 @@ char *ClassTitles(struct char_data *ch)
 {
   unsigned char i, count=0;
   char buf[256];
-  
+
     for (i = MAGE_LEVEL_IND; i <= MONK_LEVEL_IND; i++) {
       if (GET_LEVEL(ch, i)) {
 	count++;
@@ -50,10 +50,10 @@ char *ClassTitles(struct char_data *ch)
 /* When age >= 80 return the value p6 */
 int graf(int age, int p0, int p1, int p2, int p3, int p4, int p5, int p6)
 {
-  
+
   if (age < 15)
     return(p0);                               /* < 15   */
-  else if (age <= 29) 
+  else if (age <= 29)
     return (int) (p1+(((age-15)*(p2-p1))/15));  /* 15..29 */
   else if (age <= 44)
     return (int) (p2+(((age-30)*(p3-p2))/15));  /* 30..44 */
@@ -71,7 +71,7 @@ int graf(int age, int p0, int p1, int p2, int p3, int p4, int p5, int p6)
 int mana_limit(struct char_data *ch)
 {
   int max, tmp;
-  
+
   max = 0;
 
   if (IS_NPC(ch)) return(100);
@@ -88,7 +88,7 @@ int mana_limit(struct char_data *ch)
   if (HasClass(ch, CLASS_DRUID)) {
     max += 100;
     max += (GET_LEVEL(ch, DRUID_LEVEL_IND)/3) * 5;
-  }  
+  }
   if (HasClass(ch, CLASS_THIEF)) {
     max += 100;
   }
@@ -111,7 +111,7 @@ int mana_limit(struct char_data *ch)
 
   max += tmp;
   max += ch->points.max_mana;   /* bonus mana */
-  
+
   return(max);
 }
 
@@ -119,19 +119,19 @@ int mana_limit(struct char_data *ch)
 int hit_limit(struct char_data *ch)
 {
   int max;
-  
+
   if (!IS_NPC(ch)) {
       struct time_info_data ma;
       age2(ch, &ma);
       max = (ch->points.max_hit);
 	(graf(ma.year, 2,4,17,14,8,0,-10));
-  } else 
+  } else
     max = ch->points.max_hit;
-  
+
   /* Class/Level calculations */
-  
+
   /* Skill/Spell calculations */
-  
+
   return (max);
 }
 
@@ -139,7 +139,7 @@ int hit_limit(struct char_data *ch)
 int move_limit(struct char_data *ch)
 {
   int max;
-  
+
   if (!IS_NPC(ch)) {
     max = 100 + GET_CON(ch);
   } else {
@@ -149,7 +149,7 @@ int move_limit(struct char_data *ch)
   if (IsRideable(ch))
     max *= 2;
 
-  
+
   if (GET_RACE(ch) == RACE_DWARF || GET_RACE(ch) == RACE_GNOME)
     max -= 20;
   else if (GET_RACE(ch) == RACE_ELVEN)
@@ -160,9 +160,9 @@ int move_limit(struct char_data *ch)
     max -= 25;
   else if (GET_RACE(ch) == RACE_VEGMAN)
     max -= 30;
-  
+
   max += ch->points.max_move;  /* move bonus */
-  
+
   return (max);
 }
 
@@ -171,7 +171,7 @@ int move_limit(struct char_data *ch)
 int mana_gain(struct char_data *ch)
 {
   int gain;
-  
+
   if((IS_NPC(ch)) && (!IS_SET(ch->specials.act, ACT_POLYSELF))) {
     /* Neat and fast */
     gain = 8;
@@ -179,11 +179,11 @@ int mana_gain(struct char_data *ch)
     struct time_info_data ma;
     age2(ch, &ma);
     gain = graf(ma.year, 2,4,6,8,10,16,2);
-  }    
+  }
     /* Class calculations */
-    
+
     /* Skill/Spell calculations */
-    
+
     /* Position calculations    */
     switch (GET_POS(ch)) {
     case POSITION_SLEEPING:
@@ -202,22 +202,22 @@ int mana_gain(struct char_data *ch)
   if(GET_RACE(ch) == RACE_VEGMAN) {
     gain += veggie_gain_mods(ch, gain, 0);
   }
-    
+
   gain += wis_app[GET_WIS(ch)].bonus*2;
 
   gain += ch->points.mana_gain;
-  
+
   if (IS_AFFECTED(ch,AFF_POISON))
     gain >>= 2;
-  
+
   if((GET_COND(ch,FULL)==0)||(GET_COND(ch,THIRST)==0))
     gain >>= 2;
 
   if (GET_RACE(ch) == RACE_ELVEN || GET_RACE(ch) == RACE_GNOME ||
       GET_RACE(ch) == RACE_FAERIE)
     gain+=2;
-  
-  else if (GET_RACE(ch) == RACE_DRAAGDIM) 
+
+  else if (GET_RACE(ch) == RACE_DRAAGDIM)
     gain -= 5;
 
   if (GET_COND(ch, DRUNK)>10)
@@ -242,12 +242,12 @@ int hit_gain(struct char_data *ch)
 
   int gain, dam, i;
 
- 
+
   if(IS_NPC(ch)) {
     gain = 8;
     /* Neat and fast */
   } else {
-    
+
     if (GET_POS(ch) == POSITION_FIGHTING ||
 	ch->specials.fighting) {
       gain = 0;
@@ -256,13 +256,13 @@ int hit_gain(struct char_data *ch)
       age2(ch, &ma);
       gain = graf(ma.year, 2,4,6,8,6,3,1);
     }
-  }    
+  }
     /* Class/Level calculations */
-    
+
     /* Skill/Spell calculations */
-    
+
     /* Position calculations    */
-    
+
   switch (GET_POS(ch)) {
   case POSITION_SLEEPING:
     gain += gain>>2;
@@ -274,14 +274,14 @@ int hit_gain(struct char_data *ch)
     gain += gain>>4;
     break;
   }
-  
+
   if(GET_RACE(ch) == RACE_VEGMAN) {
     gain += veggie_gain_mods(ch, gain, 0);
   }
-  
+
   if (GET_RACE(ch) == RACE_DWARF || GET_RACE(ch) == RACE_HALFORC)
     gain += 2;
-  
+
   if (GET_RACE(ch) == RACE_OGRE)
     gain += 3;
 
@@ -313,17 +313,17 @@ int hit_gain(struct char_data *ch)
 
     damage(ch, ch, dam, SPELL_HEAT_STUFF);
   }
-  
+
   gain += ch->points.hit_gain;
-  
+
   if((GET_COND(ch,FULL)==0)||(GET_COND(ch,THIRST)==0))
     gain >>= 4;
-  
+
   if (GET_COND(ch, DRUNK)>10)
     gain += (gain >> 1);
   else if (GET_COND(ch, DRUNK)>0)
     gain += (gain >> 2);
-  
+
   if (IS_AFFECTED2(ch, AFF2_ONE_LIFER))
     gain += number(1,5);
 
@@ -331,7 +331,7 @@ int hit_gain(struct char_data *ch)
     gain += vamp_gain_mods(ch, gain, 0);
   }
 
-  
+
   return (gain);
 }
 
@@ -341,7 +341,7 @@ int move_gain(struct char_data *ch)
      /* move gain pr. game hour */
 {
   int gain;
-  
+
   if(IS_NPC(ch)) {
     gain = 22;
     if (IsRideable(ch))
@@ -357,7 +357,7 @@ int move_gain(struct char_data *ch)
     else
       gain = 0;
   }
-    
+
     /* Position calculations    */
     switch (GET_POS(ch)) {
     case POSITION_SLEEPING:
@@ -370,9 +370,9 @@ int move_gain(struct char_data *ch)
       gain += (gain>>4); /* Divide by 16 */
       break;
     }
-  
-  
-  if (GET_RACE(ch) == RACE_DWARF || GET_RACE(ch)==RACE_HALFLING || 
+
+
+  if (GET_RACE(ch) == RACE_DWARF || GET_RACE(ch)==RACE_HALFLING ||
       GET_RACE(ch) == RACE_HALFORC)
     gain += 15;
 
@@ -381,10 +381,10 @@ int move_gain(struct char_data *ch)
   }
 
   gain += ch->points.move_gain;
-    
+
   if (IS_AFFECTED(ch,AFF_POISON))
     gain >>= 5;
-  
+
   if((GET_COND(ch,FULL)==0)||(GET_COND(ch,THIRST)==0))
     gain >>= 3;
 
@@ -394,7 +394,7 @@ int move_gain(struct char_data *ch)
   if(GET_RACE(ch) == RACE_VAMPIRE) {
     gain += vamp_gain_mods(ch, gain, 1);
   }
-  
+
   return (gain);
 }
 
@@ -407,14 +407,14 @@ void advance_level(struct char_data *ch, int class)
 
 
   if (class > MAX_CLASS) {
-    log("Bad advance class.. no such class");
+    debug("Bad advance class.. no such class");
     return;
   }
-  
-  if (GET_LEVEL(ch, class) > 0 && 
+
+  if (GET_LEVEL(ch, class) > 0 &&
       GET_EXP(ch) < titles[class][GET_LEVEL(ch, class)+1].exp) {
     /*  they can't advance here */
-    log("Bad advance_level");
+    debug("Bad advance_level");
     return;
   }
 
@@ -422,35 +422,35 @@ void advance_level(struct char_data *ch, int class)
 
 
 
-  if (class == WARRIOR_LEVEL_IND)  
+  if (class == WARRIOR_LEVEL_IND)
      add_hp = con_app[GET_RCON(ch)].hitp;
-  else 
+  else
      add_hp = MIN(con_app[GET_RCON(ch)].hitp,2);
-    
+
 
   switch(class) {
-    
+
   case MAGE_LEVEL_IND : {
     if (GET_LEVEL(ch, MAGE_LEVEL_IND) < 12)
       add_hp += number(1, 4);
     else
       add_hp += 1;
   } break;
-    
+
   case CLERIC_LEVEL_IND : {
     if (GET_LEVEL(ch, CLERIC_LEVEL_IND) < 12)
       add_hp += number(1, 8);
     else
       add_hp += 3;
   } break;
-    
+
   case THIEF_LEVEL_IND : {
     if (GET_LEVEL(ch, THIEF_LEVEL_IND) < 12)
       add_hp += number(1,6);
     else
       add_hp += 2;
   } break;
-    
+
   case WARRIOR_LEVEL_IND : {
     if (GET_LEVEL(ch, WARRIOR_LEVEL_IND) < 10)
       add_hp += number(1,10);
@@ -479,11 +479,11 @@ void advance_level(struct char_data *ch, int class)
   ch->points.max_hit += MAX(1, add_hp);
 
   if (ch->specials.spells_to_learn < 50) {
-    if(GET_RACE(ch) == RACE_OGRE) 
-      ch->specials.spells_to_learn += 
+    if(GET_RACE(ch) == RACE_OGRE)
+      ch->specials.spells_to_learn +=
 	MIN(3,MAX(1, MAX(2, wis_app[GET_RWIS(ch)].bonus)/HowManyClasses(ch)));
     else
-      ch->specials.spells_to_learn += 
+      ch->specials.spells_to_learn +=
 	MAX(1, MAX(2, wis_app[GET_RWIS(ch)].bonus)/HowManyClasses(ch));
   } else {
     send_to_char("Practices: Use them or lose them (you just did).\n\r", ch);
@@ -495,7 +495,7 @@ void advance_level(struct char_data *ch, int class)
     for (i = 0; i < 3; i++)
       ch->specials.conditions[i] = -1;
 
-}	
+}
 
 
 
@@ -507,20 +507,20 @@ void advance_level(struct char_data *ch, int class)
 void drop_level(struct char_data *ch, int class)
 {
   int add_hp, lin_class;
-  
+
   extern struct wis_app_type wis_app[];
   extern struct con_app_type con_app[];
-  
-  
+
+
   if (GetMaxLevel(ch) >= LOW_IMMORTAL)
     return;
   if (GetMaxLevel(ch) == 1)
     return;
-  
+
   add_hp = con_app[GET_RCON(ch)].hitp;
-  
+
   switch(class) {
-    
+
   case CLASS_MAGIC_USER : {
     lin_class = MAGE_LEVEL_IND;
     if (GET_LEVEL(ch, MAGE_LEVEL_IND) < 12)
@@ -528,7 +528,7 @@ void drop_level(struct char_data *ch, int class)
     else
       add_hp += 2;
   } break;
-    
+
   case CLASS_CLERIC : {
     lin_class = CLERIC_LEVEL_IND;
     if (GET_LEVEL(ch, CLERIC_LEVEL_IND) < 12)
@@ -536,7 +536,7 @@ void drop_level(struct char_data *ch, int class)
     else
       add_hp += 5;
   } break;
-    
+
   case CLASS_THIEF : {
     lin_class = THIEF_LEVEL_IND;
     if (GET_LEVEL(ch, THIEF_LEVEL_IND) < 12)
@@ -544,7 +544,7 @@ void drop_level(struct char_data *ch, int class)
     else
       add_hp += 4;
   } break;
-    
+
   case CLASS_WARRIOR : {
     lin_class = WARRIOR_LEVEL_IND;
     if (GET_LEVEL(ch, WARRIOR_LEVEL_IND) < 10)
@@ -573,7 +573,7 @@ void drop_level(struct char_data *ch, int class)
 
 
   GET_LEVEL(ch, lin_class) -= 1;
-  
+
   if (GET_LEVEL(ch, lin_class) < 1) {
     GET_LEVEL(ch, lin_class) = 1;
     if (ch->points.max_hit > 15)
@@ -600,31 +600,31 @@ void drop_level(struct char_data *ch, int class)
   ch->points.max_hit -= MAX(1,add_hp);
   if (ch->points.max_hit < 1)
     ch->points.max_hit = 1;
-  
+
     ch->specials.spells_to_learn -= MAX(1, MAX(2, wis_app[GET_RWIS(ch)].bonus)/HowManyClasses(ch));
 
-  ch->points.exp = 
+  ch->points.exp =
     MIN(titles[lin_class][GET_LEVEL(ch, lin_class)].exp, GET_EXP(ch));
-  
+
   if (ch->points.exp < 0)
     ch->points.exp = 0;
 
   send_to_char("You lose a level\n\r", ch);
-}	
+}
 
 
 
 void set_title(struct char_data *ch)
 {
-  
+
   char buf[256];
-  
-  sprintf(buf, 
+
+  sprintf(buf,
      "the %s %s", RaceName[ch->race], ClassTitles(ch));
-  
+
   if (GET_TITLE(ch)) {
     free(GET_TITLE(ch));
-    CREATE(GET_TITLE(ch),char,strlen(buf)+1);    
+    CREATE(GET_TITLE(ch),char,strlen(buf)+1);
   } else {
     CREATE(GET_TITLE(ch),char,strlen(buf)+1);
   }
@@ -651,9 +651,9 @@ void gain_exp(struct char_data *ch, int gain)
     }
     return;
   }
-  
 
-  
+
+
   if (!IS_IMMORTAL(ch)) {
     if (gain > 0) {
       gain /= HowManyClasses(ch);
@@ -671,12 +671,12 @@ void gain_exp(struct char_data *ch, int gain)
 	else
 	  chrace = GET_RACE(ch);
 	for (i = MAGE_LEVEL_IND; i < MAX_CLASS; i++) {
-	  
+
 	  if (GET_LEVEL(ch,i)&&(GET_LEVEL(ch,i))<RacialMax[chrace][i]) {
    	    if (GET_EXP(ch) >= titles[i][GET_LEVEL(ch,i)+2].exp) {
 	      send_to_char("You must practice at a guild before you can gain any more experience\n\r", ch);
 	      GET_EXP(ch) = titles[i][GET_LEVEL(ch,i)+2].exp - 1;
-	      return;	      
+	      return;
 	    } else if (GET_EXP(ch) >= titles[i][GET_LEVEL(ch,i)+1].exp) {
 	      /* do nothing..this is cool */
 	    } else if (GET_EXP(ch)+gain >= titles[i][GET_LEVEL(ch,i)+1].exp) {
@@ -732,7 +732,7 @@ void gain_exp_regardless(struct char_data *ch, int gain, int class)
 	}
       }
     }
-    if (gain < 0) 
+    if (gain < 0)
       GET_EXP(ch) += gain;
     if (GET_EXP(ch) < 0)
       GET_EXP(ch) = 0;
@@ -744,31 +744,31 @@ void gain_exp_regardless(struct char_data *ch, int gain, int class)
 void gain_condition(struct char_data *ch,int condition,int value)
 {
   bool intoxicated;
-  
+
   if(GET_COND(ch, condition)==-1) /* No change */
     return;
-  
+
   if(GET_RACE(ch) == RACE_VAMPIRE && condition == THIRST)
     return;
-  
+
   intoxicated=(GET_COND(ch, DRUNK) > 0);
 
   if(condition == FULL && GET_RACE(ch) == RACE_VEGMAN)
     return;
-  
+
   if(condition == DRUNK && GET_RACE(ch) == RACE_VEGMAN && value > 0 ) {
     send_to_char("You feel the alcohol run through your phloem.\n\r",ch);
     GET_HIT(ch) -= value;
   }
 
   GET_COND(ch, condition)  += value;
-  
+
   GET_COND(ch,condition) = MAX(0,GET_COND(ch,condition));
   GET_COND(ch,condition) = MIN(24,GET_COND(ch,condition));
-  
+
   if(GET_COND(ch,condition))
     return;
-  
+
   switch(condition){
   case FULL :
     {
@@ -791,7 +791,7 @@ void gain_condition(struct char_data *ch,int condition,int value)
     }
     default : break;
   }
-  
+
 }
 
 
@@ -802,7 +802,7 @@ void check_idling(struct char_data *ch)
 
   if (++(ch->specials.timer) == 8) {
        do_save(ch, "", 0);
-       
+
   } else if (ch->specials.timer == 72) {
 
     if (ch->in_room != NOWHERE && ch->in_room != 0) {
@@ -821,10 +821,10 @@ void check_idling(struct char_data *ch)
       struct obj_cost cost;
       if (ch->in_room != NOWHERE)
 	char_from_room(ch);
-      
+
       char_to_room(ch, 4);
-      
-      if (ch->desc) 
+
+      if (ch->desc)
 	close_socket(ch->desc);
 
       ch->desc = 0;
@@ -833,7 +833,7 @@ void check_idling(struct char_data *ch)
 	cost.total_cost = 100;
 	save_obj(ch, &cost, 1);
        }
-      
+
       extract_char(ch);
     }
 }
@@ -864,7 +864,7 @@ int ObjFromCorpse( struct obj_data *c)
        **  don't extract it.
        */
       c->contains = 0;
-      log("Memory lost in ObjFromCorpse.");
+      debug("Memory lost in ObjFromCorpse.");
       return(TRUE);
     }
   }
@@ -879,9 +879,9 @@ int ClassSpecificStuff( struct char_data *ch)
   if (HasClass(ch, CLASS_WARRIOR) || HasClass(ch, CLASS_MONK)) {
 
     ch->mult_att = 1.0;
-    
+
     if (HasClass(ch, CLASS_WARRIOR)) {
-      
+
       ch->mult_att += (GET_LEVEL(ch, WARRIOR_LEVEL_IND)*.05);
       /* ch->mult_att+=(MIN(50,(GET_LEVEL(ch, WARRIOR_LEVEL_IND)))*.05); */
     } else {
@@ -995,12 +995,12 @@ int ClassSpecificStuff( struct char_data *ch)
   if (HasClass(ch, CLASS_MONK)) {
     if (GET_LEVEL(ch, MONK_LEVEL_IND) > 10)
       SET_BIT(ch->M_immune, IMM_HOLD);
-    
+
     if (GET_LEVEL(ch, MONK_LEVEL_IND) > 31)
       SET_BIT(ch->M_immune, IMM_POISON);
     else if (GET_LEVEL(ch, MONK_LEVEL_IND) > 14)
       SET_BIT(ch->immune, IMM_POISON);
-    
+
     if (GET_LEVEL(ch, MONK_LEVEL_IND) > 35)
       SET_BIT(ch->M_immune, IMM_CHARM);
     else if (GET_LEVEL(ch, MONK_LEVEL_IND) > 17)
@@ -1030,7 +1030,7 @@ int ClassSpecificStuff( struct char_data *ch)
 
       if (OnlyClass(ch, CLASS_THIEF))
 	GET_CHR(ch)+=1;
-      
+
       GET_CHR(ch) += GET_LEVEL(ch, THIEF_LEVEL_IND)/10;
     }
 

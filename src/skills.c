@@ -1,6 +1,6 @@
 /*
   SillyMUD Distribution V1.1b             (c) 1993 SillyMUD Developement
- 
+
   See license.doc for distribution terms.   SillyMUD is based on DIKUMUD
 */
 
@@ -39,18 +39,18 @@ int named_object_on_ground(int room, void *c_data);
 
 void do_train(struct char_data *ch, char *argument, int cmd)
 {
-  /* 
+  /*
     code to allow high level characters to train low level
     characters.
      */
 
-  
+
 }
 
 void do_inset(struct char_data *ch, char *argument, int cmd)
 {
   /* code which allows a character to inset a stone into
-     a weapon.  The stone's powers are added to the 
+     a weapon.  The stone's powers are added to the
      weapon
      */
   struct obj_data *sword, *gem, *tmp;
@@ -106,7 +106,7 @@ void do_inset(struct char_data *ch, char *argument, int cmd)
 				/* parameters. */
     if (GET_ITEM_TYPE(sword) != ITEM_WEAPON) {
       act("$p is not a weapon.", 0, ch, sword, sword, TO_CHAR);
-    } 
+    }
     if (GET_ITEM_TYPE(gem) != ITEM_TREASURE) {
       act("$p is not a gem.", 0, ch, gem, gem, TO_CHAR);
     }
@@ -120,16 +120,16 @@ void do_inset(struct char_data *ch, char *argument, int cmd)
 	   0, ch, 0, 0, TO_CHAR); */
     return;
   }
-  
+
   /* count the effects on the stone */
 
   for (i=0, stone_slots=0; i < MAX_OBJ_AFFECT; i++) {
-    if (gem->affected[i].location != APPLY_NONE) 
+    if (gem->affected[i].location != APPLY_NONE)
       stone_slots++;
   }
   /* count the effects on the sword */
   for (i=0, sword_slots=0; i < MAX_OBJ_AFFECT; i++) {
-    if (sword->affected[i].location == APPLY_NONE) 
+    if (sword->affected[i].location == APPLY_NONE)
       sword_slots++;
   }
   /* verify space is available */
@@ -145,7 +145,7 @@ void do_inset(struct char_data *ch, char *argument, int cmd)
 
   /* check skill role.  Failure damages the stone and weapon */
   perc = number(1,101);
-  if (perc > ch->skills[SKILL_INSET].learned) {  
+  if (perc > ch->skills[SKILL_INSET].learned) {
     act("$n fumbles with $p and breaks it!", 0, ch, gem, gem, TO_ROOM);
     act("You fumble with $p and break it!", 0, ch, gem, gem, TO_CHAR);
     MakeScrap(ch, gem);
@@ -178,7 +178,7 @@ void do_inset(struct char_data *ch, char *argument, int cmd)
   }
 
   /* add stone's value to sword's rent (ego)  */
-  
+
   GET_RENT(sword) += GET_VALUE(gem);
 
   /* delete stone */
@@ -206,7 +206,7 @@ void do_disarm(struct char_data *ch, char *argument, int cmd)
 
   if (!IS_PC(ch) && cmd)
     return;
-  
+
   /*
    *   get victim
    */
@@ -225,7 +225,7 @@ void do_disarm(struct char_data *ch, char *argument, int cmd)
 	  return;
 	}
 
-	if (!(trap = get_obj_in_list_vis(ch, name, 
+	if (!(trap = get_obj_in_list_vis(ch, name,
 		    real_roomp(ch->in_room)->contents))) {
 	  if (!(trap = get_obj_in_list_vis(ch, name, ch->carrying))) {
 	    send_to_char("Disarm what?\n\r", ch);
@@ -239,8 +239,8 @@ void do_disarm(struct char_data *ch, char *argument, int cmd)
       }
     }
   }
-  
-  
+
+
   if (victim == ch) {
     send_to_char("Aren't we funny today...\n\r", ch);
     return;
@@ -260,12 +260,12 @@ void do_disarm(struct char_data *ch, char *argument, int cmd)
     send_to_char("You're no warrior!\n\r", ch);
     return;
   }
-  
+
   /*
    *   make roll - modified by dex && level
    */
   percent=number(1,101); /* 101% is a complete failure */
-  
+
   percent -= dex_app[GET_DEX(ch)].reaction*10;
   percent += dex_app[GET_DEX(victim)].reaction*10;
   if (!ch->equipment[WIELD] && !HasClass(ch, CLASS_MONK)) {
@@ -286,7 +286,7 @@ void do_disarm(struct char_data *ch, char *argument, int cmd)
     /*
      *   failure.
      */
-    act("You try to disarm $N, but fail miserably.", 
+    act("You try to disarm $N, but fail miserably.",
 	TRUE, ch, 0, victim, TO_CHAR);
     act("$n does a nifty fighting move, but then falls on $s butt.",
 	TRUE, ch, 0, 0, TO_ROOM);
@@ -303,9 +303,9 @@ void do_disarm(struct char_data *ch, char *argument, int cmd)
      */
     if (victim->equipment[WIELD]) {
       w = unequip_char(victim, WIELD);
-      act("$n makes an impressive fighting move.", 
+      act("$n makes an impressive fighting move.",
 	  TRUE, ch, 0, 0, TO_ROOM);
-      act("You send $p flying from $N's grasp.", TRUE, ch, w, victim, 
+      act("You send $p flying from $N's grasp.", TRUE, ch, w, victim,
 	  TO_CHAR);
       act("$p flies from your grasp.", TRUE, ch, w, victim, TO_VICT);
 /*
@@ -313,7 +313,7 @@ void do_disarm(struct char_data *ch, char *argument, int cmd)
 */
       obj_to_room(w, victim->in_room);
     } else {
-      act("You try to disarm $N, but $E doesn't have a weapon.", 
+      act("You try to disarm $N, but $E doesn't have a weapon.",
 	  TRUE, ch, 0, victim, TO_CHAR);
       act("$n makes an impressive fighting move, but does little more.",
 	  TRUE, ch, 0, 0, TO_ROOM);
@@ -324,7 +324,7 @@ void do_disarm(struct char_data *ch, char *argument, int cmd)
     }
     WAIT_STATE(victim, PULSE_VIOLENCE*2);
     WAIT_STATE(ch, PULSE_VIOLENCE*2);
-  }  
+  }
 }
 
 
@@ -351,34 +351,34 @@ void do_track(struct char_data *ch, char *argument, int cmd)
   struct hunting_data	huntd;
   struct char_data *scan;
   extern struct char_data  *character_list;
-  
+
 #if NOTRACK
   send_to_char("Sorry, tracking is disabled. Try again after reboot.\n\r",ch);
   return;
 #endif
 
   only_argument(argument, name);
-  
+
   found = FALSE;
   for (scan = character_list; scan && !found ; scan = scan->next)
     if (isname(name, scan->player.name)) {
       found = TRUE;
     }
-  
+
   if (!found) {
     send_to_char("You are unable to find traces of one.\n\r", ch);
     return;
   }
-  
-  if (!ch->skills) 
+
+  if (!ch->skills)
     dist = 10;
   else
     dist = ch->skills[SKILL_HUNT].learned;
-  
+
   if (IS_SET(ch->player.class, CLASS_THIEF)) {
     dist *= 3;
   }
-  
+
   switch(GET_RACE(ch)){
   case RACE_ELVEN:
     dist *= 2;               /* even better */
@@ -390,36 +390,36 @@ void do_track(struct char_data *ch, char *argument, int cmd)
   default:
     break;
   }
-  
+
   if (GetMaxLevel(ch) >= IMMORTAL)
     dist = MAX_ROOMS;
-  
-  
+
+
   if (affected_by_spell(ch, SPELL_MINOR_TRACK)) {
     dist = GetMaxLevel(ch) * 10;
   } else if (affected_by_spell(ch, SPELL_MAJOR_TRACK)){
     dist = GetMaxLevel(ch) * 20;
   }
-  
+
   if (dist == 0)
     return;
-  
+
   ch->hunt_dist = dist;
-  
+
   ch->specials.hunting = 0;
   huntd.name = name;
   huntd.victim = &ch->specials.hunting;
 
   if ((GetMaxLevel(ch) < MIN_GLOB_TRACK_LEV) ||
-      (affected_by_spell(ch, SPELL_MINOR_TRACK)) || 
+      (affected_by_spell(ch, SPELL_MINOR_TRACK)) ||
       (affected_by_spell(ch, SPELL_MAJOR_TRACK))) {
     code = find_path( ch->in_room, named_mobile_in_room, &huntd, -dist, 1);
   } else {
     code = find_path( ch->in_room, named_mobile_in_room, &huntd, -dist, 0);
   }
-  
+
   WAIT_STATE(ch, PULSE_VIOLENCE*1);
-  
+
   if(ch->specials.hunting)  {
 
     if(GET_RACE(ch->specials.hunting) == RACE_VEGMAN &&
@@ -428,8 +428,8 @@ void do_track(struct char_data *ch, char *argument, int cmd)
       ch->specials.hunting = 0;
       return;
     }
-    
-    if(IS_SET(ch->specials.act, ACT_SENTINEL) || 
+
+    if(IS_SET(ch->specials.act, ACT_SENTINEL) ||
        IS_AFFECTED(ch->specials.hunting, AFF_FLYING)) {
       send_to_char("You are unable to find traces of one.\n\r", ch);
       ch->specials.hunting = 0;
@@ -465,8 +465,8 @@ int track( struct char_data *ch, struct char_data *vict)
   if ((!ch) || (!vict))
     return(-1);
 
-  if ((GetMaxLevel(ch) < MIN_GLOB_TRACK_LEV) || 
-      (affected_by_spell(ch, SPELL_MINOR_TRACK)) || 
+  if ((GetMaxLevel(ch) < MIN_GLOB_TRACK_LEV) ||
+      (affected_by_spell(ch, SPELL_MINOR_TRACK)) ||
       (affected_by_spell(ch, SPELL_MAJOR_TRACK))) {
     code = choose_exit_in_zone(ch->in_room, vict->in_room, ch->hunt_dist);
   } else {
@@ -474,7 +474,7 @@ int track( struct char_data *ch, struct char_data *vict)
   }
   if ((!ch) || (!vict))
     return(-1);
-  
+
 
   if (ch->in_room == vict->in_room) {
     send_to_char("##You have found your target!\n\r",ch);
@@ -500,15 +500,15 @@ int dir_track( struct char_data *ch, struct char_data *vict)
   if ((!ch) || (!vict))
     return(-1);
 
-  
+
   if ((GetMaxLevel(ch) >= MIN_GLOB_TRACK_LEV) ||
-      (affected_by_spell(ch, SPELL_MINOR_TRACK)) || 
+      (affected_by_spell(ch, SPELL_MINOR_TRACK)) ||
       (affected_by_spell(ch, SPELL_MAJOR_TRACK))) {
     code = choose_exit_global(ch->in_room, vict->in_room, ch->hunt_dist);
   } else {
     code = choose_exit_in_zone(ch->in_room, vict->in_room, ch->hunt_dist);
   }
-  
+
   if ((!ch) || (!vict))
     return(-1);
 
@@ -550,7 +550,7 @@ void donothing()
   return;
 }
 
-int find_path(int in_room, int (*predicate)(), void *c_data, 
+int find_path(int in_room, int (*predicate)(), void *c_data,
 	      int depth, int in_zone)
 {
    struct room_q *tmp_q, *q_head, *q_tail;
@@ -571,7 +571,7 @@ int find_path(int in_room, int (*predicate)(), void *c_data,
 
 #if 0
    if (top_of_world > MAX_ROOMS) {
-     log("TRACK Is disabled, too many rooms.\n\rContact Loki soon.\n\r");
+     debug("TRACK Is disabled, too many rooms.\n\rContact Loki soon.\n\r");
     return -1;
    }
 #endif
@@ -597,8 +597,8 @@ int find_path(int in_room, int (*predicate)(), void *c_data,
   while(q_head) {
     herep = real_roomp(q_head->room_nr);
 		/* for each room test all directions */
-    if (herep->zone == startp->zone || !in_zone) {  
-                                           /* only look in this zone.. 
+    if (herep->zone == startp->zone || !in_zone) {
+                                           /* only look in this zone..
 					      saves cpu time.  makes world
 					      safer for players
 					      */
@@ -614,13 +614,13 @@ int find_path(int in_room, int (*predicate)(), void *c_data,
 	       && !IS_SET(RM_FLAGS(tmp_room),DEATH)) {
 	      count++;
 	      /* mark room as visted and put on queue */
-	      
+
 	      tmp_q = (struct room_q *) malloc(sizeof(struct room_q));
 	      tmp_q->room_nr = tmp_room;
 	      tmp_q->next_q = 0;
 	      q_tail->next_q = tmp_q;
 	      q_tail = tmp_q;
-	      
+
 	      /* ancestor for first layer is the direction */
 	      hash_enter(&x_room, tmp_room,
 			 ((int)hash_find(&x_room,q_head->room_nr) == -1) ?
@@ -641,7 +641,7 @@ int find_path(int in_room, int (*predicate)(), void *c_data,
 	      return(i);
 	    } else {  /* else return the ancestor */
 	      int i;
-	      
+
               i = (int)hash_find(&x_room,tmp_room);
               if (x_room.buckets) { /* junk left over from a previous track */
 		destroy_hash_table(&x_room, donothing);
@@ -652,7 +652,7 @@ int find_path(int in_room, int (*predicate)(), void *c_data,
 	}
       }
     }
-  
+
       /* free queue head and point to next entry */
       tmp_q = q_head->next_q;
       free(q_head);
@@ -661,7 +661,7 @@ int find_path(int in_room, int (*predicate)(), void *c_data,
    /* couldn't find path */
    if (x_room.buckets) { /* junk left over from a previous track */
       destroy_hash_table(&x_room, donothing);
-   } 
+   }
    return(-1);
 
 }
@@ -677,11 +677,11 @@ int choose_exit_in_zone(int in_room, int tgt_room, int depth)
   return find_path(in_room, is_target_room_p, (void*)tgt_room, depth, 1);
 }
 
-int go_direction(struct char_data *ch, int dir)     
+int go_direction(struct char_data *ch, int dir)
 {
   if (ch->specials.fighting)
     return 0;
-  
+
   if (!IS_SET(EXIT(ch,dir)->exit_info, EX_CLOSED)) {
     do_move(ch, "", dir+1);
   } else if ( IsHumanoid(ch) && !IS_SET(EXIT(ch,dir)->exit_info, EX_LOCKED) ) {
@@ -695,7 +695,7 @@ void slam_into_wall( struct char_data *ch, struct room_direction_data *exitp)
 {
   char doorname[128];
   char buf[256];
-  
+
   if (exitp->keyword && *exitp->keyword) {
     if ((strcmp(fname(exitp->keyword), "secret")==0) ||
 	(IS_SET(exitp->exit_info, EX_SECRET))) {
@@ -775,7 +775,7 @@ void do_doorbash( struct char_data *ch, char *arg, int cmd)
       return;
     }
   }
-  
+
   sprintf(buf, "$n charges %swards", dirs[dir]);
   act(buf, FALSE, ch, 0, 0, TO_ROOM);
   sprintf(buf, "You charge %swards\n\r", dirs[dir]);
@@ -789,7 +789,7 @@ void do_doorbash( struct char_data *ch, char *arg, int cmd)
 
     DisplayMove(ch, dir, was_in, 1);
     if (!check_falling(ch)) {
-      if (IS_SET(RM_FLAGS(ch->in_room), DEATH) && 
+      if (IS_SET(RM_FLAGS(ch->in_room), DEATH) &&
 	  GetMaxLevel(ch) < LOW_IMMORTAL) {
 	NailThisSucker(ch);
 	return;
@@ -826,10 +826,10 @@ void do_doorbash( struct char_data *ch, char *arg, int cmd)
 	/*
 	  unlock and open the door
 	  */
-	sprintf(buf, "$n slams into the %s, and it bursts open!", 
+	sprintf(buf, "$n slams into the %s, and it bursts open!",
 		fname(exitp->keyword));
 	act(buf, FALSE, ch, 0, 0, TO_ROOM);
-	sprintf(buf, "You slam into the %s, and it bursts open!\n\r", 
+	sprintf(buf, "You slam into the %s, and it bursts open!\n\r",
 		fname(exitp->keyword));
 	send_to_char(buf, ch);
 	raw_unlock_door(ch, exitp, dir);
@@ -847,7 +847,7 @@ void do_doorbash( struct char_data *ch, char *arg, int cmd)
 	  do_look(ch, "", 0);
 	  DisplayMove(ch, dir, was_in, 1);
 	  if (!check_falling(ch)) {
-	    if (IS_SET(RM_FLAGS(ch->in_room), DEATH) && 
+	    if (IS_SET(RM_FLAGS(ch->in_room), DEATH) &&
 		GetMaxLevel(ch) < LOW_IMMORTAL) {
 	      NailThisSucker(ch);
 	      return;
@@ -857,7 +857,7 @@ void do_doorbash( struct char_data *ch, char *arg, int cmd)
 	  }
 	  WAIT_STATE(ch, PULSE_VIOLENCE*3);
 	  GET_MOVE(ch) -= 10;
-	  return;	  
+	  return;
 	} else {
 	  WAIT_STATE(ch, PULSE_VIOLENCE*1);
 	  GET_MOVE(ch) -= 5;
@@ -884,7 +884,7 @@ void do_swim( struct char_data *ch, char *arg, int cmd)
 
   struct affected_type af;
   byte percent;
-  
+
 
   send_to_char("Ok, you'll try to swim for a while.\n\r", ch);
 
@@ -892,7 +892,7 @@ void do_swim( struct char_data *ch, char *arg, int cmd)
     /* kinda pointless if they don't need to...*/
     return;
   }
-  
+
   if (affected_by_spell(ch, SKILL_SWIM)) {
     send_to_char("You're too exhausted to swim right now\n", ch);
     return;
@@ -902,7 +902,7 @@ void do_swim( struct char_data *ch, char *arg, int cmd)
 
   if (!ch->skills)
     return;
-  
+
   if (percent > ch->skills[SKILL_SWIM].learned) {
     send_to_char("You're too afraid to enter the water.\n\r",ch);
     if (ch->skills[SKILL_SWIM].learned < 95 &&
@@ -914,7 +914,7 @@ void do_swim( struct char_data *ch, char *arg, int cmd)
     }
     return;
   }
- 
+
   af.type = SKILL_SWIM;
   af.duration = (ch->skills[SKILL_SWIM].learned/10)+1;
   af.modifier = 0;
@@ -954,7 +954,7 @@ void do_spy( struct char_data *ch, char *arg, int cmd)
   if (IS_AFFECTED(ch, AFF_SCRYING)) {
     return;
   }
-  
+
   if (affected_by_spell(ch, SKILL_SPY)) {
     send_to_char("You're already acting like a secret agent.\n", ch);
     return;
@@ -973,7 +973,7 @@ void do_spy( struct char_data *ch, char *arg, int cmd)
     af.bitvector = 0;
     affect_to_char(ch, &af);    return;
   }
- 
+
   af.type = SKILL_SPY;
   af.duration = (ch->skills[SKILL_SPY].learned/10)+1;
   af.modifier = 0;
@@ -1020,7 +1020,7 @@ void do_feign_death( struct char_data *ch, char *arg, int cmd)
     send_to_char("But you are not fighting anything...\n\r", ch);
     return;
   }
-  
+
   if (!HasClass(ch, CLASS_MONK)) {
     send_to_char("You're no monk!\n\r", ch);
     return;
@@ -1063,7 +1063,7 @@ void do_feign_death( struct char_data *ch, char *arg, int cmd)
 void do_first_aid( struct char_data *ch, char *arg, int cmd)
 {
   struct affected_type af;
-    
+
   send_to_char("You attempt to render first aid unto yourself.\n\r", ch);
 
   if (affected_by_spell(ch, SKILL_FIRST_AID)) {
@@ -1086,15 +1086,15 @@ void do_first_aid( struct char_data *ch, char *arg, int cmd)
   af.modifier = 0;
   af.location = APPLY_NONE;
   af.bitvector = 0;
-  affect_to_char(ch, &af);    
-  return;  
+  affect_to_char(ch, &af);
+  return;
 }
 
 
 void do_disguise(struct char_data *ch, char *argument, int cmd)
 {
   struct affected_type af;
-    
+
   send_to_char("You attempt to disguise yourself\n\r", ch);
 
   if (affected_by_spell(ch, SKILL_DISGUISE)) {
@@ -1127,8 +1127,8 @@ void do_disguise(struct char_data *ch, char *argument, int cmd)
   af.modifier = 0;
   af.location = APPLY_NONE;
   af.bitvector = 0;
-  affect_to_char(ch, &af);    
-  return;  
+  affect_to_char(ch, &af);
+  return;
 }
 
 /* Skill for climbing walls and the like -DM */
@@ -1215,7 +1215,7 @@ void do_climb( struct char_data *ch, char *arg, int cmd)
 	  do_look(ch, "", 0);
 	  DisplayMove(ch, dir, was_in, 1);
 	  if (!check_falling(ch)) {
-	    if (IS_SET(RM_FLAGS(ch->in_room), DEATH) && 
+	    if (IS_SET(RM_FLAGS(ch->in_room), DEATH) &&
 		GetMaxLevel(ch) < LOW_IMMORTAL) {
 	      NailThisSucker(ch);
 	      return;
@@ -1224,7 +1224,7 @@ void do_climb( struct char_data *ch, char *arg, int cmd)
 	  }
 	  WAIT_STATE(ch, PULSE_VIOLENCE*3);
 	  GET_MOVE(ch) -= 10;
-	  return;	  
+	  return;
 	}
       }
      else {
@@ -1268,7 +1268,7 @@ void slip_in_climb(struct char_data *ch, int dir, int room)
 
 void do_palm( struct char_data *ch, char *arg, int cmd)
 {
-  char arg1[MAX_STRING_LENGTH], arg2[MAX_STRING_LENGTH], 
+  char arg1[MAX_STRING_LENGTH], arg2[MAX_STRING_LENGTH],
   buffer[MAX_STRING_LENGTH];
   struct obj_data *sub_object;
   struct obj_data *obj_object;
@@ -1279,24 +1279,24 @@ void do_palm( struct char_data *ch, char *arg, int cmd)
     return;
   }
 
-  if(number(1,101) > ch->skills[SKILL_PALM].learned || 
+  if(number(1,101) > ch->skills[SKILL_PALM].learned ||
      !(HasClass(ch, CLASS_THIEF) && !IsIntrinsic(ch, SKILL_SPY))) {
 
     do_get(ch, arg, cmd);
     return;
   }
-  
+
   argument_interpreter(arg, arg1, arg2);
-  
+
   if(!*arg1) {
     send_to_char("Palm what doofus?\n\r",ch);
   } else if(*arg1 && !*arg2) {
-    
+
     if(!str_cmp(arg1,"all")) {
       send_to_char("Palm everything?  Are you mad?!?!\n\r", ch);
       return;
     }
-    
+
     obj_object = get_obj_in_list_vis(ch, arg1,
 				     real_roomp(ch->in_room)->contents);
 
@@ -1320,12 +1320,12 @@ void do_palm( struct char_data *ch, char *arg, int cmd)
 		      obj_object->obj_flags.value[0]);
 	      send_to_char(buffer,ch);
 	      GET_GOLD(ch) += obj_object->obj_flags.value[0];
-	      if (GET_GOLD(ch) > 100000 && 
+	      if (GET_GOLD(ch) > 100000 &&
 		  obj_object->obj_flags.value[0] > 10000) {
 		char buf[MAX_INPUT_LENGTH];
 		sprintf(buf,"%s just got %d coins!",
 			GET_NAME(ch),obj_object->obj_flags.value[0]);
-		log(buf);
+		debug(buf);
 	      }
 	      extract_obj(obj_object);
 	    }
@@ -1386,7 +1386,7 @@ void do_palm( struct char_data *ch, char *arg, int cmd)
 		      char buf[MAX_INPUT_LENGTH];
 		      sprintf(buf,"%s just got %d coins!",
 			      GET_NAME(ch),obj_object->obj_flags.value[0]);
-		      log(buf);
+		      debug(buf);
 		    }
 		    extract_obj(obj_object);
 		  }
@@ -1412,7 +1412,7 @@ void do_palm( struct char_data *ch, char *arg, int cmd)
 	  send_to_char(buffer, ch);
 	}
       } else {
-	sprintf(buffer,"%s is not a container.\n\r", 
+	sprintf(buffer,"%s is not a container.\n\r",
 		sub_object->short_description);
       }
     } else {
@@ -1440,7 +1440,7 @@ void do_peek( struct char_data *ch, char *arg, int cmd)
   }
 
   if ( IS_DARK(ch->in_room) ) {
-    if(!SUNPROBLEM(ch) && IS_AFFECTED(ch, AFF_INFRAVISION) && 
+    if(!SUNPROBLEM(ch) && IS_AFFECTED(ch, AFF_INFRAVISION) &&
        !IS_AFFECTED(ch, AFF_TRUE_SIGHT)) {
       send_to_char("Your infravision can't discern the items!\n\r",ch);
       return;
@@ -1448,7 +1448,7 @@ void do_peek( struct char_data *ch, char *arg, int cmd)
   }
 
   if(!IS_IMMORTAL(ch)) {
-    if( number(1,101) > ch->skills[SKILL_PEEK].learned || 
+    if( number(1,101) > ch->skills[SKILL_PEEK].learned ||
        !(HasClass(ch, CLASS_THIEF) && !IsIntrinsic(ch, SKILL_SPY))) {
       do_look(ch, arg, cmd);
       LearnFromMistake(ch, SKILL_PEEK, 0, 95);
@@ -1472,7 +1472,7 @@ void do_berserk( struct char_data *ch, char *arg, int cmd)
 {
 
   struct affected_type af;
-  
+
   if(!ch->skills)
     return;
 
@@ -1493,7 +1493,7 @@ void do_berserk( struct char_data *ch, char *arg, int cmd)
   }
 
   if (!ch->specials.fighting) {
-    act("$n gets worked up into a lather and runs madly about!",TRUE, ch, 0, 
+    act("$n gets worked up into a lather and runs madly about!",TRUE, ch, 0,
 	0, TO_ROOM);
     send_to_char("You get all worked up over nothing and run madly about.\n\r",
 		 ch);
@@ -1531,11 +1531,11 @@ void do_berserk( struct char_data *ch, char *arg, int cmd)
       af.modifier = 3;
       af.location = APPLY_DAMROLL;
       affect_to_char(ch, &af);
-      
+
       send_to_char("You fly into a furious rage!\n\r",ch);
       act("$n roars furiously and starts squashing $s opponents!\n\r",TRUE,
 	  ch,0, 0, TO_ROOM);
-      
+
     } else {
       send_to_char("Maybe you should get on your feet first?\n\r",ch);
     }
@@ -1555,7 +1555,7 @@ void do_makepotion(struct char_data *ch, char *argument, int cmd)
 
   for(i=0;i<5;i++)		/* very important indeed */
     object[i] = 0;
-  
+
   for(i=0; i<MAX_POTIONS; i++) {
     if(!strcmp(argument, BrewList[i].keyword)) {
       which_potion = i;
@@ -1566,7 +1566,7 @@ void do_makepotion(struct char_data *ch, char *argument, int cmd)
       break;
     }
   }
- 
+
   /* well, these (and only these) ingredients must be found in a */
   /* cauldron that is sitting in the room.  One communal one in the */
   /* druid's tree, another sold by elvira in her shop :) and one in the*/
@@ -1586,15 +1586,15 @@ void do_makepotion(struct char_data *ch, char *argument, int cmd)
   for (o = rp->contents; o; o = o->next_content) {
     if( obj_index[o->item_number].virtual == CAULDRON ) {
       match = TRUE;		/* o now points at our cauldron */
-      break;		
+      break;
     }
   }
-  
+
   if(!match) {
     send_to_char("Egads, go find Sherlock, your cauldron is gone!\n\r", ch);
     return;
   }
-  potion = read_object(BrewList[which_potion].object[5], VIRTUAL); 
+  potion = read_object(BrewList[which_potion].object[5], VIRTUAL);
 
   /* is the caster high enough level to cast this? */
 
@@ -1610,12 +1610,12 @@ void do_makepotion(struct char_data *ch, char *argument, int cmd)
   {
     char buf[80];
     sprintf(buf,"Min brew level is: %d", max);
-    log(buf);
+    debug(buf);
   }
 
   extract_obj(potion);
 
-  if(which_potion) 
+  if(which_potion)
     if(!max || GetMaxLevel(ch) < max) {
       send_to_char("This brew is beyond your powers.\n\r", ch);
       return;
@@ -1626,14 +1626,14 @@ void do_makepotion(struct char_data *ch, char *argument, int cmd)
       return;
     }
   }
-  
+
   if(GET_ITEM_TYPE(o) == ITEM_CONTAINER) { /* it better be */
     /* our cauldron must contain ONLY the right ingredients */
     for(in_o=o->contains,i=0,match=ingredients; in_o; in_o = next) {
       next = in_o->next_content;
       i++;
       for(j=0;j<5;j++) {
-	if (obj_index[in_o->item_number].virtual == 
+	if (obj_index[in_o->item_number].virtual ==
 	    BrewList[which_potion].object[j]) {
 	  if(!object[j]) {
 	    object[j] = TRUE;
@@ -1652,24 +1652,24 @@ void do_makepotion(struct char_data *ch, char *argument, int cmd)
   if(ingredients != i || match != 0) {
     send_to_char("You don't have all the correct ingredients!\n\r", ch);
     send_to_char("Damn, you lost this batch.\n\r", ch);
-  } else if (number(1,101) > ch->skills[SKILL_BREWING].learned) {  
+  } else if (number(1,101) > ch->skills[SKILL_BREWING].learned) {
     act("$n accidentally lets a drop of sweat fall into the brew...",
 	FALSE, ch, 0, 0, TO_ROOM);
     act("You stood too close to the cauldron.  A drop of your sweat just fell in...", FALSE, ch, 0, 0, TO_CHAR);
-    act("The cauldron overflows!  Everything is ruined!", 
+    act("The cauldron overflows!  Everything is ruined!",
 	FALSE, ch, 0, 0, TO_ROOM);
     act("Next time pay more attention to your master... You just ruined this batch!", FALSE, ch, 0, 0, TO_CHAR);
   } else {
     potion = read_object(BrewList[which_potion].object[5], VIRTUAL);
     obj_to_room(potion, ch->in_room);
-    
+
     act("$n carefully mixes some secret ingredients in a cauldron.",
 	FALSE, ch, 0, 0, TO_ROOM);
-    act("You carefully mix the ingredients of an age-old recipe.", 
+    act("You carefully mix the ingredients of an age-old recipe.",
 	FALSE, ch, 0, 0, TO_CHAR);
     act("Suddenly... Rainbows shoot out of the pot, and sparks fly!",
 	FALSE, ch, 0, 0, TO_ROOM);
-    act("Then in a burst of light, nothing remains but a bright flask!", 
+    act("Then in a burst of light, nothing remains but a bright flask!",
 	FALSE, ch, 0, 0, TO_ROOM);
     act("Suddenly... Rainbows shoot out of the pot, and sparks fly!",
 	FALSE, ch, 0, 0, TO_CHAR);
@@ -1682,9 +1682,9 @@ void do_makepotion(struct char_data *ch, char *argument, int cmd)
   for(in_o = o->contains; in_o; in_o = next) {
     next = in_o->next_content;
     obj_from_obj(in_o);
-    act("$p has vanished in a flash of bright light.", 
+    act("$p has vanished in a flash of bright light.",
 	FALSE, ch, in_o, 0, TO_CHAR);
-    act("$p has vanished in a flash of bright light.", 
+    act("$p has vanished in a flash of bright light.",
 	FALSE, ch, in_o, 0, TO_ROOM);
     extract_obj(in_o);
   }
@@ -1709,7 +1709,7 @@ void add_skill(int nr, int taught_by, int class_use, int percent)
 
   for (i = 0; i < MAX_RACE_DENY; i++)
     skill_info[nr].race_deny[i] = 0;
-  
+
   for (i = 0; i < MAX_RACE_INTRINSIC; i++)
     skill_info[nr].race_intrinsic[i] = 0;
 
@@ -1757,19 +1757,19 @@ void assign_skills()
 	                       CLASS_WARRIOR   | CLASS_MONK, 45);
   add_skill(SKILL_READ_MAGIC,  TAUGHT_BY_LORE,   CLASS_ALL, 95);
   add_skill(SKILL_EVALUATE,    TAUGHT_BY_HUNTER, CLASS_THIEF, 95);
-  
+
   add_skill(SKILL_SPY,         TAUGHT_BY_NINJA,  CLASS_THIEF, 45);
   add_skill(SKILL_DOORBASH,    TAUGHT_BY_NINJA,  CLASS_WARRIOR, 45);
   add_skill(SKILL_SWIM,        TAUGHT_BY_SAILOR, CLASS_ALL, 60);
   add_skill(SKILL_CONS_UNDEAD, TAUGHT_BY_LORE,   CLASS_ALL, 95);
   add_skill(SKILL_CONS_VEGGIE, TAUGHT_BY_LORE,   CLASS_ALL, 95);
-  
+
   add_skill(SKILL_CONS_DEMON,   TAUGHT_BY_LORE, CLASS_ALL, 95);
   add_skill(SKILL_CONS_ANIMAL,  TAUGHT_BY_LORE, CLASS_ALL, 95);
   add_skill(SKILL_CONS_REPTILE, TAUGHT_BY_LORE, CLASS_ALL, 95);
   add_skill(SKILL_CONS_PEOPLE,  TAUGHT_BY_LORE, CLASS_ALL, 95);
   add_skill(SKILL_CONS_GIANT,   TAUGHT_BY_LORE, CLASS_ALL, 95);
-  
+
   add_skill(SKILL_CONS_OTHER, TAUGHT_BY_LORE,  CLASS_ALL, 95);
   add_skill(SKILL_DISGUISE,   TAUGHT_BY_NINJA, CLASS_THIEF, 45);
   add_skill(SKILL_CLIMB,      TAUGHT_BY_NINJA, CLASS_THIEF, 45);
@@ -1780,7 +1780,7 @@ void assign_skills()
   add_skill(SKILL_PEEK,       TAUGHT_BY_THIEF, CLASS_THIEF, 45);
   add_skill(SKILL_CONS_AVIAN, TAUGHT_BY_LORE, CLASS_ALL, 95);
   add_skill(SKILL_CONS_INSECT, TAUGHT_BY_LORE, CLASS_ALL, 95);
-  
+
   /* Racial access and forbiddance goes below.  Must ensure that */
   /* skills (spells will) allow these via IsIntrinsic() checks.  */
 

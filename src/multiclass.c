@@ -1,6 +1,6 @@
 /*
   SillyMUD Distribution V1.1b             (c) 1993 SillyMUD Developement
- 
+
   See license.doc for distribution terms.   SillyMUD is based on DIKUMUD
 */
 
@@ -10,7 +10,7 @@
 */
 
 /*
-**  
+**
 */
 
 #include <stdio.h>
@@ -87,15 +87,15 @@ int HowManyClasses(struct char_data *ch)
       tot++;
     }
   }
-  if (tot) 
+  if (tot)
     return(tot);
   else {
-    if (IS_SET(ch->player.class, CLASS_MAGIC_USER)) 
+    if (IS_SET(ch->player.class, CLASS_MAGIC_USER))
       tot++;
 
-    if (IS_SET(ch->player.class, CLASS_WARRIOR)) 
+    if (IS_SET(ch->player.class, CLASS_WARRIOR))
       tot++;
-      
+
     if (IS_SET(ch->player.class, CLASS_THIEF))
       tot++;
 
@@ -116,21 +116,21 @@ int HowManyClasses(struct char_data *ch)
 int BestFightingClass(struct char_data *ch)
 {
 
- if (GET_LEVEL(ch, WARRIOR_LEVEL_IND)) 
+ if (GET_LEVEL(ch, WARRIOR_LEVEL_IND))
    return(WARRIOR_LEVEL_IND);
  if (GET_LEVEL(ch, CLERIC_LEVEL_IND))
    return(CLERIC_LEVEL_IND);
  if (GET_LEVEL(ch, DRUID_LEVEL_IND))
    return(DRUID_LEVEL_IND);
- if (GET_LEVEL(ch, MONK_LEVEL_IND)) 
+ if (GET_LEVEL(ch, MONK_LEVEL_IND))
    return(MONK_LEVEL_IND);
- if (GET_LEVEL(ch, THIEF_LEVEL_IND)) 
+ if (GET_LEVEL(ch, THIEF_LEVEL_IND))
    return(THIEF_LEVEL_IND);
- if (GET_LEVEL(ch, MAGE_LEVEL_IND)) 
+ if (GET_LEVEL(ch, MAGE_LEVEL_IND))
    return(MAGE_LEVEL_IND);
- 
-  log("Massive error.. character has no recognized class.");
-  log(GET_NAME(ch));
+
+  debug("Massive error.. character has no recognized class.");
+  debug(GET_NAME(ch));
   assert(0);
 
   return(1);
@@ -139,21 +139,21 @@ int BestFightingClass(struct char_data *ch)
 int BestThiefClass(struct char_data *ch)
 {
 
- if (GET_LEVEL(ch, THIEF_LEVEL_IND)) 
+ if (GET_LEVEL(ch, THIEF_LEVEL_IND))
    return(THIEF_LEVEL_IND);
- if (GET_LEVEL(ch, MONK_LEVEL_IND)) 
+ if (GET_LEVEL(ch, MONK_LEVEL_IND))
    return(MONK_LEVEL_IND);
- if (GET_LEVEL(ch, MAGE_LEVEL_IND)) 
+ if (GET_LEVEL(ch, MAGE_LEVEL_IND))
    return(MAGE_LEVEL_IND);
- if (GET_LEVEL(ch, WARRIOR_LEVEL_IND)) 
+ if (GET_LEVEL(ch, WARRIOR_LEVEL_IND))
    return(WARRIOR_LEVEL_IND);
- if (GET_LEVEL(ch, DRUID_LEVEL_IND)) 
+ if (GET_LEVEL(ch, DRUID_LEVEL_IND))
    return(DRUID_LEVEL_IND);
- if (GET_LEVEL(ch, CLERIC_LEVEL_IND)) 
+ if (GET_LEVEL(ch, CLERIC_LEVEL_IND))
    return(CLERIC_LEVEL_IND);
- 
-  log("Massive error.. character has no recognized class.");
-  log(GET_NAME(ch));
+
+  debug("Massive error.. character has no recognized class.");
+  debug(GET_NAME(ch));
   assert(0);
 
   return(1);
@@ -162,21 +162,21 @@ int BestThiefClass(struct char_data *ch)
 int BestMagicClass(struct char_data *ch)
 {
 
- if (GET_LEVEL(ch, MAGE_LEVEL_IND)) 
+ if (GET_LEVEL(ch, MAGE_LEVEL_IND))
    return(MAGE_LEVEL_IND);
- if (GET_LEVEL(ch, DRUID_LEVEL_IND)) 
+ if (GET_LEVEL(ch, DRUID_LEVEL_IND))
    return(DRUID_LEVEL_IND);
- if (GET_LEVEL(ch, CLERIC_LEVEL_IND)) 
+ if (GET_LEVEL(ch, CLERIC_LEVEL_IND))
    return(CLERIC_LEVEL_IND);
- if (GET_LEVEL(ch, THIEF_LEVEL_IND)) 
+ if (GET_LEVEL(ch, THIEF_LEVEL_IND))
    return(THIEF_LEVEL_IND);
- if (GET_LEVEL(ch, WARRIOR_LEVEL_IND)) 
+ if (GET_LEVEL(ch, WARRIOR_LEVEL_IND))
    return(WARRIOR_LEVEL_IND);
- if (GET_LEVEL(ch, MONK_LEVEL_IND)) 
+ if (GET_LEVEL(ch, MONK_LEVEL_IND))
    return(MONK_LEVEL_IND);
- 
-  log("Massive error.. character has no recognized class.");
-  log(GET_NAME(ch));
+
+  debug("Massive error.. character has no recognized class.");
+  debug(GET_NAME(ch));
   ch->player.class = 4;
 
   return(1);
@@ -263,7 +263,7 @@ void StartLevels(struct char_data *ch)
   if (IS_SET(ch->player.class, CLASS_MONK)) {
     advance_level(ch, MONK_LEVEL_IND);
   }
-  
+
   if(GET_RACE(ch) == RACE_OGRE)
     ch->specials.spells_to_learn = 2;
   else

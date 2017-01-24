@@ -1,6 +1,6 @@
 /*
   SillyMUD Distribution V1.1b             (c) 1993 SillyMUD Developement
- 
+
   See license.doc for distribution terms.   SillyMUD is based on DIKUMUD
 */
 
@@ -44,16 +44,16 @@ void assign_mobiles()
     { 6, AcidBlob },
     { 25, magic_user },
 
-    { 30, MageGuildMaster }, 
-    { 31, ClericGuildMaster }, 
-    { 32, ThiefGuildMaster }, 
+    { 30, MageGuildMaster },
+    { 31, ClericGuildMaster },
+    { 32, ThiefGuildMaster },
     { 33, WarriorGuildMaster },
-    { 34, MageGuildMaster }, 
-    { 35, ClericGuildMaster }, 
-    { 36, ThiefGuildMaster }, 
+    { 34, MageGuildMaster },
+    { 35, ClericGuildMaster },
+    { 36, ThiefGuildMaster },
     { 37, WarriorGuildMaster },
     { 38, fighter},  /* armor golem */
-    { 39, creeping_death},  
+    { 39, creeping_death},
 
     {199, AGGRESSIVE},
     {200, AGGRESSIVE},
@@ -178,7 +178,7 @@ void assign_mobiles()
     {691, monk_master},
 
 /*
-  frost giant area 
+  frost giant area
 */
 
     { 9401, fighter },
@@ -219,7 +219,7 @@ void assign_mobiles()
     { 1000, magic_user },
     { 1035, fighter},
     { 1012, fighter},
-    { 1026, fighter}, 
+    { 1026, fighter},
     { 1010, fighter},
     { 1011, fighter},
     { 1012, fighter},
@@ -329,7 +329,7 @@ void assign_mobiles()
     { 1413, chess_game },
     { 1414, chess_game },
     { 1415, chess_game },
-    
+
     { 1448, chess_game },  /* white pieces */
     { 1449, chess_game },
     { 1450, chess_game },
@@ -346,23 +346,23 @@ void assign_mobiles()
     { 1461, chess_game },
     { 1462, chess_game },
     { 1463, chess_game },
-    
+
 #if 0
-    { 1401, fighter}, 
-    { 1404, fighter}, 
-    { 1406, fighter}, 
-    { 1457, fighter}, 
-    { 1460, fighter}, 
-    { 1462, fighter}, 
+    { 1401, fighter},
+    { 1404, fighter},
+    { 1406, fighter},
+    { 1457, fighter},
+    { 1460, fighter},
+    { 1462, fighter},
 #endif
 
-    { 1499, sisyphus }, 
-    { 1471, paramedics }, 
+    { 1499, sisyphus },
+    { 1471, paramedics },
     { 1470, jabberwocky },
-    { 1472, flame }, 
-    { 1437, banana }, 
+    { 1472, flame },
+    { 1437, banana },
     { 1428, jugglernaut },
-    { 1495, delivery_elf },  
+    { 1495, delivery_elf },
     { 1493, delivery_beast },
 
 /*
@@ -463,21 +463,21 @@ void assign_mobiles()
     { 3681, cleric },       /* High priest */
     { 3689, NewThalosMayor }, /* Guess */
     { 3644, fido},
-    { 3635, thief}, 
+    { 3635, thief},
 /*
 **  Skexie
 */
     { 15813, magic_user},
     { 15815, magic_user},
-    { 15820, magic_user },	
-    { 15821, vampire },	
-    { 15844, cleric },	
-    { 15847, fighter },	
-    { 15831, fighter },	
-    { 15832, fighter },	
-    { 15822, fighter },	
-    { 15819, fighter },	
-    { 15805, fighter },	
+    { 15820, magic_user },
+    { 15821, vampire },
+    { 15844, cleric },
+    { 15847, fighter },
+    { 15831, fighter },
+    { 15832, fighter },
+    { 15822, fighter },
+    { 15819, fighter },
+    { 15805, fighter },
 /*
 **  Challenge
 */
@@ -497,17 +497,17 @@ void assign_mobiles()
     { 15852, fighter },
     { 15875, cleric },
     { 15869, magic_user },
-    
+
 /*
 **  abyss
 */
     { 25000, magic_user },      /* Demi-lich  */
-    { 25001, Keftab }, 
+    { 25001, Keftab },
     { 25009, BreathWeapon },    /* hydra */
     { 25002, vampire },	        /* Crimson */
     { 25003, StormGiant },      /* MistDaemon */
     { 25006, StormGiant },      /* Storm giant */
-    { 25014, StormGiant },      /* DeathKnight */    
+    { 25014, StormGiant },      /* DeathKnight */
     { 25009, BreathWeapon },    /* hydra */
     { 25017, AbyssGateKeeper }, /* Abyss Gate Keeper */
     { 25013, fighter},          /* kalas */
@@ -524,7 +524,7 @@ void assign_mobiles()
 */
     { 196, GreyParamedic},
     { 197, AmberParamedic},
-    { 198, GameGuard}, 
+    { 198, GameGuard},
 /*
 **  Abyss Fire Giants
 */
@@ -570,20 +570,20 @@ void assign_mobiles()
     {18200, magic_user},
     {18205, receptionist},
     {18206, MageGuildMaster},
-    {18207, ClericGuildMaster},    
+    {18207, ClericGuildMaster},
     {18208, ThiefGuildMaster},
-    {18209, WarriorGuildMaster},    
-    {18210, MordGuildGuard},  /*18266 3*/  
+    {18209, WarriorGuildMaster},
+    {18210, MordGuildGuard},  /*18266 3*/
     {18211, MordGuildGuard},  /*18276 1*/
     {18212, MordGuildGuard},  /*18272 0*/
     {18213, MordGuildGuard},  /*18256 2*/
-    {18215, MordGuard },    
+    {18215, MordGuard },
     {18216, janitor},
-    {18217, fido},    
-    {18218, fighter},    
+    {18217, fido},
+    {18218, fighter},
     {18221, fighter},
     {18222, MordGuard},
-    {18223, MordGuard},    
+    {18223, MordGuard},
 
 /*
 **  Graecia:
@@ -614,11 +614,11 @@ void assign_mobiles()
     { 13843, fighter },
 
 
-    
+
 /*
 **  Eastern Path
 */
-    
+
     {16001, fighter},
     {16006, fighter},
     {16007, fighter},
@@ -802,25 +802,25 @@ void assign_mobiles()
 **  Main City
 */
 
-    { 3000, magic_user }, 
-    { 3060, MidgaardCityguard }, 
+    { 3000, magic_user },
+    { 3060, MidgaardCityguard },
     { 3080, fighter},
-    { 3067, MidgaardCityguard }, 
+    { 3067, MidgaardCityguard },
     { 3061, janitor },
-    { 3062, fido }, 
+    { 3062, fido },
     { 3066, fido },
     { 3005, receptionist },
-    { 3020, MageGuildMaster }, 
-    { 3021, ClericGuildMaster }, 
-    { 3022, ThiefGuildMaster }, 
+    { 3020, MageGuildMaster },
+    { 3021, ClericGuildMaster },
+    { 3022, ThiefGuildMaster },
     { 3023, WarriorGuildMaster },
 
     { 3007, sailor },    /* Sailor */
-    { 3024, guild_guard }, 
-    { 3025, guild_guard }, 
+    { 3024, guild_guard },
+    { 3025, guild_guard },
     { 3026, guild_guard },
     { 3027, guild_guard },
-    { 3070, RepairGuy }, 
+    { 3070, RepairGuy },
     { 3071, RepairGuy },
     { 3069, MidgaardCityguard },	/* post guard */
     { 3068, ninja_master },
@@ -839,15 +839,15 @@ void assign_mobiles()
     { 3900, eric_johnson }, { 3901, andy_wilcox }, { 3950, zombie_master },
     { 3952, BreathWeapon },
 
-/* 
-**  MORIA 
+/*
+**  MORIA
 */
-    { 4000, snake }, 
-    { 4001, snake }, 
+    { 4000, snake },
+    { 4001, snake },
     { 4053, snake },
 
-    { 4103, thief }, 
-    { 4100, magic_user }, 
+    { 4103, thief },
+    { 4100, magic_user },
     { 4101, regenerator },
     { 4102, snake },
 
@@ -870,8 +870,8 @@ void assign_mobiles()
     { 6824, BreathWeapon },
     { 6825, thief },
 
-/* 
-** SEWERS 
+/*
+** SEWERS
 */
     { 7009, fighter},
     { 7006, snake },
@@ -880,13 +880,13 @@ void assign_mobiles()
     { 7040, BreathWeapon },     /* Red    */
     { 7041, magic_user },	/* sea hag    */
     { 7045, ettin },		/* berserk teacher */
-    { 7200, magic_user },	/* mindflayer */ 
+    { 7200, magic_user },	/* mindflayer */
     { 7201, magic_user },	/* senior     */
     { 7202, magic_user },	/* junior     */
-    
 
-/* 
-** FOREST 
+
+/*
+** FOREST
 */
 
     { 6111, magic_user },	/* tree */
@@ -1008,14 +1008,14 @@ void assign_mobiles()
 */
 
     { 24050, cleric },
-    { 24052, magic_user2 }, 
-    { 24053, magic_user2 }, 
-    { 24054, magic_user2 }, 
-    { 24055, magic_user2 }, 
-    { 24056, magic_user2 }, 
-    { 24057, magic_user2 }, 
-    { 24058, magic_user2 }, 
-    { 24059, magic_user2 }, 
+    { 24052, magic_user2 },
+    { 24053, magic_user2 },
+    { 24054, magic_user2 },
+    { 24055, magic_user2 },
+    { 24056, magic_user2 },
+    { 24057, magic_user2 },
+    { 24058, magic_user2 },
+    { 24059, magic_user2 },
 #endif
 
 /*
@@ -1080,7 +1080,7 @@ void assign_mobiles()
     if (rnum<0) {
       sprintf(buf, "mobile_assign: Mobile %d not found in database.",
 	      specials[i].vnum);
-      log(buf);
+      debug(buf);
     } else {
       mob_index[rnum].func = specials[i].proc;
     }
@@ -1158,12 +1158,12 @@ void assign_rooms()
   int i;
   struct room_data *rp;
   char buf[80];
-  
+
   for (i=0; specials[i].vnum>=0; i++) {
     rp = real_roomp(specials[i].vnum);
     if (rp==NULL) {
       sprintf(buf,"assign_rooms: room %d unknown",specials[i].vnum);
-      log(buf);
+      debug(buf);
     } else
       rp->funct = specials[i].proc;
   }

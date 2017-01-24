@@ -46,15 +46,15 @@ void do_changeform(struct char_data *ch, char *argument, int cmd)
   int mobn, X=LAST_DRUID_MOB, found=FALSE, level;
   struct char_data *mob;
   struct affected_type af;
-  
+
   level = GET_LEVEL(ch, DRUID_LEVEL_IND) ;
 
   level = (level ? level : GetMaxLevel(ch)); /* for vampires */
   sprintf(buf,"Level %d thing doing a changeform.",level);
-  log(buf);
+  debug(buf);
 
   one_argument(argument,buf);
-  
+
   if(!*buf) {
     if (HasClass(ch, CLASS_DRUID)) {
       send_to_char("You are able to change into the following forms:\n\r",ch);
@@ -81,12 +81,12 @@ void do_changeform(struct char_data *ch, char *argument, int cmd)
     send_to_char("You don't really want to do that.\n\r",ch);
     return;
   }
-  
+
   if (affected_by_spell(ch, SKILL_CHANGE_FORM)) {
     send_to_char("You can only change form once every 8 hours.\n\r", ch);
     return;
   }
-  
+
   if (HasClass(ch, CLASS_DRUID)) {
     if(IS_EVIL(ch) || IS_GOOD(ch)) {
       send_to_char("You unable to change your form.  You have strayed too\n\r",
@@ -109,7 +109,7 @@ void do_changeform(struct char_data *ch, char *argument, int cmd)
 	}
       }
     }
-    
+
     if (!found) {
       send_to_char("You couldn't summon an image of that creature.\n\r", ch);
       return;
@@ -121,9 +121,9 @@ void do_changeform(struct char_data *ch, char *argument, int cmd)
 	af.modifier  = 0;
 	af.location  = APPLY_NONE;
 	af.bitvector = 0;
-	
+
 	affect_to_char(ch, &af);
-	
+
 	spell_poly_self(level, ch, mob, 0);
       } else {
 	send_to_char("You couldn't summon an image of that creature.\n\r", ch);
@@ -133,13 +133,13 @@ void do_changeform(struct char_data *ch, char *argument, int cmd)
   } else if(GET_RACE(ch) == RACE_VAMPIRE) {
     mob = read_mobile(VAMPIRE_BAT, VIRTUAL);
     if(mob) {
-   
+
       mob->points.max_hit += level*2;
       GET_HIT(mob)         = GET_MAX_HIT(mob);
       GET_RACE(ch)         = RACE_VAMPIRE;
 
       SET_BIT(mob->specials.affected_by, AFF_INFRAVISION);
-      
+
       if(level > 5)
 	SET_BIT(mob->specials.affected_by, AFF_SENSE_LIFE);
       if(level > 10)
@@ -164,7 +164,7 @@ void do_changeform(struct char_data *ch, char *argument, int cmd)
       af.modifier  = 0;
       af.location  = APPLY_NONE;
       af.bitvector = 0;
-      
+
       affect_to_char(ch, &af);
       spell_poly_self(level, ch, mob, 0);
       GET_AC(ch)          -= level*2;
@@ -190,9 +190,9 @@ void do_bite(struct char_data *ch, char *argument, int cmd)
 
   if (check_peaceful(ch, "You feel too peaceful to contemplate feeding.\n\r"))
     return;
-  
+
   only_argument(argument, arg);
-  
+
   if (*arg) {
     victim = get_char_room_vis(ch, arg);
     if (victim) {
@@ -205,7 +205,7 @@ void do_bite(struct char_data *ch, char *argument, int cmd)
 	return;
       } else if (victim == ch) {
 	send_to_char("Suck your own blood?   I think not.\n\r", ch);
-	act("$n contemplates feeding on $mself but decides against it.", 
+	act("$n contemplates feeding on $mself but decides against it.",
 	    TRUE, ch, 0, victim, TO_ROOM);
 	return;
       } else if(IS_AFFECTED(ch, AFF_CHARM) && (ch->master == victim)) {
@@ -218,20 +218,20 @@ void do_bite(struct char_data *ch, char *argument, int cmd)
 	    if (!ch->equipment[WIELD]) {
 	      SET_BIT(ch->specials.affected_by2, AFF2_FEEDING);
 	      hit(ch, victim, TYPE_UNDEFINED);
-	    } else 
+	    } else
 	      send_to_char("You can't be wielding anything to feed!\n\r", ch);
 	  } else
 	    send_to_char("Hey, why don't you try doing this when on your feet!\n\r", ch);
 	} else
 	  send_to_char("You can't do this when they are fighting!\n\r", ch);
-      } else 
+      } else
 	send_to_char("How can you think about your stomach at a time like this?!?!\n\r", ch);
     } else
       send_to_char("Sink your fangs into who?\n\r", ch);
-  } else 
+  } else
     send_to_char("Sink your fangs into who?\n\r", ch);
 }
-	  
+
 void MindflayerAttack(struct char_data *ch, struct char_data *v)
 {
   int loss;
@@ -314,7 +314,7 @@ void VampireBite(struct char_data *ch, struct char_data *v)
     /* we bite better at night :) */
     if(time_info.hours < gSunRise && time_info.hours > gSunSet -1)
       chance += number(1,50);	/* chance from +150 to -50 */
-   
+
     /* for avg str diff of 5, 17%, if same level, chance = 17% + [1->50] */
     /* or, about 42% */
     /* for str diff of 8, 27%, if 10 level dif., 37%, chance averages 62% */
@@ -328,7 +328,7 @@ void VampireBite(struct char_data *ch, struct char_data *v)
 	  ch, 0, v, TO_NOTVICT);
       act("$N struggles violently and breaks free of your grasp!", FALSE,
 	  ch, 0, v, TO_CHAR);
-      act("You struggle violently and break free of $n's grasp!", FALSE, 
+      act("You struggle violently and break free of $n's grasp!", FALSE,
 	  ch, 0, v, TO_VICT);
       v->specials.bitten = FALSE;
       return;
@@ -351,10 +351,10 @@ void VampireBite(struct char_data *ch, struct char_data *v)
     }
   }
 
-  
+
   if(to_bite) {
     int loss, ammt;
-   
+
     v->specials.bitten = TRUE;
 
     loss = number(1,MAX(10, GetMaxLevel(ch)));
@@ -366,19 +366,19 @@ void VampireBite(struct char_data *ch, struct char_data *v)
 	  v, TO_NOTVICT);
       act("$n sinks $s fangs into your neck drains away your essence.", FALSE,
 	  ch, 0, v, TO_VICT);
-      
+
       gain_condition(ch,FULL, MAX(loss/10,3));
 
       ammt = number(1,loss);
-      
+
       if(GET_HIT(v) - ammt <= 0)
 	ammt = ammt = GET_HIT(v);
       (ammt > 0) ? ammt : 0;
       GET_HIT(v) -= ammt;
       GET_HIT(ch) += ammt;
-      
+
       loss -= ammt;
-      
+
       if(loss > 0) {
 	ammt = number(1, loss);
 	if(GET_MOVE(v) - ammt <= 0)
@@ -388,7 +388,7 @@ void VampireBite(struct char_data *ch, struct char_data *v)
 	GET_MOVE(v) -= ammt;
 	loss -= ammt;
       }
-      
+
       if(loss > 0) {
 	if(GET_MANA(v) - loss <= 0)
 	  loss = GET_MANA(v);
@@ -447,7 +447,7 @@ int veggie_gain_mods(struct char_data *ch, int gain, bool msgs)
   return(bonus);
 }
 
-int vamp_gain_mods(struct char_data *ch, int gain, bool msgs) 
+int vamp_gain_mods(struct char_data *ch, int gain, bool msgs)
 {
   /* hierarchy of vampire problems in the world: */
   /* 1st: gain in sunlight is -1. */
@@ -468,7 +468,7 @@ int vamp_gain_mods(struct char_data *ch, int gain, bool msgs)
       return(10);
     }
   }
-  
+
   return(0);
-  
+
 }

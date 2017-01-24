@@ -1,6 +1,6 @@
 /*
   SillyMUD Distribution V1.1b             (c) 1993 SillyMUD Developement
- 
+
   See license.doc for distribution terms.   SillyMUD is based on DIKUMUD
 */
 
@@ -31,10 +31,10 @@ int CheckForMoveTrap(struct char_data *ch, int dir)
   struct obj_data *i;
 
   for (i = real_roomp(ch->in_room)->contents; i; i = i->next_content) {
-    if ((ITEM_TYPE(i) == ITEM_TRAP) && 
+    if ((ITEM_TYPE(i) == ITEM_TRAP) &&
 	(IS_SET(GET_TRAP_EFF(i),TRAP_EFF_MOVE)) &&
 	(GET_TRAP_CHARGES(i) > 0))
-        if (IS_SET(GET_TRAP_EFF(i), TrapDir[dir])) 
+        if (IS_SET(GET_TRAP_EFF(i), TrapDir[dir]))
 	   return(TriggerTrap(ch, i));
   }
   return(FALSE);
@@ -45,10 +45,10 @@ int CheckForInsideTrap(struct char_data *ch, struct obj_data *i)
   struct obj_data *t;
 
   for (t = i->contains; t; t = t->next_content) {
-    if ((ITEM_TYPE(t) == ITEM_TRAP) && 
+    if ((ITEM_TYPE(t) == ITEM_TRAP) &&
 	(IS_SET(GET_TRAP_EFF(t),TRAP_EFF_OBJECT)) &&
 	(GET_TRAP_CHARGES(t) > 0)) {
-	   return(TriggerTrap(ch, t));  
+	   return(TriggerTrap(ch, t));
 	 }
   }
   return(FALSE);
@@ -56,7 +56,7 @@ int CheckForInsideTrap(struct char_data *ch, struct obj_data *i)
 
 int CheckForAnyTrap(struct char_data *ch, struct obj_data *i)
 {
-    if ((ITEM_TYPE(i) == ITEM_TRAP) && 
+    if ((ITEM_TYPE(i) == ITEM_TRAP) &&
 	(GET_TRAP_CHARGES(i) > 0))
 	   return(TriggerTrap(ch, i));
 
@@ -67,10 +67,10 @@ int CheckForAnyTrap(struct char_data *ch, struct obj_data *i)
 
 int CheckForGetTrap(struct char_data *ch, struct obj_data *i)
 {
-    if ((ITEM_TYPE(i) == ITEM_TRAP) && 
+    if ((ITEM_TYPE(i) == ITEM_TRAP) &&
 	(IS_SET(GET_TRAP_EFF(i),TRAP_EFF_OBJECT)) &&
 	(GET_TRAP_CHARGES(i) > 0)) {
-	   return(TriggerTrap(ch, i));  
+	   return(TriggerTrap(ch, i));
 	 }
     return(FALSE);
 }
@@ -97,7 +97,7 @@ int TriggerTrap( struct char_data *ch, struct obj_data *i)
 	  if (IS_SET(GET_TRAP_EFF(i),TRAP_EFF_ROOM)) {
 	    for (v = real_roomp(ch->in_room)->people;v;v = v->next_in_room) {
 	      FindTrapDamage(v,i);
-	    }	    
+	    }
 	  } else {
 	    FindTrapDamage(ch,i);
 	  }
@@ -133,7 +133,7 @@ void TrapDamage(struct char_data *v, int damtype, int amnt, struct obj_data *t)
 
   if (IS_AFFECTED(v, AFF_SANCTUARY))
        	   amnt = MAX((int)(amnt/2), 0);  /* Max 1/2 damage when sanct'd */
-        
+
    amnt = PreProcDam(v, damtype, amnt);
 
    if (saves_spell(v, SAVING_PETRI))
@@ -156,12 +156,12 @@ void TrapDamage(struct char_data *v, int damtype, int amnt, struct obj_data *t)
 	 sprintf(buf, "%s killed by a trap at %s",
 		 GET_NAME(v),
 		 real_roomp(v->in_room)->name);
-       log(buf);
+       debug(buf);
      }
-     
+
      die(v);
    }
-} 
+}
 
 void TrapDam(struct char_data *v, int damtype, int amnt, struct obj_data *t)
 {
@@ -202,7 +202,7 @@ void TrapDam(struct char_data *v, int damtype, int amnt, struct obj_data *t)
     strcpy(desc, "blown away");
     break;
   }
-   
+
   if ((damtype != TRAP_DAM_TELEPORT)   &&
       (damtype != TRAP_DAM_SLEEP)) {
       if (amnt > 0) {
@@ -227,28 +227,28 @@ void TrapDam(struct char_data *v, int damtype, int amnt, struct obj_data *t)
 }
 
 
-void TrapTeleport(struct char_data *v) 
+void TrapTeleport(struct char_data *v)
 {
   int to_room;
   extern int top_of_world;      /* ref to the top element of world */
-  
+
   if (saves_spell(v,SAVING_SPELL)) {
     send_to_char("You feel strange, but the effect fades.\n\r",v);
     return;
-  } 
+  }
 
   do {
     to_room = number(0, top_of_world);
   } while (IS_SET(real_roomp(to_room)->room_flags, PRIVATE));
-  
+
   act("$n slowly fade out of existence.", FALSE, v,0,0,TO_ROOM);
   char_from_room(v);
   char_to_room(v, to_room);
   act("$n slowly fade in to existence.", FALSE, v,0,0,TO_ROOM);
-  
+
   do_look(v, "", 0);
-  
-  if (IS_SET(real_roomp(to_room)->room_flags, DEATH) && 
+
+  if (IS_SET(real_roomp(to_room)->room_flags, DEATH) &&
       GetMaxLevel(v) < LOW_IMMORTAL) {
     NailThisSucker(v);
   }
@@ -256,9 +256,9 @@ void TrapTeleport(struct char_data *v)
 
 void TrapSleep(struct char_data *v)
 {
-  
+
   struct affected_type af;
-  
+
   if ( !saves_spell(v, SAVING_SPELL) )  {
     af.type      = SPELL_SLEEP;
     af.duration  = 12;
@@ -266,7 +266,7 @@ void TrapSleep(struct char_data *v)
     af.location  = APPLY_NONE;
     af.bitvector = AFF_SLEEP;
     affect_join(v, &af, FALSE, FALSE);
-    
+
     if (GET_POS(v)>POSITION_SLEEPING)    {
       act("You feel very sleepy ..... zzzzzz",FALSE,v,0,0,TO_CHAR);
       act("$n goes to sleep.",TRUE,v,0,0,TO_ROOM);
@@ -275,30 +275,30 @@ void TrapSleep(struct char_data *v)
   } else {
     send_to_char("You feel sleepy,but you recover\n\r",v);
   }
-  
+
 }
 
 
 void InformMess( struct char_data *v)
 {
-  
+
   switch (GET_POS(v)) {
   case POSITION_MORTALLYW:
-    act("$n is mortally wounded, and will die soon, if not aided.", 
+    act("$n is mortally wounded, and will die soon, if not aided.",
 	TRUE, v, 0, 0, TO_ROOM);
-    act("You are mortally wounded, and will die soon, if not aided.", 
+    act("You are mortally wounded, and will die soon, if not aided.",
 	FALSE, v, 0, 0, TO_CHAR);
     break;
   case POSITION_INCAP:
-    act("$n is incapacitated and will slowly die, if not aided.", 
+    act("$n is incapacitated and will slowly die, if not aided.",
 	TRUE, v, 0, 0, TO_ROOM);
-    act("You are incapacitated and you will slowly die, if not aided.", 
+    act("You are incapacitated and you will slowly die, if not aided.",
 	FALSE, v, 0, 0, TO_CHAR);
     break;
   case POSITION_STUNNED:
-    act("$n is stunned, but will probably regain consciousness.", 
+    act("$n is stunned, but will probably regain consciousness.",
 	TRUE, v, 0, 0, TO_ROOM);
-    act("You're stunned, but you will probably regain consciousness.", 
+    act("You're stunned, but you will probably regain consciousness.",
 	FALSE, v, 0, 0, TO_CHAR);
     break;
   case POSITION_DEAD:
@@ -309,4 +309,3 @@ void InformMess( struct char_data *v)
     break;
   }
 }
-

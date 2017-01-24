@@ -18,18 +18,16 @@
 #include "wizlist.h"
 #include "parser.h"
 
-char *strdup(char *source);
-
 /* From Heap.c */
- 
+
 void SmartStrCpy(char *s1, const char *s2);
 void StringHeap(char *string, struct StrHeap *Heap);
 struct StrHeap *InitHeap();
 void DisplayStringHeap(struct StrHeap *Heap, struct char_data *ch, int type, int d);
- 
- 
+
+
 /* From Opinion.c */
- 
+
 int FreeHates( struct char_data *ch);
 int FreeFears( struct char_data *ch);
 int RemHated( struct char_data *ch, struct char_data *pud);
@@ -47,16 +45,16 @@ void ZeroHatred(struct char_data *ch, struct char_data *v);
 void ZeroFeared(struct char_data *ch, struct char_data *v);
 void DeleteFears(struct char_data *ch);
 void KillTheOrcs(struct char_data *ch);
- 
+
 /* From Sound.c */
- 
+
 int RecGetObjRoom(struct obj_data *obj);
 void MakeNoise(int room, char *local_snd, char *distant_snd);
 int MakeSound(int pulse);
- 
- 
+
+
 /* From Trap.c */
- 
+
 void do_settrap( struct char_data *ch, char *arg, int cmd);
 int CheckForMoveTrap(struct char_data *ch, int dir);
 int CheckForInsideTrap(struct char_data *ch, struct obj_data *i);
@@ -69,12 +67,12 @@ void TrapDam(struct char_data *v, int damtype, int amnt, struct obj_data *t);
 void TrapTeleport(struct char_data *v);
 void TrapSleep(struct char_data *v);
 void InformMess( struct char_data *v);
- 
- 
+
+
 /* From act.comm.c and act.move.c*/
 
 void UpdateScreen(struct char_data *ch, int update);
-void InitScreen(struct char_data *ch); 
+void InitScreen(struct char_data *ch);
 void do_say(struct char_data *ch, char *argument, int cmd);
 void do_shout(struct char_data *ch, char *argument, int cmd);
 void do_commune(struct char_data *ch, char *argument, int cmd);
@@ -106,7 +104,7 @@ void half_orc_garble(char *buf, char *buf2, struct char_data *ch);
 void ogre_garble(char *buf, char *buf2, struct char_data *ch);
 void do_fly(struct char_data *ch, char *argument, int cmd);
 void do_walk(struct char_data *ch, char *argument, int cmd);
- 
+
 /* From act.info.c */
 
 void do_resize(struct char_data *ch, char *arg, int cmd);
@@ -165,21 +163,21 @@ char *DescDamage(float dam);
 char *DescAttacks(float a);
 char *EgoDesc(int a);
 void show_exits(struct char_data *ch);
- 
- 
+
+
 /* From act.obj1.c */
- 
-void get(struct char_data *ch, struct obj_data *obj_object, 
+
+void get(struct char_data *ch, struct obj_data *obj_object,
 	struct obj_data *sub_object);
 void do_get(struct char_data *ch, char *argument, int cmd);
 void do_drop(struct char_data *ch, char *argument, int cmd);
 void do_put(struct char_data *ch, char *argument, int cmd);
 int newstrlen(char *p);
 void do_give(struct char_data *ch, char *argument, int cmd);
- 
- 
+
+
 /* From act.obj2.c */
- 
+
 void weight_change_object(struct obj_data *obj, int weight);
 void name_from_drinkcon(struct obj_data *obj);
 void name_to_drinkcon(struct obj_data *obj,int type);
@@ -195,10 +193,10 @@ void do_wear(struct char_data *ch, char *argument, int cmd);
 void do_wield(struct char_data *ch, char *argument, int cmd);
 void do_grab(struct char_data *ch, char *argument, int cmd);
 void do_remove(struct char_data *ch, char *argument, int cmd);
- 
- 
+
+
 /* From act.off.c */
- 
+
 void do_hit(struct char_data *ch, char *argument, int cmd);
 void do_kill(struct char_data *ch, char *argument, int cmd);
 void do_backstab(struct char_data *ch, char *argument, int cmd);
@@ -214,10 +212,10 @@ void do_shoot(struct char_data *ch, char *argument, int cmd);
 void do_springleap(struct char_data *ch, char *argument, int cmd);
 void do_quivering_palm( struct char_data *ch, char *arg, int cmd);
 void kick_messages(struct char_data *ch, struct char_data *victim, int damage);
- 
- 
+
+
 /* From act.other.c */
- 
+
 void do_gain(struct char_data *ch, char *argument, int cmd);
 void do_guard(struct char_data *ch, char *argument, int cmd);
 void do_junk(struct char_data *ch, char *argument, int cmd);
@@ -244,7 +242,7 @@ void do_alias(struct char_data *ch, char *arg, int cmd);
 int Dismount(struct char_data *ch, struct char_data *h, int pos);
 void do_mount(struct char_data *ch, char *arg, int cmd);
 void do_donate(struct char_data *ch, char *argument, int cmd);
-void do_auto(struct char_data *ch, char *argument, int cmd);  
+void do_auto(struct char_data *ch, char *argument, int cmd);
 void do_gname(struct char_data *ch, char *argument, int cmd);
 void do_show_exits( struct char_data *ch, char *arg, int cmd);
 void do_split( struct char_data *ch, char *arg, int cmd);
@@ -253,7 +251,7 @@ void do_prompt(struct char_data *ch, char *argument, int cmd);
 
 
 /* From act.social.c */
- 
+
 char *fread_action(FILE *fl);
 void boot_social_messages();
 int find_action(int cmd);
@@ -261,10 +259,10 @@ void do_action(struct char_data *ch, char *argument, int cmd);
 void do_insult(struct char_data *ch, char *argument, int cmd);
 void boot_pose_messages();
 void do_pose(struct char_data *ch, char *argument, int cmd);
- 
- 
+
+
 /* From act.wizard.c */
- 
+
 void do_auth(struct char_data *ch, char *argument, int cmd);
 void do_imptest(struct char_data *ch, char *arg, int cmd);
 void do_passwd(struct char_data *ch, char *argument, int cmdnum);
@@ -317,10 +315,10 @@ void CreateOneRoom( int loc_nr);
 void do_set_log(struct char_data *ch, char *arg, int cmd);
 void do_event(struct char_data *ch, char *arg, int cmd);
 void do_beep(struct char_data *ch, char *argument, int cmd);
- 
- 
+
+
 /* From board.c */
- 
+
 void board_write_msg(struct char_data *ch, char *arg, int bnum);
 int board_display_msg(struct char_data *ch, char *arg, int bnum);
 int board_remove_msg(struct char_data *ch, char *arg, int bnum);
@@ -331,10 +329,10 @@ int fwrite_string(char *buf, FILE *fl);
 int board(struct char_data *ch, int cmd, char *arg, struct obj_data *obj, int type);
 char *fix_returns(char *text_string);
 int board_check_locks (int bnum, struct char_data *ch);
- 
- 
+
+
 /* From comm.c */
- 
+
 int __main ();
 int close_socket_fd( int desc);
 int main (int argc, char **argv);
@@ -371,14 +369,14 @@ void send_to_room_except_two
 void act(char *str, int hide_invisible, struct char_data *ch,
 	 struct obj_data *obj, void *vict_obj, int type);
 int raw_force_all( char *to_force);
- 
- 
+
+
 /* From constants.c */
- 
- 
+
+
 /* From db.c */
 
-void SaveTheWorld(); 
+void SaveTheWorld();
 void boot_db();
 void reset_time();
 void update_time();
@@ -402,7 +400,7 @@ void store_to_char(struct char_file_u *st, struct char_data *ch);
 void char_to_store(struct char_data *ch, struct char_file_u *st);
 int create_entry(char *name);
 void save_char(struct char_data *ch, sh_int load_room);
-int compare(struct player_index_element *arg1, struct player_index_element 
+int compare(struct player_index_element *arg1, struct player_index_element
 	*arg2);
 char *fread_string(FILE *fl);
 void free_char(struct char_data *ch);
@@ -425,13 +423,13 @@ int workhours();
 void reboot_text(struct char_data *ch, char *arg, int cmd);
 void InitScripts();
 void ReloadRooms();
-void FreeZone(int zone_nr); 
+void FreeZone(int zone_nr);
 void BootFigurines();
 /* char *strmake(char *string); KEEP THIS OUT UNTIL FIXED */
 /* void strfree(char *string);  KEEP THIS OUT UNTIL FIXED */
- 
+
 /* From fight.c */
- 
+
 void appear(struct char_data *ch);
 int LevelMod(struct char_data *ch, struct char_data *v, int exp);
 int RatioExp( struct char_data *ch, struct char_data *victim, int total);
@@ -469,12 +467,12 @@ int CalcThaco(struct char_data *ch);
 int HitOrMiss(struct char_data *ch, struct char_data *victim, int calc_thaco);
 int MissVictim(struct char_data *ch, struct char_data *v, int type, int w_type,
 	       int (*dam_func)());
-int GetWeaponDam(struct char_data *ch, struct char_data *v, 
+int GetWeaponDam(struct char_data *ch, struct char_data *v,
 		 struct obj_data *wielded);
 int GetBackstabMult(struct char_data *ch, struct char_data *v);
-int HitVictim(struct char_data *ch, struct char_data *v, int dam, 
+int HitVictim(struct char_data *ch, struct char_data *v, int dam,
 		   int type, int w_type, int (*dam_func)());
-void root_hit(struct char_data *ch, struct char_data *victim, int type, 
+void root_hit(struct char_data *ch, struct char_data *victim, int type,
 	      int (*dam_func)());
 void MissileHit(struct char_data *ch, struct char_data *victim, int type);
 void hit(struct char_data *ch, struct char_data *victim, int type);
@@ -501,13 +499,13 @@ struct char_data *FindMetaVictim( struct char_data *ch);
 void NailThisSucker( struct char_data *ch);
 int GetFormType(struct char_data *ch);
 int MonkDodge( struct char_data *ch, struct char_data *v, int *dam);
-int GetMonkw_type(struct char_data *ch); 
+int GetMonkw_type(struct char_data *ch);
 int AreaDamage(struct char_data *ch, int dam, int attacktype,
                char *same_room_hitmsg, char *same_room_missmsg,
                char *global_msg, bool save_negates, bool heat_blind);
 
 /* From handler.c */
- 
+
 char *fname(char *namelist);
 int split_string(char *str, char *sep, char **argv);
 int isname(const char *str, const char *namelist);
@@ -554,7 +552,7 @@ struct char_data *get_char_room_vis(struct char_data *ch, char *name);
 struct char_data *get_char_vis_world(struct char_data *ch, char *name,
 				     int *count);
 struct char_data *get_char_vis(struct char_data *ch, char *name);
-struct obj_data *get_obj_in_list_vis(struct char_data *ch, char *name, 
+struct obj_data *get_obj_in_list_vis(struct char_data *ch, char *name,
 				     struct obj_data *list);
 struct obj_data *get_obj_vis_world(struct char_data *ch, char *name,
 				   int *count);
@@ -564,10 +562,10 @@ struct obj_data *create_money( int amount );
 int generic_find(char *arg, int bitvector, struct char_data *ch,
 		 struct char_data **tar_ch, struct obj_data **tar_obj);
 void AddAffects( struct char_data *ch, struct obj_data *o);
- 
- 
+
+
 /* From hash.c */
- 
+
 void init_hash_table(struct hash_header	*ht, int rec_size, int table_size);
 void init_world(struct room_data *room_db[]);
 void destroy_hash_table(struct hash_header *ht, void (*gman)());
@@ -582,10 +580,10 @@ int room_remove(struct room_data *rb[], int key);
 void *hash_remove(struct hash_header *ht, int key);
 void room_iterate(struct room_data *rb[], void (*func)(), void *cdata);
 void hash_iterate(struct hash_header *ht, void (*func)(), void *cdata);
- 
- 
+
+
 /* From interpreter.c */
- 
+
 void commando(int number, int min_pos, void (*pointer)(), int min_level);
 int search_block(char *arg, char **list, bool exact);
 int old_search_block(char *argument,int begin,int length,char **list,int mode);
@@ -608,12 +606,12 @@ int CheckValidClass(struct descriptor_data *d, int class);
 void DisplayRaceClasses(struct descriptor_data *d);
 
 #if 0
-int command_search( char *arg, int len, struct command_info *cmd_info, 
+int command_search( char *arg, int len, struct command_info *cmd_info,
   char **list);
-#endif 
- 
+#endif
+
 /* From limits.c */
- 
+
 char *ClassTitles(struct char_data *ch);
 int graf(int age, int p0, int p1, int p2, int p3, int p4, int p5, int p6);
 int mana_limit(struct char_data *ch);
@@ -631,10 +629,10 @@ void gain_condition(struct char_data *ch,int condition,int value);
 void check_idling(struct char_data *ch);
 int ObjFromCorpse( struct obj_data *c);
 int ClassSpecificStuff( struct char_data *ch);
- 
- 
+
+
 /* From magic.c */
- 
+
 void heat_blind(struct char_data *ch);
 void spell_magic_missile(byte level, struct char_data *ch,
   struct char_data *victim, struct obj_data *obj);
@@ -745,10 +743,10 @@ void spell_gas_breath(byte level, struct char_data *ch,
   struct char_data *victim, struct obj_data *obj);
 void spell_lightning_breath(byte level, struct char_data *ch,
   struct char_data *victim, struct obj_data *obj);
- 
- 
+
+
 /* Fom magic2.c */
- 
+
 void spell_resurrection(byte level, struct char_data *ch,
 		     struct char_data *victim, struct obj_data *obj);
 void spell_cause_light(byte level, struct char_data *ch,
@@ -863,10 +861,10 @@ void spell_geyser(byte level, struct char_data *ch,
   struct char_data *victim, struct obj_data *obj);
 void spell_green_slime(byte level, struct char_data *ch,
   struct char_data *victim, struct obj_data *obj);
- 
- 
+
+
 /* From magic3.c */
- 
+
 void spell_tree_travel(byte level, struct char_data *ch,
 		     struct char_data *victim, struct obj_data *obj);
 void spell_transport_via_plant(byte level, struct char_data *ch,
@@ -987,9 +985,9 @@ void spell_resist_slash(byte level, struct char_data *ch,
   struct char_data *victim, struct obj_data *obj);
 void spell_resist_blunt(byte level, struct char_data *ch,
   struct char_data *victim, struct obj_data *obj);
- 
+
 /* From magicutils.c */
- 
+
 int SwitchStuff( struct char_data *giver, struct char_data *taker);
 int FailCharm(struct char_data *victim, struct char_data *ch);
 int FailSnare(struct char_data *victim, struct char_data *ch);
@@ -997,9 +995,9 @@ int FailSleep(struct char_data *victim, struct char_data *ch);
 int FailPara(struct char_data *victim, struct char_data *ch);
 int FailCalm(struct char_data *victim, struct char_data *ch);
 int ItemMagicFailure(struct char_data *ch, int skill_number);
- 
+
 /* From mobact.c */
- 
+
 void mobile_guardian(struct char_data *ch);
 void mobile_wander(struct char_data *ch);
 void MobHunt(struct char_data *ch);
@@ -1026,10 +1024,10 @@ void do_jmp(char *arg, struct char_data *ch);
 void do_jsr(char *arg, struct char_data *ch);
 void do_rts(char *arg, struct char_data *ch);
 void MobHit(struct char_data *, struct char_data *, int);
- 
- 
+
+
 /* From modify.c */
- 
+
 void string_add(struct descriptor_data *d, char *str);
 void quad_arg(char *arg, int *type, char *name, int *field, char *string);
 void do_string(struct char_data *ch, char *arg, int cmd);
@@ -1042,10 +1040,10 @@ void page_string(struct descriptor_data *d, char *str, int keep_internal);
 void show_string(struct descriptor_data *d, char *input);
 void night_watchman();
 void check_reboot();
- 
- 
+
+
 /* From multiclass.c */
- 
+
 int GetClassLevel(struct char_data *ch, int class);
 int CountBits(int class);
 int OnlyClass( struct char_data *ch, int class);
@@ -1061,10 +1059,10 @@ int GetMaxLevel(struct char_data *ch);
 int GetTotLevel(struct char_data *ch);
 void StartLevels(struct char_data *ch);
 int BestClass(struct char_data *ch);
- 
- 
+
+
 /* From reception.c */
- 
+
 int add_obj_cost(struct char_data *ch, struct char_data *re,
                   struct obj_data *obj, struct obj_cost *cost, int hoarder);
 bool recep_offer(struct char_data *ch,	struct char_data *receptionist,
@@ -1090,15 +1088,15 @@ void write_char_extra( struct char_data *ch);
 void obj_store_to_room(int room, struct obj_file_u *st);
 void load_room_objs(int room);
 void save_room(int room);
- 
- 
+
+
 /* From security.c */
- 
+
 int SecCheck(char *arg, char *site);
- 
- 
+
+
 /* From shop.c */
- 
+
 int is_ok(struct char_data *keeper, struct char_data *ch, int shop_nr);
 int trade_with(struct obj_data *item, int shop_nr);
 int shop_producing(struct obj_data *item, int shop_nr);
@@ -1106,7 +1104,7 @@ void shopping_buy( char *arg, struct char_data *ch,
 	 struct char_data *keeper, int shop_nr);
 void shopping_sell( char *arg, struct char_data *ch,
 		   struct char_data *keeper,int shop_nr);
-void shopping_value( char *arg, struct char_data *ch, 
+void shopping_value( char *arg, struct char_data *ch,
 		    struct char_data *keeper, int shop_nr);
 void shopping_list( char *arg, struct char_data *ch,
 		   struct char_data *keeper, int shop_nr);
@@ -1115,19 +1113,19 @@ void shopping_kill( char *arg, struct char_data *ch,
 int shop_keeper(struct char_data *ch, int cmd, char *arg, char *mob, int type);
 void boot_the_shops();
 void assign_the_shopkeepers();
-int DoIHateYou(struct char_data *v); 
- 
+int DoIHateYou(struct char_data *v);
+
 /* From signals.c */
- 
+
 void signal_setup();
 int checkpointing();
 int shutdown_request();
 int hupsig();
 int logsig();
- 
- 
+
+
 /* From skills.c */
- 
+
 void do_inset(struct char_data *ch, char *argument, int cmd);
 void do_train(struct char_data *ch, char *argument, int cmd);
 void do_disarm(struct char_data *ch, char *argument, int cmd);
@@ -1135,7 +1133,7 @@ void do_track(struct char_data *ch, char *argument, int cmd);
 int track( struct char_data *ch, struct char_data *vict);
 int dir_track( struct char_data *ch, struct char_data *vict);
 void donothing();
-int find_path(int in_room, int (*predicate)(), void *c_data, 
+int find_path(int in_room, int (*predicate)(), void *c_data,
 	      int depth, int in_zone);
 int choose_exit_global(int in_room, int tgt_room, int depth);
 int choose_exit_in_zone(int in_room, int tgt_room, int depth);
@@ -1156,16 +1154,16 @@ void add_skill(int nr, int taught_by, int class_use, int percent);
 void do_berserk( struct char_data *ch, char *arg, int cmd);
 void do_palm( struct char_data *ch, char *arg, int cmd);
 void do_peek( struct char_data *ch, char *arg, int cmd);
- 
+
 /* From spec_assign.c */
- 
+
 void assign_mobiles();
 void assign_objects();
 void assign_rooms();
- 
- 
+
+
 /* From spec_procs.c */
- 
+
 int is_target_room_p(int room, void *tgt_room);
 int named_object_on_ground(int room, void *c_data);
 char *how_good(int percent);
@@ -1275,10 +1273,10 @@ int ghostsoldier(struct char_data *ch, int cmd, char *arg, struct char_data *mob
 int Valik( struct char_data *ch, int cmd, char *arg, struct char_data *mob, int type );
 int guardian(struct char_data *ch, int cmd, char *arg, struct char_data *mob, int type);
 int web_slinger(struct char_data *ch, int cmd, char *arg, struct char_data *mob, int type);
- 
- 
+
+
 /* From spec_procs2.c */
- 
+
 int ghost(struct char_data *ch, int cmd, char *arg, struct char_data *mob, int type);
 int druid_protector(struct char_data *ch, int cmd, char *arg, struct char_data *mob, int type);
 int Magic_Fountain(struct char_data *ch, int cmd, char *arg, struct room_data *rp, int type);
@@ -1339,10 +1337,10 @@ int DwarvenMiners(struct char_data *ch, int cmd, char *arg, struct char_data *mo
 int real_rabbit(struct char_data *ch, int cmd, char *arg, struct char_data *mob, int type);
 int real_fox(struct char_data *ch, int cmd, char *arg, struct char_data *mob, int type);
 int antioch_grenade(struct char_data *ch, int cmd, char *arg, struct obj_data *obj, int type);
- 
- 
+
+
 /* From spec_procs3.c */
- 
+
 struct room_data *forward_square(struct room_data *room);
 struct room_data *back_square(struct room_data *room);
 struct room_data *left_square(struct room_data *room);
@@ -1367,7 +1365,7 @@ int type);
 int entering_turbo_lift(struct char_data *ch, int cmd, char *arg, struct room_data *rp, int type);
 int OldHag(struct char_data *ch, int cmd, char *arg, struct char_data *mob, int type);
 /* From spell_parser.c */
- 
+
 void spello(int nr, byte beat, byte pos, byte mlev, byte clev, byte dlev, ubyte mana,sh_int tar, void *func, sh_int sf);
 int SPELL_LEVEL(struct char_data *ch, int sn);
 void affect_update( int pulse );
@@ -1393,9 +1391,9 @@ int check_nature( struct char_data *i);
 int death_knight(struct char_data *ch, int cmd, char *arg, struct char_data *mob, int type);
 int IsIntrinsic(struct char_data *ch, int spl);
 int CastIntrinsic(struct char_data *ch, int spl);
- 
+
 /* From spells1.c */
- 
+
 void cast_burning_hands( byte level, struct char_data *ch, char *arg, int type,
   struct char_data *victim, struct obj_data *tar_obj );
 void cast_call_lightning(byte level, struct char_data *ch, char *arg, int type,
@@ -1438,10 +1436,10 @@ void cast_geyser( byte level, struct char_data *ch, char *arg, int type,
   struct char_data *victim, struct obj_data *tar_obj );
 void cast_green_slime( byte level, struct char_data *ch, char *arg, int type,
   struct char_data *victim, struct obj_data *tar_obj );
- 
- 
+
+
 /* From spells2.c */
- 
+
 void cast_resurrection( byte level, struct char_data *ch, char *arg, int type,
 		struct char_data *tar_ch, struct obj_data *tar_obj );
 void cast_major_track( byte level, struct char_data *ch, char *arg, int type,
@@ -1572,11 +1570,11 @@ void cast_lightning_breath( byte level, struct char_data *ch, char *arg, int typ
   struct char_data *tar_ch, struct obj_data *tar_obj );
 void cast_knock( byte level, struct char_data *ch, char *arg, int type,
   struct char_data *tar_ch, struct obj_data *tar_obj );
-void cast_know_alignment(byte level, struct char_data *ch, char *arg, 
+void cast_know_alignment(byte level, struct char_data *ch, char *arg,
 	  int type, struct char_data *tar_ch, struct obj_data *tar_obj );
 void cast_weakness( byte level, struct char_data *ch, char *arg, int type,
   struct char_data *tar_ch, struct obj_data *tar_obj );
-void cast_dispel_magic( byte level, struct char_data *ch, char *arg, 
+void cast_dispel_magic( byte level, struct char_data *ch, char *arg,
 	    int type,struct char_data *tar_ch, struct obj_data *tar_obj );
 void cast_animate_dead( byte level, struct char_data *ch, char *arg, int type,
 	struct char_data *tar_ch, struct obj_data *tar_obj );
@@ -1614,39 +1612,39 @@ void cast_mon_sum7( byte level, struct char_data *ch, char *arg, int type,
   struct char_data *tar_ch, struct obj_data *tar_obj );
 void cast_tree_travel( byte level, struct char_data *ch, char *arg, int type,
   struct char_data *tar_ch, struct obj_data *tar_obj );
-void cast_speak_with_plants( byte level, struct char_data *ch, char *arg, 
+void cast_speak_with_plants( byte level, struct char_data *ch, char *arg,
 		int type,  struct char_data *tar_ch, struct obj_data *tar_obj );
-void cast_transport_via_plant( byte level, struct char_data *ch, char *arg, 
+void cast_transport_via_plant( byte level, struct char_data *ch, char *arg,
 		int type,  struct char_data *tar_ch, struct obj_data *tar_obj );
-void cast_haste( byte level, struct char_data *ch, char *arg, 
+void cast_haste( byte level, struct char_data *ch, char *arg,
 		int type,  struct char_data *tar_ch, struct obj_data *tar_obj );
-void cast_slow( byte level, struct char_data *ch, char *arg, 
+void cast_slow( byte level, struct char_data *ch, char *arg,
 	       int type,  struct char_data *tar_ch, struct obj_data *tar_obj );
 void cast_reincarnate( byte level, struct char_data *ch, char *arg, int type,
 		struct char_data *tar_ch, struct obj_data *tar_obj );
-void cast_changestaff( byte level, struct char_data *ch, char *arg, 
+void cast_changestaff( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *tar_ch, struct obj_data *tar_obj );
-void cast_pword_kill( byte level, struct char_data *ch, char *arg, 
+void cast_pword_kill( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *tar_ch, struct obj_data *tar_obj );
-void cast_pword_blind( byte level, struct char_data *ch, char *arg, 
+void cast_pword_blind( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *tar_ch, struct obj_data *tar_obj );
-void cast_chain_lightn( byte level, struct char_data *ch, char *arg, 
+void cast_chain_lightn( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *tar_ch, struct obj_data *tar_obj );
-void cast_scare( byte level, struct char_data *ch, char *arg, 
+void cast_scare( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *tar_ch, struct obj_data *tar_obj );
-void cast_familiar( byte level, struct char_data *ch, char *arg, 
+void cast_familiar( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *tar_ch, struct obj_data *tar_obj );
-void cast_aid( byte level, struct char_data *ch, char *arg, 
+void cast_aid( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *tar_ch, struct obj_data *tar_obj );
-void cast_holyword( byte level, struct char_data *ch, char *arg, 
+void cast_holyword( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *tar_ch, struct obj_data *tar_obj );
-void cast_unholyword( byte level, struct char_data *ch, char *arg, 
+void cast_unholyword( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *tar_ch, struct obj_data *tar_obj );
-void cast_golem( byte level, struct char_data *ch, char *arg, 
+void cast_golem( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *tar_ch, struct obj_data *tar_obj );
 void cast_command( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *tar_ch, struct obj_data *tar_obj );
-void cast_change_form( byte level, struct char_data *ch, char *arg, 
+void cast_change_form( byte level, struct char_data *ch, char *arg,
 int type, struct char_data *tar_ch, struct obj_data *tar_obj );
 void cast_shillelagh( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *tar_ch, struct obj_data *tar_obj );
@@ -1684,78 +1682,78 @@ void cast_charm_veggie( byte level, struct char_data *ch, char *arg, int type,
   struct char_data *tar_ch, struct obj_data *tar_obj );
 void cast_tree( byte level, struct char_data *ch, char *arg, int type,
   struct char_data *tar_ch, struct obj_data *tar_obj );
-void cast_animate_rock( byte level, struct char_data *ch, char *arg, 
+void cast_animate_rock( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *tar_ch, struct obj_data *tar_obj );
-void cast_travelling( byte level, struct char_data *ch, char *arg, 
+void cast_travelling( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *tar_ch, struct obj_data *tar_obj );
-void cast_animal_friendship( byte level, struct char_data *ch, char *arg, 
+void cast_animal_friendship( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *tar_ch, struct obj_data *tar_obj );
-void cast_invis_to_animals( byte level, struct char_data *ch, char *arg, 
+void cast_invis_to_animals( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *tar_ch, struct obj_data *tar_obj );
-void cast_slow_poison( byte level, struct char_data *ch, char *arg, 
+void cast_slow_poison( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *tar_ch, struct obj_data *tar_obj );
-void cast_entangle( byte level, struct char_data *ch, char *arg, 
+void cast_entangle( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *tar_ch, struct obj_data *tar_obj );
-void cast_snare( byte level, struct char_data *ch, char *arg, 
+void cast_snare( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *tar_ch, struct obj_data *tar_obj );
-void cast_gust_of_wind( byte level, struct char_data *ch, char *arg, 
+void cast_gust_of_wind( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *tar_ch, struct obj_data *tar_obj );
-void cast_barkskin( byte level, struct char_data *ch, char *arg, 
+void cast_barkskin( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *tar_ch, struct obj_data *tar_obj );
-void cast_warp_weapon( byte level, struct char_data *ch, char *arg, 
+void cast_warp_weapon( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *tar_ch, struct obj_data *tar_obj );
-void cast_calm( byte level, struct char_data *ch, char *arg, 
+void cast_calm( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *tar_ch, struct obj_data *tar_obj );
-void cast_heat_stuff( byte level, struct char_data *ch, char *arg, 
+void cast_heat_stuff( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *tar_ch, struct obj_data *tar_obj );
-void cast_sunray( byte level, struct char_data *ch, char *arg, 
+void cast_sunray( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *tar_ch, struct obj_data *tar_obj );
-void cast_find_traps( byte level, struct char_data *ch, char *arg, 
+void cast_find_traps( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *tar_ch, struct obj_data *tar_obj );
-void cast_firestorm( byte level, struct char_data *ch, char *arg, 
+void cast_firestorm( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *tar_ch, struct obj_data *tar_obj );
-void cast_dust_devil( byte level, struct char_data *ch, char *arg, 
+void cast_dust_devil( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *tar_ch, struct obj_data *tar_obj );
-void cast_know_monster( byte level, struct char_data *ch, char *arg, 
+void cast_know_monster( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *tar_ch, struct obj_data *tar_obj );
-void cast_silence( byte level, struct char_data *ch, char *arg, 
+void cast_silence( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *tar_ch, struct obj_data *tar_obj );
-void cast_dragon_ride( byte level, struct char_data *ch, char *arg, 
+void cast_dragon_ride( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *tar_ch, struct obj_data *tar_obj );
-void cast_mount( byte level, struct char_data *ch, char *arg, 
+void cast_mount( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *tar_ch, struct obj_data *tar_obj );
-void cast_sending( byte level, struct char_data *ch, char *arg, 
+void cast_sending( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *tar_ch, struct obj_data *tar_obj );
-void cast_portal( byte level, struct char_data *ch, char *arg, 
+void cast_portal( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *tar_ch, struct obj_data *tar_obj );
-void cast_teleport_wo_error( byte level, struct char_data *ch, char *arg, 
+void cast_teleport_wo_error( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *tar_ch, struct obj_data *tar_obj );
 void cast_thorn_spray( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *victim, struct obj_data *tar_obj );
-void cast_resist_hold( byte level, struct char_data *ch, char *arg, 
+void cast_resist_hold( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *victim, struct obj_data *tar_obj );
 void cast_resist_electricity( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *victim, struct obj_data *tar_obj );
-void cast_resist_cold( byte level, struct char_data *ch, char *arg, 
+void cast_resist_cold( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *victim, struct obj_data *tar_obj );
-void cast_resist_drain( byte level, struct char_data *ch, char *arg, 
+void cast_resist_drain( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *victim, struct obj_data *tar_obj );
-void cast_resist_poison( byte level, struct char_data *ch, char *arg, 
+void cast_resist_poison( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *victim, struct obj_data *tar_obj );
-void cast_resist_acid( byte level, struct char_data *ch, char *arg, 
+void cast_resist_acid( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *victim, struct obj_data *tar_obj );
-void cast_resist_fire( byte level, struct char_data *ch, char *arg, 
+void cast_resist_fire( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *victim, struct obj_data *tar_obj );
-void cast_resist_energy( byte level, struct char_data *ch, char *arg, 
+void cast_resist_energy( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *victim, struct obj_data *tar_obj );
-void cast_resist_pierce( byte level, struct char_data *ch, char *arg, 
+void cast_resist_pierce( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *victim, struct obj_data *tar_obj );
-void cast_resist_slash( byte level, struct char_data *ch, char *arg, 
+void cast_resist_slash( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *victim, struct obj_data *tar_obj );
-void cast_resist_blunt( byte level, struct char_data *ch, char *arg, 
+void cast_resist_blunt( byte level, struct char_data *ch, char *arg,
      int type, struct char_data *victim, struct obj_data *tar_obj );
 
- 
+
 /* From utility.c */
 
 int char_array_size(char *thingie[]);
@@ -1767,7 +1765,7 @@ int CAN_SEE(struct char_data *s, struct char_data *o);
 int exit_ok(struct room_direction_data	*exit, struct room_data **rpp);
 int MobVnum( struct char_data *c);
 int ObjVnum( struct obj_data *o);
-void Zwrite (FILE *fp, char cmd, int tf, int arg1, int arg2, int arg3, 
+void Zwrite (FILE *fp, char cmd, int tf, int arg1, int arg2, int arg3,
 	     char *desc);
 void RecZwriteObj(FILE *fp, struct obj_data *o);
 FILE *MakeZoneFile( struct char_data *c);
@@ -1857,7 +1855,7 @@ int too_many_followers(struct char_data *ch);
 int follow_time(struct char_data *ch);
 int ItemAlignClash(struct char_data *ch, struct obj_data *obj);
 int ItemEgoClash(struct char_data *ch, struct obj_data *obj, int bon);
-void IncrementZoneNr(int nr); 
+void IncrementZoneNr(int nr);
 int IsDarkOutside(struct room_data *rp);
 int GET_OBJ_EGO(struct obj_data *obj);
 int GET_EGO(struct char_data *ch);
@@ -1872,7 +1870,7 @@ void ChangeStrength(struct char_data *ch, int delta);
 char *MovementType(struct char_data *ch, bool enter);
 
 /* From weather.c */
- 
+
 void weather_and_time(int mode);
 void another_hour(int mode);
 void ChangeSeason(int month);
@@ -1907,8 +1905,8 @@ void GenerateHash();
 void AddNodeTail(NODE *n, int length, int radix);
 NODE *SearchForNodeByName(NODE *head, char *name, int length);
 void InitRadix();
-NODE *FindValidCommand(char *name); 
- 
+NODE *FindValidCommand(char *name);
+
 /* from intrinsics.c */
 void do_changeform(struct char_data *ch, char *argument, int cmd);
 void MindflayerAttack(struct char_data *ch, struct char_data *v);
@@ -1923,4 +1921,3 @@ int No_Hoard(struct char_data *ch, struct char_data *re,
 
 /*  */
 /* All Done! (yay!) */
-

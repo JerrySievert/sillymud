@@ -3,6 +3,8 @@ CC=gcc
 ##
 LD=$(CC)
 ##
+RM=rm
+##
 ##  these are compile time constructs, that affect the running of the game.
 CPPFLAGS = -DIMPL_SECURITY -DNEW_RENT -DLEVEL_LOSS -DNEWEXP \
  -DGROUP_NAMES
@@ -19,7 +21,7 @@ CFLAGS = $(SUNFLAGS) $(CPPFLAGS)
 ##
 ##  To make some optimizations, you need to add things to the line above.
 ##  to use hash tables for rooms  (More cpu, less storage), add
-##  -DHASH    
+##  -DHASH
 ##
 ##  To get rid of tracking (lower cpu)
 ##  -DNOTRACK
@@ -81,13 +83,14 @@ dmserver : ${OBJS}
 ## if you want to add debugging stuff, uncomment the following, and comment
 ##  out the line after that
 ##	$(LD) -o $@ -g ${OBJS} /local/lib/gnu/gcc-gnulib /usr/lib/debug/malloc.o
-	$(LD) -o $@ -g ${OBJS} 
+	$(LD) -o $@ -g ${OBJS}
 ##	$(LD) -o $@  ${OBJS}
 ##
 depend :
 	makedepend ${SRCS}
 
-
+clean :
+	$(RM) *.o dmserver
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
 

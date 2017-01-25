@@ -10,9 +10,12 @@ CPPFLAGS = -DIMPL_SECURITY -DNEW_RENT -DLEVEL_LOSS -DNEWEXP \
  -DGROUP_NAMES
 ##  these are architecture dependent flags
 TITANFLAGS = -g -43 -vector_c -safe=ptrs -DTITAN
-SUNFLAGS = -g -Werror
+OSXFLAGS = -g -Werror
+LINUXFLAGS = -g -fPIC
+LINUXLDFLAGS = -lcrypt -fPIC
 ##
-CFLAGS = $(SUNFLAGS) $(CPPFLAGS)
+CFLAGS = $(OSXFLAGS) $(CPPFLAGS)
+LDFLAGS = $(OSXFLAGS)
 ##
 ##
 ##  For lower exp loss at lower levels -DNEWEXP

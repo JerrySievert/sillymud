@@ -363,7 +363,7 @@ int MoveOne(struct char_data *ch, int dir) {
     return FALSE;
 }
 
-int MoveGroup(struct char_data *ch, int dir) {
+void MoveGroup(struct char_data *ch, int dir) {
   struct char_data *heap_ptr[ 50 ];
   int was_in, i, heap_top, heap_tot[ 50 ];
   struct follow_type *k, *next_dude;
@@ -410,11 +410,11 @@ int MoveGroup(struct char_data *ch, int dir) {
   }
 }
 
-int DisplayOneMove(struct char_data *ch, int dir, int was_in) {
+void DisplayOneMove(struct char_data *ch, int dir, int was_in) {
   DisplayMove(ch, dir, was_in, 1);
 }
 
-int DisplayGroupMove(struct char_data *ch, int dir, int was_in, int total) {
+void DisplayGroupMove(struct char_data *ch, int dir, int was_in, int total) {
   DisplayMove(ch, dir, was_in, total);
 }
 
@@ -466,7 +466,7 @@ void do_move(struct char_data *ch, char *argument, int cmd) {
 
   */
 
-int DisplayMove(struct char_data *ch, int dir, int was_in, int total) {
+void DisplayMove(struct char_data *ch, int dir, int was_in, int total) {
   struct char_data *tmp_ch;
   char tmp[ 256 ], *how;
 
@@ -654,7 +654,7 @@ int find_door(struct char_data *ch, char *type, char *dir) {
   }
 }
 
-open_door(struct char_data *ch, int dir)
+void open_door(struct char_data *ch, int dir)
 /* remove all necessary bits and send messages */
 {
   struct room_direction_data *exitp, *back;
@@ -696,7 +696,7 @@ open_door(struct char_data *ch, int dir)
   }
 }
 
-raw_open_door(struct char_data *ch, int dir)
+void raw_open_door(struct char_data *ch, int dir)
 /* remove all necessary bits and send messages */
 {
   struct room_direction_data *exitp, *back;

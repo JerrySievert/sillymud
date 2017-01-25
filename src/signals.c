@@ -7,15 +7,15 @@
 #include <signal.h>
 #include <stdio.h>
 #include <sys/time.h>
+#include <stdlib.h>
 
 #include "protos.h"
 
-int checkpointing(void);
-int shutdown_request(void);
-int logsig(void);
-int hupsig(void);
+void checkpointing(int);
+void shutdown_request(int);
+void logsig(int);
+void hupsig(int);
 
-int raw_force_all(char *to_force);
 
 void signal_setup( ) {
   struct itimerval itime;
@@ -41,7 +41,7 @@ void signal_setup( ) {
   signal(SIGVTALRM, checkpointing);
 }
 
-int checkpointing( ) {
+void checkpointing(int sig) {
   extern int tics;
 
   if (!tics) {
@@ -51,7 +51,7 @@ int checkpointing( ) {
     tics = 0;
 }
 
-int shutdown_request( ) {
+void shutdown_request(int sig) {
   extern int mudshutdown;
 
   debug("Received USR2 - shutdown request");
@@ -59,7 +59,7 @@ int shutdown_request( ) {
 }
 
 /* kick out players etc */
-int hupsig( ) {
+void hupsig(int sig) {
   int i;
   extern int mudshutdown, reboot;
 
@@ -73,4 +73,4 @@ int hupsig( ) {
   mudshutdown = reboot = 1;
 }
 
-int logsig( ) { debug("Signal received. Ignoring."); }
+void logsig(int sig) { debug("Signal received. Ignoring."); }

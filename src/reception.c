@@ -6,6 +6,8 @@
 
 #include <stdio.h>
 #include <sys/time.h>
+#include <string.h>
+#include <stdlib.h>
 
 #include "protos.h"
 
@@ -501,7 +503,7 @@ void update_obj_file( ) {
           debug(buf);
           abort( );
         } else {
-          sprintf(buf, "   Processing %s[%d].", st.owner, i);
+          sprintf(buf, "   Processing %s[%ld].", st.owner, i);
           debug(buf);
           days_passed = ((time(0) - st.last_update) / SECS_PER_REAL_DAY);
           secs_lost   = ((time(0) - st.last_update) % SECS_PER_REAL_DAY);
@@ -848,9 +850,11 @@ int ReadObjs(FILE *fl, struct obj_file_u *st) {
   for (i = 0; i < st->number; i++) {
     fread(&st->objects[ i ], sizeof(struct obj_file_elem), 1, fl);
   }
+
+  return TRUE;
 }
 
-int WriteObjs(FILE *fl, struct obj_file_u *st) {
+void WriteObjs(FILE *fl, struct obj_file_u *st) {
   int i;
   char buf[ 128 ];
 

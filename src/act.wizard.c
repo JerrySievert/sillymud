@@ -7,6 +7,9 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 #include "protos.h"
 
@@ -235,7 +238,7 @@ void dsearch(char *string, char *tmp) {
       buf[ j ] = '\0';
       strcpy(buf3, (string + j + 2));
       sprintf(tmp, "%s%s%s", buf, buf2, buf3);
-      sprintf(string, tmp);
+      sprintf(string, "%s", tmp);
     }
   }
 }
@@ -841,9 +844,9 @@ void do_at(struct char_data *ch, char *argument, int cmd) {
       return;
     }
     location = loc_nr;
-  } else if (target_mob = get_char_vis(ch, loc_str)) {
+  } else if ((target_mob = get_char_vis(ch, loc_str))) {
     location = target_mob->in_room;
-  } else if (target_obj = get_obj_vis_world(ch, loc_str, NULL))
+  } else if ((target_obj = get_obj_vis_world(ch, loc_str, NULL)))
     if (target_obj->in_room != NOWHERE)
       location = target_obj->in_room;
     else {
@@ -917,9 +920,9 @@ void do_goto(struct char_data *ch, char *argument, int cmd) {
       }
     }
     location = loc_nr;
-  } else if (target_mob = get_char_vis_world(ch, buf, NULL))
+  } else if ((target_mob = get_char_vis_world(ch, buf, NULL)))
     location = target_mob->in_room;
-  else if (target_obj = get_obj_vis_world(ch, buf, NULL))
+  else if ((target_obj = get_obj_vis_world(ch, buf, NULL)))
     if (target_obj->in_room != NOWHERE)
       location = target_obj->in_room;
     else {
@@ -1137,7 +1140,7 @@ void do_stat(struct char_data *ch, char *argument, int cmd) {
     count = 1;
 
     /* mobile in world */
-    if (k = get_char_vis_world(ch, arg1, &count)) {
+    if ((k = get_char_vis_world(ch, arg1, &count))) {
 
       struct time_info_data ma;
 
@@ -1200,7 +1203,7 @@ void do_stat(struct char_data *ch, char *argument, int cmd) {
       strcat(buf, buf2);
       send_to_char(buf, ch);
 
-      sprintf(buf, "Birth : [%ld]secs, Logon[%ld]secs, Played[%ld]secs\n\r",
+      sprintf(buf, "Birth : [%ld]secs, Logon[%ld]secs, Played[%d]secs\n\r",
               k->player.time.birth, k->player.time.logon,
               k->player.time.played);
 
@@ -1343,7 +1346,7 @@ void do_stat(struct char_data *ch, char *argument, int cmd) {
           if (aff->location == APPLY_IMMUNE && !(aff->modifier) &&
               aff->bitvector) {
             sprintf(buf, "Spell : '%s'\n\r", spells[ aff->type - 1 ]);
-            sprintf(buf, "     Modifies %s by %d points\n\r",
+            sprintf(buf, "     Modifies %s by %ld points\n\r",
                     apply_types[ aff->location ], aff->bitvector);
             send_to_char(buf, ch);
             sprintf(buf, "     Expires in %3d hours, Resistance Bits set ",
@@ -1372,7 +1375,7 @@ void do_stat(struct char_data *ch, char *argument, int cmd) {
       return;
     }
     /* stat on object */
-    if (j = (struct obj_data *)get_obj_vis_world(ch, arg1, &count)) {
+    if ((j = (struct obj_data *)get_obj_vis_world(ch, arg1, &count))) {
       virtual = (j->item_number >= 0) ? obj_index[ j->item_number ].virtual : 0;
       sprintf(buf,
               "Object name: [%s], R-number: [%d], V-number: [%d] Item type: ",
@@ -1536,7 +1539,7 @@ void do_stat(struct char_data *ch, char *argument, int cmd) {
       for (j2 = j->contains; j2; j2 = j2->next_content) {
         strcat(buf, fname(j2->name));
         strcat(buf, "\n\r");
-        found == TRUE;
+        found = TRUE;
       }
       if (!found)
         strcpy(buf, "Contains : Nothing\n\r");
@@ -1545,7 +1548,7 @@ void do_stat(struct char_data *ch, char *argument, int cmd) {
       send_to_char("Can affect char :\n\r", ch);
       for (i = 0; i < MAX_OBJ_AFFECT; i++) {
         sprinttype(j->affected[ i ].location, apply_types, buf2);
-        sprintf(buf, "    Affects : %s By %d\n\r", buf2,
+        sprintf(buf, "    Affects : %s By %ld\n\r", buf2,
                 j->affected[ i ].modifier);
         send_to_char(buf, ch);
       }
@@ -1599,7 +1602,7 @@ void do_set(struct char_data *ch, char *argument, int cmd) {
     GET_EXP(mob) = parm;
   } else if (!strcmp(field, "lev")) {
     parm2 = 0; /* mage */
-    sscanf(parmstr, "%d %d", &parm);
+    sscanf(parmstr, "%d %d", &parm, &parm2);
     argument = one_argument(argument, parmstr);
     sscanf(parmstr, "%d", &parm2);
     if (!IS_NPC(mob)) {
@@ -1774,7 +1777,7 @@ void do_shutdow(struct char_data *ch, char *argument, int cmd) {
 }
 
 void do_shutdown(struct char_data *ch, char *argument, int cmd) {
-  extern int mudshutdown, reboot;
+  extern int mudshutdown, restart;
   char buf[ 100 ], arg[ MAX_INPUT_LENGTH ];
 
   if (IS_NPC(ch))
@@ -1791,7 +1794,7 @@ void do_shutdown(struct char_data *ch, char *argument, int cmd) {
     sprintf(buf, "Reboot by %s.", GET_NAME(ch));
     send_to_all(buf);
     debug(buf);
-    mudshutdown = reboot = 1;
+    mudshutdown = restart = 1;
   } else
     send_to_char("Go shut down someone your own size.\n\r", ch);
 }
@@ -2180,7 +2183,7 @@ void do_purge(struct char_data *ch, char *argument, int cmd) {
       }
       return;
     }
-    if (vict = get_char_room_vis(ch, name)) {
+    if ((vict = get_char_room_vis(ch, name))) {
       if ((!IS_NPC(vict) || IS_SET(vict->specials.act, ACT_POLYSELF)) &&
           (GetMaxLevel(ch) < IMPLEMENTOR)) {
         send_to_char("I'm sorry...  I can't let you do that.\n\r", ch);
@@ -2200,8 +2203,8 @@ void do_purge(struct char_data *ch, char *argument, int cmd) {
           extract_char(vict);
         }
       }
-    } else if (obj = get_obj_in_list_vis(ch, name,
-                                         real_roomp(ch->in_room)->contents)) {
+    } else if ((obj = get_obj_in_list_vis(ch, name,
+                                         real_roomp(ch->in_room)->contents))) {
       act("$n destroys $p.", FALSE, ch, obj, 0, TO_ROOM);
       extract_obj(obj);
     } else {
@@ -2990,10 +2993,10 @@ void do_show(struct char_data *ch, char *argument, int cmd) {
       bottom = zd->top + 1;
     }
 
-  } else if (is_abbrev(buf, "objects") &&
-                 (which_i = obj_index, topi = top_of_objt) ||
-             is_abbrev(buf, "mobiles") &&
-                 (which_i = mob_index, topi = top_of_mobt)) {
+  } else if ((is_abbrev(buf, "objects") &&
+                 (which_i = obj_index, topi = top_of_objt)) ||
+             (is_abbrev(buf, "mobiles") &&
+                 (which_i = mob_index, topi = top_of_mobt))) {
     int objn;
     struct index_data *oi;
 
@@ -3013,8 +3016,8 @@ void do_show(struct char_data *ch, char *argument, int cmd) {
     for (objn = 0; objn <= topi; objn++) {
       oi = which_i + objn;
 
-      if (zone >= 0 && (oi->virtual < bottom || oi->virtual > top) ||
-          zone < 0 && !isname(zonenum, oi->name))
+      if ((zone >= 0 && (oi->virtual < bottom || oi->virtual > top)) ||
+          (zone < 0 && !isname(zonenum, oi->name)))
         continue; /* optimize later*/
 
       sprintf(buf, "%5d %4d %3d  %s\n\r", oi->virtual, objn, oi->number,

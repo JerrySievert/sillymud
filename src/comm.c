@@ -9,6 +9,7 @@
 #include <fcntl.h>
 #include <netdb.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 #include <signal.h>
 #include <stdio.h>
 #include <string.h>
@@ -17,6 +18,8 @@
 #include <sys/time.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 #include "protos.h"
 
@@ -56,7 +59,7 @@ struct descriptor_data *descriptor_list, *next_to_process;
 int lawful      = 0; /* work like the game regulator */
 int slow_death  = 0; /* Shut her down, Martha, she's sucking mud */
 int mudshutdown = 0; /* clean shutdown */
-int reboot      = 0; /* reboot the game after a shutdown */
+int restart     = 0; /* reboot the game after a shutdown */
 int no_specials = 0; /* Suppress ass. of special routines */
 long Uptime;         /* time that the game has been up */
 
@@ -80,7 +83,7 @@ int __main( ) { return (1); }
    can die, and try to keep these 'invalid' sockets from getting to select
 */
 
-int close_socket_fd(int desc) {
+void close_socket_fd(int desc) {
   struct descriptor_data *d;
   extern struct descriptor_data *descriptor_list;
 
@@ -145,7 +148,7 @@ int main(int argc, char **argv) {
     pos++;
   }
 
-  if (pos < argc)
+  if (pos < argc) {
     if (!isdigit(*argv[ pos ])) {
       fprintf(stderr, "Usage: %s [-l] [-s] [-d pathname] [ port # ]\n",
               argv[ 0 ]);
@@ -154,6 +157,7 @@ int main(int argc, char **argv) {
       printf("Illegal port #\n");
       assert(0);
     }
+  }
 
   Uptime = time(0);
 
@@ -196,7 +200,7 @@ int main(int argc, char **argv) {
 #define PROFILE(x)
 
 /* Init sockets, run game, and cleanup sockets */
-int run_the_game(int port) {
+void run_the_game(int port) {
   int s;
   PROFILE(extern etext( );)
 
@@ -228,7 +232,7 @@ int run_the_game(int port) {
 
   PROFILE(monitor(0);)
 
-  if (reboot) {
+  if (restart) {
     debug("Rebooting.");
     assert(52); /* what's so great about HHGTTG, anyhow? */
   }
@@ -237,7 +241,7 @@ int run_the_game(int port) {
 }
 
 /* Accept new connects, relay commands, and call 'heartbeat-functs' */
-int game_loop(int s) {
+void game_loop(int s) {
   fd_set input_set, output_set, exc_set;
 #if 0
   fd_set tin, tout, tex;
@@ -404,23 +408,25 @@ int game_loop(int s) {
 
     for (point = descriptor_list; point; point = next_point) {
       next_point = point->next;
-      if (FD_ISSET(point->descriptor, &output_set) && point->output.head)
-        if (process_output(point) < 0)
+      if (FD_ISSET(point->descriptor, &output_set) && point->output.head) {
+        if (process_output(point) < 0) {
           close_socket(point);
-        else
+        } else {
           point->prompt_mode = 1;
+        }
+      }
     }
 
     /* give the people some prompts  */
     for (point = descriptor_list; point; point = point->next)
       if (point->prompt_mode) {
-        if (point->str)
+        if (point->str) {
           write_to_descriptor(point->descriptor, "-> ");
-        else if (!point->connected)
-          if (point->showstr_point)
+        } else if (!point->connected) {
+          if (point->showstr_point) {
             write_to_descriptor(point->descriptor,
                                 "[Return to continue/Q to quit]");
-          else {
+          } else {
             struct char_data *ch;
             ch = point->character;
 
@@ -460,8 +466,9 @@ int game_loop(int s) {
                 ch->last.exp = GET_EXP(ch);
               }
 
-              if (update)
+              if (update) {
                 UpdateScreen(ch, update);
+              }
             }
 
             if (point->character->term != VT100) {
@@ -509,6 +516,8 @@ int game_loop(int s) {
               write_to_descriptor(point->descriptor, promptbuf);
             }
           }
+        }
+
         point->prompt_mode = 0;
       }
 
@@ -647,7 +656,8 @@ void flush_queues(struct descriptor_data *d) {
 ****************************************************************** */
 
 int init_socket(int port) {
-  int s;
+  socklen_t s;
+  int c;
   char *opt;
   char hostname[ MAX_HOSTNAME + 1 ];
   struct sockaddr_in sa;
@@ -657,30 +667,30 @@ int init_socket(int port) {
   bzero(&sa, sizeof(struct sockaddr_in));
   sa.sin_family = AF_INET;
   sa.sin_port   = htons(port);
-  s             = socket(AF_INET, SOCK_STREAM, 0);
-  if (s < 0) {
+  c             = socket(AF_INET, SOCK_STREAM, 0);
+  if (c < 0) {
     perror("Init-socket");
     assert(0);
   }
-  if (setsockopt(s, SOL_SOCKET, SO_REUSEADDR, (char *)&opt, sizeof(opt)) < 0) {
+  if (setsockopt(c, SOL_SOCKET, SO_REUSEADDR, (char *)&opt, sizeof(opt)) < 0) {
     perror("setsockopt REUSEADDR");
     exit(1);
   }
 
   ld.l_onoff  = 1;
   ld.l_linger = 100;
-  if (setsockopt(s, SOL_SOCKET, SO_LINGER, &ld, sizeof(ld)) < 0) {
+  if (setsockopt(c, SOL_SOCKET, SO_LINGER, &ld, sizeof(ld)) < 0) {
     perror("setsockopt LINGER");
     assert(0);
   }
 
-  if (bind(s, &sa, sizeof(sa)) < 0) {
+  if (bind(c, (struct sockaddr *) &sa, sizeof(sa)) < 0) {
     perror("bind");
     exit(0);
   }
 
-  listen(s, 5);
-  return (s);
+  listen(c, 5);
+  return (c);
 }
 
 int new_connection(int s) {
@@ -688,7 +698,7 @@ int new_connection(int s) {
 #ifdef sun
   struct sockaddr peer;
 #endif
-  int i;
+  socklen_t i;
   int t;
   char buf[ 100 ];
 
@@ -734,7 +744,7 @@ char *buf;
   if (s) {
     strcpy(buf, s);
   } else {
-    strcpy(buf, (char *)inet_ntoa(addr));
+    strcpy(buf, (char *)inet_ntoa(*addr));
   }
 }
 
@@ -755,7 +765,7 @@ int new_descriptor(int s) {
 
   int desc;
   struct descriptor_data *newd;
-  int size;
+  socklen_t size;
 #ifdef sun
   struct hostent *from;
   struct sockaddr peer;
@@ -1382,8 +1392,9 @@ void act(char *str, int hide_invisible, struct char_data *ch,
             break;
           }
 
-          while (*point = *(i++))
+          while ((*point = *(i++))) {
             ++point;
+          }
 
           ++strp;
 
@@ -1401,16 +1412,17 @@ void act(char *str, int hide_invisible, struct char_data *ch,
   }
 }
 
-int raw_force_all(char *to_force) {
+void raw_force_all(char *to_force) {
   struct descriptor_data *i;
   char buf[ 400 ];
 
-  for (i = descriptor_list; i; i = i->next)
+  for (i = descriptor_list; i; i = i->next) {
     if (!i->connected) {
       sprintf(buf, "The game has forced you to '%s'.\n\r", to_force);
       send_to_char(buf, i->character);
       command_interpreter(i->character, to_force);
     }
+  }
 }
 
 #if 0

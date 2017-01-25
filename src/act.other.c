@@ -7,6 +7,7 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "protos.h"
 
@@ -75,10 +76,10 @@ void do_junk(struct char_data *ch, char *argument, int cmd) {
 
   only_argument(argument, arg);
   if (*arg) {
-    if (getall(arg, newarg) != NULL) {
+    if (getall(arg, newarg) != FALSE) {
       num = -1;
       strcpy(arg, newarg);
-    } else if ((p = getabunch(arg, newarg)) != NULL) {
+    } else if ((p = getabunch(arg, newarg)) != FALSE) {
       num = p;
       strcpy(arg, newarg);
     } else {
@@ -559,17 +560,19 @@ void do_steal(struct char_data *ch, char *argument, int cmd) {
     }
   }
 
-  if (ohoh && IS_NPC(victim) && AWAKE(victim))
+  if (ohoh && IS_NPC(victim) && AWAKE(victim)) {
     if (IS_SET(victim->specials.act, ACT_NICE_THIEF)) {
       sprintf(buf, "%s is a bloody thief.", GET_NAME(ch));
       do_shout(victim, buf, 0);
       do_say(victim, "Don't you ever do that again!", 0);
     } else {
-      if (CAN_SEE(victim, ch))
+      if (CAN_SEE(victim, ch)) {
         hit(victim, ch, TYPE_UNDEFINED);
-      else if (number(0, 1))
+      } else if (number(0, 1)) {
         hit(victim, ch, TYPE_UNDEFINED);
+      }
     }
+  }
 }
 
 void do_practice(struct char_data *ch, char *arg, int cmd) {
@@ -1525,7 +1528,7 @@ void do_alias(struct char_data *ch, char *arg, int cmd) {
   }
 }
 
-int Dismount(struct char_data *ch, struct char_data *h, int pos) {
+void Dismount(struct char_data *ch, struct char_data *h, int pos) {
 
   MOUNTED(ch) = 0;
   RIDDEN(h)   = 0;
@@ -1760,10 +1763,10 @@ void do_donate(struct char_data *ch, char *argument, int cmd) {
 
   only_argument(argument, arg);
   if (*arg) {
-    if (getall(arg, newarg) != NULL) {
+    if (getall(arg, newarg) != FALSE) {
       num = -1;
       strcpy(arg, newarg);
-    } else if ((p = getabunch(arg, newarg)) != NULL) {
+    } else if ((p = getabunch(arg, newarg)) != FALSE) {
       num = p;
       strcpy(arg, newarg);
     } else {

@@ -1,6 +1,6 @@
 /*
   SillyMUD Distribution V1.1b             (c) 1993 SillyMUD Developement
- 
+
   See license.doc for distribution terms.   SillyMUD is based on DIKUMUD
 */
 
@@ -14,7 +14,7 @@ typedef unsigned short int ush_int;
 typedef char bool;
 typedef char byte;
 
-/*  
+/*
    my new stuff
 */
 
@@ -257,7 +257,7 @@ struct string_block {
 
 
 /*
-  memory stuff 
+  memory stuff
 */
 
 struct char_list {
@@ -323,7 +323,7 @@ typedef struct {
 #define ITEM_MISSILE    7
 #define ITEM_TREASURE   8
 #define ITEM_ARMOR      9
-#define ITEM_POTION    10 
+#define ITEM_POTION    10
 #define ITEM_WORN      11
 #define ITEM_OTHER     12
 #define ITEM_TRASH     13
@@ -344,17 +344,17 @@ typedef struct {
 
 /* Bitvector For 'wear_flags' */
 
-#define ITEM_TAKE              1 
+#define ITEM_TAKE              1
 #define ITEM_WEAR_FINGER       2
 #define ITEM_WEAR_NECK         4
 #define ITEM_WEAR_BODY         8
 #define ITEM_WEAR_HEAD        16
 #define ITEM_WEAR_LEGS        32
 #define ITEM_WEAR_FEET        64
-#define ITEM_WEAR_HANDS      128 
+#define ITEM_WEAR_HANDS      128
 #define ITEM_WEAR_ARMS       256
 #define ITEM_WEAR_SHIELD     512
-#define ITEM_WEAR_ABOUT     1024 
+#define ITEM_WEAR_ABOUT     1024
 #define ITEM_WEAR_WAISTE    2048
 #define ITEM_WEAR_WRIST     4096
 #define ITEM_WIELD          8192
@@ -455,7 +455,7 @@ struct obj_affected_type {
 struct obj_data
 {
 	sh_int item_number;            /* Where in data-base             */
-	int in_room;                /* In what room -1 when conta/carr  */ 
+	int in_room;                /* In what room -1 when conta/carr  */
 	struct obj_flag_data obj_flags;/* Object information             */
 	struct obj_affected_type
 	    affected[MAX_OBJ_AFFECT];  /* Which abilities in PC to change*/
@@ -544,14 +544,14 @@ struct obj_data
 #define LARGE_IMPASS         4
 
 
-struct large_room_data 
+struct large_room_data
 {
   unsigned int flags[9];
 };
 
 struct room_direction_data
 {
-	char *general_description;    /* When look DIR.                  */ 
+	char *general_description;    /* When look DIR.                  */
 	char *keyword;                /* for open/close                  */
 	sh_int exit_info;             /* Exit info                       */
 	int key;	              /* Key's number (-1 for no key)    */
@@ -580,11 +580,11 @@ struct room_data
 	char *description;           /* Shown when entered                 */
 	struct extra_descr_data *ex_description; /* for examine/look       */
 	struct room_direction_data *dir_option[6]; /* Directions           */
-	long room_flags;             /* DEATH,DARK ... etc                 */ 
+	long room_flags;             /* DEATH,DARK ... etc                 */
 	byte light;                  /* Number of lightsources in room     */
         byte dark;
 	int (*funct)();              /* special procedure                  */
-         
+
 	struct obj_data *contents;   /* List of items in room              */
 	struct char_data *people;    /* List of NPC / PC in room           */
 
@@ -875,11 +875,11 @@ struct char_player_data
 /* Used in CHAR_FILE_U *DO*NOT*CHANGE* */
 struct char_ability_data
 {
-  sbyte str; 
+  sbyte str;
   sbyte str_add;      /* 000 - 100 if strength 18             */
   sbyte intel;
-  sbyte wis; 
-  sbyte dex; 
+  sbyte wis;
+  sbyte dex;
   sbyte con;
   sbyte chr;
 };
@@ -888,16 +888,16 @@ struct char_ability_data
 /* Used in CHAR_FILE_U *DO*NOT*CHANGE* */
 struct char_point_data
 {
-  sh_int mana;         
+  sh_int mana;
   sh_int max_mana;
   byte  mana_gain;
 
 
-  sh_int hit;   
+  sh_int hit;
   sh_int max_hit;      /* Max hit for NPC                         */
   byte  hit_gain;
 
-  sh_int move;  
+  sh_int move;
   sh_int max_move;     /* Max move for NPC                        */
   byte  move_gain;
 
@@ -905,7 +905,7 @@ struct char_point_data
   int gold;            /* Money carried                           */
   int bankgold;        /* gold in the bank.                       */
   int exp;             /* The experience of the player            */
-  
+
   sbyte hitroll;       /* Any bonus or penalty to the hit roll    */
   sbyte damroll;       /* Any bonus or penalty to the damage roll */
 
@@ -926,8 +926,8 @@ struct char_special_data
   byte last_direction;      /* The last direction the monster went */
   char sev;                  /* log severety level for gods */
   byte   move_cost;    /* bonus or subtraction from movement cost */
-  
- 
+
+
   int start_room;  /* so people can be set to start certain places */
   int edit;               /* edit state */
   sbyte conditions[3];    /* Drunk full etc.                     */
@@ -958,16 +958,16 @@ struct char_special_data
 		   who are in them. (Pcs).
 		   */
 #endif
- 
+
   Alias   *A_list;
-  struct char_data *misc;  
+  struct char_data *misc;
   struct char_data *fighting; /* Opponent                          */
-	
+
   struct char_data *hunting;  /* Hunting person..                  */
 
   struct char_data *ridden_by;
   struct char_data *mounted_on;
-  
+
   long affected_by;  /* Bitvector for spells/skills affected by    */
   long affected_by2; /* Other special things                       */
 
@@ -1046,7 +1046,7 @@ struct char_data
 	sh_int  persist;
 	int     old_room;
 
-	void *act_ptr;    /* numeric argument for the mobile 
+	void *act_ptr;    /* numeric argument for the mobile
 					actions */
 
 	struct char_player_data player;       /* Normal data            */
@@ -1139,8 +1139,8 @@ struct char_file_u
 
 	/* specials */
 
-	byte spells_to_learn;  
-	int alignment;     
+	byte spells_to_learn;
+	int alignment;
 
 	long affected_by;
 	long affected_by2;
@@ -1171,7 +1171,7 @@ struct obj_cost { /* used in act.other.c:do_save as
 
 #define MAX_OBJ_SAVE 200 /* Used in OBJ_FILE_U *DO*NOT*CHANGE* */
 
-struct equip_fill {  
+struct equip_fill {
         sh_int finger[3];
         int fingerego;
         sh_int neck[3];
@@ -1202,7 +1202,7 @@ struct equip_fill {
         int misfitego[MAX_OBJ_SAVE];
 };
 
-struct obj_file_elem 
+struct obj_file_elem
 {
 	sh_int item_number;
 
@@ -1316,7 +1316,7 @@ struct txt_q
 
 struct snoop_data
 {
-	struct char_data *snooping;	
+	struct char_data *snooping;
 		/* Who is this char snooping */
 	struct char_data *snoop_by;
 		/* And who is snooping on this char */
@@ -1346,7 +1346,7 @@ struct descriptor_data
 	struct descriptor_data *next; /* link to next descriptor    */
 };
 
-struct msg_type 
+struct msg_type
 {
 	char *attacker_msg;  /* message to attacker */
 	char *victim_msg;    /* message to victim   */
@@ -1454,7 +1454,7 @@ struct skill_data {
   ubyte race_deny[MAX_RACE_DENY]; /* races that can't use this skill */
 
   /* races having this skill intrinsically */
-  ubyte race_intrinsic[MAX_RACE_INTRINSIC]; 
+  ubyte race_intrinsic[MAX_RACE_INTRINSIC];
 
 };
 

@@ -27,6 +27,8 @@ int RecGetObjRoom(struct obj_data *obj) {
   if (obj->in_obj) {
     return (RecGetObjRoom(obj->in_obj));
   }
+
+  return 0;
 }
 
 void MakeNoise(int room, char *local_snd, char *distant_snd) {
@@ -56,7 +58,7 @@ void MakeNoise(int room, char *local_snd, char *distant_snd) {
   }
 }
 
-MakeSound(int pulse) {
+void MakeSound(int pulse) {
   int room;
   char buffer[ 128 ];
   struct obj_data *obj;

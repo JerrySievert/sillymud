@@ -10,7 +10,7 @@ CPPFLAGS = -DIMPL_SECURITY -DNEW_RENT -DLEVEL_LOSS -DNEWEXP \
  -DGROUP_NAMES
 ##  these are architecture dependent flags
 TITANFLAGS = -g -43 -vector_c -safe=ptrs -DTITAN
-SUNFLAGS = -g
+SUNFLAGS = -g -Werror
 ##
 CFLAGS = $(SUNFLAGS) $(CPPFLAGS)
 ##

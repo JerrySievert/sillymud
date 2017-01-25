@@ -38,8 +38,9 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#ifndef NULL
 #define NULL 0
-
+#endif
 #ifdef KLUDGE_MEM
 static void morecore( );
 static int findbucket( );

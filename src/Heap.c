@@ -5,6 +5,9 @@
 */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #define TRUE 1
 #define FALSE 0
 
@@ -121,7 +124,7 @@ main()
    for (i=1;i<10;i++) {
       scanf("%s", buf);
       StringHeap(buf, H);
-   }   
+   }
 
    DisplayStringHeap(H,0,TRUE);
 

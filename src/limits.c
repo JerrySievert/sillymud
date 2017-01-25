@@ -6,6 +6,8 @@
 
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "protos.h"
 
@@ -24,7 +26,7 @@ extern struct time_info_data time_info;
 
 char *ClassTitles(struct char_data *ch) {
   unsigned char i, count = 0;
-  char buf[ 256 ];
+  static char buf[ 256 ];
 
   for (i = MAGE_LEVEL_IND; i <= MONK_LEVEL_IND; i++) {
     if (GET_LEVEL(ch, i)) {
@@ -800,7 +802,7 @@ void check_idling(struct char_data *ch) {
   }
 }
 
-int ObjFromCorpse(struct obj_data *c) {
+void ObjFromCorpse(struct obj_data *c) {
   struct obj_data *jj, *next_thing;
 
   for (jj = c->contains; jj; jj = next_thing) {
@@ -824,13 +826,13 @@ int ObjFromCorpse(struct obj_data *c) {
        */
       c->contains = 0;
       debug("Memory lost in ObjFromCorpse.");
-      return (TRUE);
+      return;
     }
   }
   extract_obj(c);
 }
 
-int ClassSpecificStuff(struct char_data *ch) {
+void ClassSpecificStuff(struct char_data *ch) {
 
   if (HasClass(ch, CLASS_WARRIOR) || HasClass(ch, CLASS_MONK)) {
 

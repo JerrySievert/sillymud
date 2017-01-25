@@ -7,6 +7,8 @@
 
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "protos.h"
 
@@ -21,7 +23,6 @@ extern struct descriptor_data *descriptor_list;
 
 /* Extern procedures */
 
-char *strdup(char *source);
 
 /*
   druid spells
@@ -891,7 +892,7 @@ void spell_creeping_death(byte level, struct char_data *ch,
 
   af.type      = SPELL_CREEPING_DEATH;
   af.duration  = 2;
-  af.modifier  = 10500;
+  af.modifier  = (char) 10500;
   af.location  = APPLY_SPELLFAIL;
   af.bitvector = 0;
   affect_to_char(ch, &af);

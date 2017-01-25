@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "protos.h"
 
@@ -46,7 +47,7 @@ void get(struct char_data *ch, struct obj_data *obj_object,
     act("You get $p.", 0, ch, obj_object, 0, TO_CHAR);
     act("$n gets $p.", 1, ch, obj_object, 0, TO_ROOM);
   }
-  if ((obj_object->obj_flags.type_flag == ITEM_MONEY)) {
+  if (obj_object->obj_flags.type_flag == ITEM_MONEY) {
     if (obj_object->obj_flags.value[ 0 ] < 1)
       obj_object->obj_flags.value[ 0 ] = 1;
     obj_from_char(obj_object);
@@ -164,10 +165,10 @@ void do_get(struct char_data *ch, char *argument, int cmd) {
     sub_object = 0;
     found      = FALSE;
     fail       = FALSE;
-    if (getall(arg1, newarg) != NULL) {
+    if (getall(arg1, newarg) != FALSE) {
       strcpy(arg1, newarg);
       num = -1;
-    } else if ((p = getabunch(arg1, newarg)) != NULL) {
+    } else if ((p = getabunch(arg1, newarg)) != FALSE) {
       strcpy(arg1, newarg);
       num = p;
     } else {
@@ -227,7 +228,7 @@ void do_get(struct char_data *ch, char *argument, int cmd) {
     sub_object = (struct obj_data *)get_obj_vis_accessible(ch, arg2);
     if (sub_object) {
       if (GET_ITEM_TYPE(sub_object) == ITEM_CONTAINER) {
-        if (blah = get_obj_in_list_vis(ch, arg2, ch->carrying)) {
+        if ((blah = get_obj_in_list_vis(ch, arg2, ch->carrying))) {
           has = TRUE;
         }
         for (obj_object = sub_object->contains; obj_object;
@@ -295,12 +296,12 @@ void do_get(struct char_data *ch, char *argument, int cmd) {
     sub_object = (struct obj_data *)get_obj_vis_accessible(ch, arg2);
     if (sub_object) {
       if (GET_ITEM_TYPE(sub_object) == ITEM_CONTAINER) {
-        if (blah = get_obj_in_list_vis(ch, arg2, ch->carrying))
+        if ((blah = get_obj_in_list_vis(ch, arg2, ch->carrying)))
           has = TRUE;
-        if (getall(arg1, newarg) != NULL) {
+        if (getall(arg1, newarg) != FALSE) {
           num = -1;
           strcpy(arg1, newarg);
-        } else if ((p = getabunch(arg1, newarg)) != NULL) {
+        } else if ((p = getabunch(arg1, newarg)) != FALSE) {
           num = p;
           strcpy(arg1, newarg);
         } else {
@@ -443,10 +444,10 @@ void do_drop(struct char_data *ch, char *argument, int cmd) {
 #endif
     } else {
       /* &&&&&& */
-      if (getall(arg, newarg) != NULL) {
+      if (getall(arg, newarg) != FALSE) {
         num = -1;
         strcpy(arg, newarg);
-      } else if ((p = getabunch(arg, newarg)) != NULL) {
+      } else if ((p = getabunch(arg, newarg)) != FALSE) {
         num = p;
         strcpy(arg, newarg);
       } else {
@@ -507,10 +508,10 @@ void do_put(struct char_data *ch, char *argument, int cmd) {
   if (*arg1) {
     if (*arg2) {
 
-      if (getall(arg1, newarg) != NULL) {
+      if (getall(arg1, newarg) != FALSE) {
         num = -1;
         strcpy(arg1, newarg);
-      } else if ((p = getabunch(arg1, newarg)) != NULL) {
+      } else if ((p = getabunch(arg1, newarg)) != FALSE) {
         num = p;
         strcpy(arg1, newarg);
       } else {
@@ -695,10 +696,10 @@ void do_give(struct char_data *ch, char *argument, int cmd) {
       return;
     }
     /* &&&& */
-    if (getall(obj_name, newarg) != NULL) {
+    if (getall(obj_name, newarg) != FALSE) {
       num = -1;
       strcpy(obj_name, newarg);
-    } else if ((p = getabunch(obj_name, newarg)) != NULL) {
+    } else if ((p = getabunch(obj_name, newarg)) != FALSE) {
       num = p;
       strcpy(obj_name, newarg);
     } else {

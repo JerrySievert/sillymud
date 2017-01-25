@@ -6,6 +6,8 @@
 
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "protos.h"
 
@@ -998,7 +1000,7 @@ void spell_cone_of_cold(byte level, struct char_data *ch,
   AreaDamage(ch, dam, SPELL_CONE_OF_COLD, "You are chilled to the bone!\n\r",
              "You are able to avoid the cone!\n\r", "", FALSE, FALSE);
 #if 0
-   for ( tmp_victim = real_roomp(ch->in_room)->people; tmp_victim; 
+   for ( tmp_victim = real_roomp(ch->in_room)->people; tmp_victim;
 	tmp_victim = temp ) {
       temp = tmp_victim->next_in_room;
       if ( (ch->in_room == tmp_victim->in_room) && (ch != tmp_victim)) {
@@ -1034,7 +1036,7 @@ void spell_ice_storm(byte level, struct char_data *ch, struct char_data *victim,
   AreaDamage(ch, dam, SPELL_ICE_STORM, "You are blasted by the storm!\n\r",
              "You are able to dodge the storm.\n\r", "", FALSE, FALSE);
 #if 0
-   for ( tmp_victim = real_roomp(ch->in_room)->people; tmp_victim; 
+   for ( tmp_victim = real_roomp(ch->in_room)->people; tmp_victim;
 	tmp_victim = temp) {
       temp = tmp_victim->next_in_room;
       if ( (ch->in_room == tmp_victim->in_room) && (ch != tmp_victim)) {
@@ -2200,7 +2202,7 @@ void spell_geyser(byte level, struct char_data *ch, struct char_data *victim,
              "You are almost seared by the boiling water!!\n\r",
              "You hear Old Faithful off in the distance.\n\r", FALSE, FALSE);
 #if 0
-   for(tmp_victim = real_roomp(ch->in_room)->people; 
+   for(tmp_victim = real_roomp(ch->in_room)->people;
        tmp_victim; tmp_victim = temp) {
       temp = tmp_victim->next_in_room;
       if ((ch != tmp_victim) && (ch->in_room == tmp_victim->in_room)) {

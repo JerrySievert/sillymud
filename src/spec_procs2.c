@@ -7,6 +7,7 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "protos.h"
 
@@ -349,13 +350,13 @@ int Summoner(struct char_data *ch, int cmd, char *arg, struct char_data *mob,
           if (i->op_ch) { /* if there is a char_ptr */
             targ = i->op_ch;
             if (IS_PC(targ)) {
-              sprintf(buf, "You hate %s\n\r", targ);
+              sprintf(buf, "You hate %s\n\r", targ->player.name);
               send_to_char(buf, ch);
               break;
             }
           } else { /* look up the char_ptr */
             for (d = descriptor_list; d; d = d->next) {
-              if (d->character && i->name &&
+              if (d->character && i->name[0] != '\0' &&
                   (strcmp(GET_NAME(d->character), i->name) == 0)) {
                 targ = d->character;
                 break;
@@ -1007,7 +1008,7 @@ int cleric(struct char_data *ch, int cmd, char *arg, struct char_data *mob,
     case 18:
     case 19:
     default:
-      act("$n utters the words 'Hurts, doesn't it??'.", 1, ch, 0, 0, TO_ROOM);
+      act("$n utters the words 'Hurts, doesn't it?'.", 1, ch, 0, 0, TO_ROOM);
       cast_harm(GetMaxLevel(ch), ch, "", SPELL_TYPE_SPELL, vict, 0);
       break;
     }
@@ -1262,9 +1263,8 @@ int Teacher(struct char_data *ch, int cmd, char *arg, struct char_data *mob,
       send_to_char("'You are now a master of this art.'\n\r", ch);
       return (TRUE);
     }
-  } else {
-    return (FALSE);
   }
+  return (FALSE);
 }
 
 int RepairGuy(struct char_data *ch, int cmd, char *arg, struct char_data *mob,
@@ -1474,6 +1474,8 @@ int RepairGuy(struct char_data *ch, int cmd, char *arg, struct char_data *mob,
       return FALSE;
     return (fighter(ch, cmd, arg, mob, type));
   }
+
+  return FALSE;
 }
 
 int Samah(struct char_data *ch, int cmd, char *arg, struct char_data *mob,
@@ -1958,9 +1960,9 @@ int MakeQuest(struct char_data *ch, struct char_data *gm, int Class, char *arg,
       GainLevel(ch, Class);
       return (TRUE);
     }
-  } else { /* command is neither gain nor give */
-    return (FALSE);
   }
+
+  return (FALSE);
 }
 
 int AbyssGateKeeper(struct char_data *ch, int cmd, char *arg,
@@ -2103,6 +2105,8 @@ int creeping_death(struct char_data *ch, int cmd, char *arg,
       }
     }
   }
+
+  return FALSE;
 }
 
 #if 0
@@ -2520,6 +2524,8 @@ int breath_weapon(struct char_data *ch, struct char_data *target, int mana_cost,
   }
 
   free_victims(hitlist);
+
+  return FALSE;
 }
 
 int use_breath_weapon(struct char_data *ch, struct char_data *target, int cost,
@@ -2534,14 +2540,16 @@ int use_breath_weapon(struct char_data *ch, struct char_data *target, int cost,
   } else if (GET_MANA(ch) <= -3 * cost) {
     breath_weapon(ch, target, 0, NULL); /* sputter */
   }
+
+  return FALSE;
 }
 
-static void (*breaths[])( ) = { cast_acid_breath,      0,
-                                cast_frost_breath,     0,
-                                cast_lightning_breath, 0,
-                                cast_fire_breath,      0,
-                                cast_acid_breath,      cast_fire_breath,
-                                cast_lightning_breath, 0 };
+static void (*breaths[])( ) = { (funcp) cast_acid_breath,      0,
+                                (funcp) cast_frost_breath,     0,
+                                (funcp) cast_lightning_breath, 0,
+                                (funcp) cast_fire_breath,      0,
+                                (funcp) cast_acid_breath,     (funcp) cast_fire_breath,
+                                (funcp) cast_lightning_breath, 0 };
 
 struct breather breath_monsters[] = {
   { 230, 55, breaths + 0 },   { 233, 55, breaths + 4 },
@@ -2641,9 +2649,11 @@ int DruidTree(struct char_data *ch) {
   ch->mult_att             = 6;
   ch->specials.damsizedice = 6;
   REMOVE_BIT(ch->specials.act, ACT_SPEC);
+
+  return FALSE;
 }
 
-DruidMob(struct char_data *ch) {
+int DruidMob(struct char_data *ch) {
 
   act("$n utters the words 'lagomorph'", FALSE, ch, 0, 0, TO_ROOM);
   act("$n takes on the form and shape of a huge lion", FALSE, ch, 0, 0,
@@ -2661,6 +2671,8 @@ DruidMob(struct char_data *ch) {
   ch->specials.damnodice   = 3;
   ch->specials.damsizedice = 4;
   REMOVE_BIT(ch->specials.act, ACT_SPEC);
+
+  return FALSE;
 }
 
 int DruidChallenger(struct char_data *ch, int cmd, char *arg,
@@ -2849,6 +2861,8 @@ int DruidChallenger(struct char_data *ch, int cmd, char *arg,
       DruidAttackSpells(ch, vict, level);
     }
   }
+
+  return FALSE;
 }
 
 int MonkChallenger(struct char_data *ch, int cmd, char *arg,
@@ -3290,6 +3304,8 @@ int portal(struct char_data *ch, int cmd, char *arg, struct obj_data *obj,
       extract_obj(obj);
     }
   }
+
+  return FALSE;
 }
 
 int scraps(struct char_data *ch, int cmd, char *arg, struct obj_data *obj,
@@ -3311,6 +3327,8 @@ int scraps(struct char_data *ch, int cmd, char *arg, struct obj_data *obj,
       extract_obj(obj);
     }
   }
+
+  return FALSE;
 }
 
 #define ATTACK_ROOM 3004
@@ -3340,6 +3358,8 @@ int attack_rats(struct char_data *ch, int cmd, char *arg, struct char_data *mob,
   }
 
   go_direction(ch, dir);
+
+  return FALSE;
 }
 
 #define WHO_TO_HUNT 6112  /* green dragon */
@@ -3673,7 +3693,7 @@ int SlotMachine(struct char_data *ch, int cmd, char *arg, struct obj_data *obj,
 
 int astral_portal(struct char_data *ch, int cmd, char *arg,
                   struct char_data *mob, int type) {
-  int destination[ 20 ];
+  int destination[ 25 ];
   char buf[ 50 ];
   int j;
   struct char_data *portal;
@@ -3711,8 +3731,8 @@ int astral_portal(struct char_data *ch, int cmd, char *arg,
   if (cmd == 7) { /* enter */
     one_argument(arg, buf);
     if (*buf) {
-      if ((str_cmp("pool", buf)) || (str_cmp("color", buf))) {
-        if (portal = get_char_room("color pool", ch->in_room)) {
+      if ((strcmp("pool", buf)) || (strcmp("color", buf))) {
+        if ((portal = get_char_room("color pool", ch->in_room))) {
           j = destination[ mob_index[ portal->nr ].virtual - AST_MOB_NUM ];
           if (j > 0 && j < 32000) {
             send_to_char("\n\r", ch);
@@ -3767,7 +3787,7 @@ int astral_portal(struct char_data *ch, int cmd, char *arg,
 
         /* hey, is there another pool in the room I am going to? */
 
-        if (portal = get_char_room("color pool", going_to))
+        if ((portal = get_char_room("color pool", going_to)))
           continue;
 
         go_direction(ch, door);
@@ -3894,6 +3914,8 @@ int DwarvenMiners(struct char_data *ch, int cmd, char *arg,
 
     return (FALSE);
   }
+
+  return FALSE;
 }
 
 /* From the appendages of Gecko... (now you know who to blame =) */

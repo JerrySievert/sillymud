@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 #include "protos.h"
 
@@ -385,7 +386,7 @@ void half_chop(char *string, char *arg1, char *arg2) {
   for (; isspace(*string); string++)
     ;
 
-  for (; *arg2 = *string; string++, arg2++)
+  for (; (*arg2 = *string); string++, arg2++)
     ;
 }
 
@@ -787,7 +788,7 @@ int _parse_name(char *arg, char *name) {
   for (; isspace(*arg); arg++)
     ;
 
-  for (i = 0; *name = *arg; arg++, i++, name++)
+  for (i = 0; (*name = *arg); arg++, i++, name++)
     if ((*arg < 0) || !isalpha(*arg) || i > 15)
       return (1);
 
@@ -1422,7 +1423,7 @@ void nanny(struct descriptor_data *d, char *arg) {
     d->character->player.class = 0;
     count                      = 0;
     oops                       = FALSE;
-    for (; *arg && count < 3 && !oops; *arg++) {
+    for (; *arg && count < 3 && !oops; arg++) {
       if (count && GET_RACE(d->character) == RACE_HUMANTWO)
         break;
       switch (*arg) {

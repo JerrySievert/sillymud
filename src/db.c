@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+#include <stdlib.h>
 
 #include "protos.h"
 
@@ -190,7 +191,7 @@ void boot_db( ) {
     zone_table[ i ].start = 0;
 
     if (i == 0) {
-      fprintf(stderr, "Performing boot-time reload of static mobs\n", s);
+      fprintf(stderr, "Performing boot-time reload of static mobs\n");
       reset_zone(0);
     }
 
@@ -348,7 +349,7 @@ void build_player_index( ) {
       player_table[ nr ].nr = nr;
 
       CREATE(player_table[ nr ].name, char, strlen(dummy.name) + 1);
-      for (i = 0; *(player_table[ nr ].name + i) = LOWER(*(dummy.name + i));
+      for (i = 0; (*(player_table[ nr ].name + i) = LOWER(*(dummy.name + i)));
            i++)
         ;
 
@@ -388,7 +389,7 @@ void build_player_index( ) {
   sprintf(buf, "-* Creator and Supreme Being [%d/1] *-\n\r",
           list_wiz.number[ 10 ]);
 
-  center = (38 - (int)(str_len(buf) / 2));
+  center = (38 - (int)(strlen(buf) / 2));
   debug("center computed.");
   for (i = 0; i <= center; i++)
     strcat(wizlist, " ");
@@ -399,7 +400,7 @@ void build_player_index( ) {
     sprintf(buf, "%s %s\n\r", list_wiz.lookup[ 10 ].stuff[ i ].name,
             list_wiz.lookup[ 10 ].stuff[ i ].title);
 
-    center = 38 - (int)(str_len(buf) / 2);
+    center = 38 - (int)(strlen(buf) / 2);
     for (j = 0; j <= center; j++)
       strcat(wizlist, " ");
     strcat(wizlist, buf);
@@ -410,7 +411,7 @@ void build_player_index( ) {
 
   sprintf(buf, "-* Designers/Administrators [%d/2] *-\n\r",
           list_wiz.number[ 9 ]);
-  center = 38 - (int)(str_len(buf) / 2);
+  center = 38 - (int)(strlen(buf) / 2);
 
   for (i = 0; i <= center; i++)
     strcat(wizlist, " ");
@@ -419,7 +420,7 @@ void build_player_index( ) {
   for (i = 0; i < list_wiz.number[ 9 ]; i++) {
     sprintf(buf, "%s %s\n\r", list_wiz.lookup[ 9 ].stuff[ i ].name,
             list_wiz.lookup[ 9 ].stuff[ i ].title);
-    center = 38 - (int)(str_len(buf) / 2);
+    center = 38 - (int)(strlen(buf) / 2);
     for (j = 0; j <= center; j++)
       strcat(wizlist, " ");
     strcat(wizlist, buf);
@@ -428,7 +429,7 @@ void build_player_index( ) {
   strcat(wizlist, "\n\r\n\r");
 
   sprintf(buf, "-* Implementors [%d/5] *-\n\r", list_wiz.number[ 8 ]);
-  center = 38 - (int)(str_len(buf) / 2);
+  center = 38 - (int)(strlen(buf) / 2);
 
   for (i = 0; i <= center; i++)
     strcat(wizlist, " ");
@@ -437,7 +438,7 @@ void build_player_index( ) {
   for (i = 0; i < list_wiz.number[ 8 ]; i++) {
     sprintf(buf, "%s %s\n\r", list_wiz.lookup[ 8 ].stuff[ i ].name,
             list_wiz.lookup[ 8 ].stuff[ i ].title);
-    center = 38 - (int)(str_len(buf) / 2);
+    center = 38 - (int)(strlen(buf) / 2);
     for (j = 0; j <= center; j++)
       strcat(wizlist, " ");
     strcat(wizlist, buf);
@@ -448,7 +449,7 @@ void build_player_index( ) {
 
   sprintf(buf, "-* Gods of Final Judgement [%d/6] *-\n\r",
           list_wiz.number[ 7 ]);
-  center = 38 - (int)(str_len(buf) / 2);
+  center = 38 - (int)(strlen(buf) / 2);
 
   for (i = 0; i <= center; i++)
     strcat(wizlist, " ");
@@ -457,7 +458,7 @@ void build_player_index( ) {
   for (i = 0; i < list_wiz.number[ 7 ]; i++) {
     sprintf(buf, "%s %s\n\r", list_wiz.lookup[ 7 ].stuff[ i ].name,
             list_wiz.lookup[ 7 ].stuff[ i ].title);
-    center = 38 - (int)(str_len(buf) / 2);
+    center = 38 - (int)(strlen(buf) / 2);
     for (j = 0; j <= center; j++)
       strcat(wizlist, " ");
     strcat(wizlist, buf);
@@ -467,7 +468,7 @@ void build_player_index( ) {
   debug("Gods of Final Judgement Generated.");
 
   sprintf(buf, "-* Gods of Judgement [%d/8] *-\n\r", list_wiz.number[ 6 ]);
-  center = 38 - (int)(str_len(buf) / 2);
+  center = 38 - (int)(strlen(buf) / 2);
 
   for (i = 0; i <= center; i++)
     strcat(wizlist, " ");
@@ -476,7 +477,7 @@ void build_player_index( ) {
   for (i = 0; i < list_wiz.number[ 6 ]; i++) {
     sprintf(buf, "%s %s\n\r", list_wiz.lookup[ 6 ].stuff[ i ].name,
             list_wiz.lookup[ 6 ].stuff[ i ].title);
-    center = 38 - (int)(str_len(buf) / 2);
+    center = 38 - (int)(strlen(buf) / 2);
     for (j = 0; j <= center; j++)
       strcat(wizlist, " ");
     strcat(wizlist, buf);
@@ -485,7 +486,7 @@ void build_player_index( ) {
   strcat(wizlist, "\n\r\n\r");
 
   sprintf(buf, "-* Greater Gods [%d/10] *-\n\r", list_wiz.number[ 5 ]);
-  center = 38 - (int)(str_len(buf) / 2);
+  center = 38 - (int)(strlen(buf) / 2);
 
   for (i = 0; i <= center; i++)
     strcat(wizlist, " ");
@@ -494,7 +495,7 @@ void build_player_index( ) {
   for (i = 0; i < list_wiz.number[ 5 ]; i++) {
     sprintf(buf, "%s %s\n\r", list_wiz.lookup[ 5 ].stuff[ i ].name,
             list_wiz.lookup[ 5 ].stuff[ i ].title);
-    center = 38 - (int)(str_len(buf) / 2);
+    center = 38 - (int)(strlen(buf) / 2);
     for (j = 0; j <= center; j++)
       strcat(wizlist, " ");
     strcat(wizlist, buf);
@@ -503,7 +504,7 @@ void build_player_index( ) {
   strcat(wizlist, "\n\r\n\r");
 
   sprintf(buf, "-* Gods [%d/12] *-\n\r", list_wiz.number[ 4 ]);
-  center = 38 - (int)(str_len(buf) / 2);
+  center = 38 - (int)(strlen(buf) / 2);
 
   for (i = 0; i <= center; i++)
     strcat(wizlist, " ");
@@ -512,7 +513,7 @@ void build_player_index( ) {
   for (i = 0; i < list_wiz.number[ 4 ]; i++) {
     sprintf(buf, "%s %s\n\r", list_wiz.lookup[ 4 ].stuff[ i ].name,
             list_wiz.lookup[ 4 ].stuff[ i ].title);
-    center = 38 - (int)(str_len(buf) / 2);
+    center = 38 - (int)(strlen(buf) / 2);
     for (j = 0; j <= center; j++)
       strcat(wizlist, " ");
     strcat(wizlist, buf);
@@ -521,7 +522,7 @@ void build_player_index( ) {
   strcat(wizlist, "\n\r\n\r");
 
   sprintf(buf, "-* Demi-Gods [%d/14] *-\n\r", list_wiz.number[ 3 ]);
-  center = 38 - (int)(str_len(buf) / 2);
+  center = 38 - (int)(strlen(buf) / 2);
 
   for (i = 0; i <= center; i++)
     strcat(wizlist, " ");
@@ -530,7 +531,7 @@ void build_player_index( ) {
   for (i = 0; i < list_wiz.number[ 3 ]; i++) {
     sprintf(buf, "%s %s\n\r", list_wiz.lookup[ 3 ].stuff[ i ].name,
             list_wiz.lookup[ 3 ].stuff[ i ].title);
-    center = 38 - (int)(str_len(buf) / 2);
+    center = 38 - (int)(strlen(buf) / 2);
     for (j = 0; j <= center; j++)
       strcat(wizlist, " ");
     strcat(wizlist, buf);
@@ -539,7 +540,7 @@ void build_player_index( ) {
   strcat(wizlist, "\n\r\n\r");
 
   sprintf(buf, "-* Saints [%d/30] *-\n\r", list_wiz.number[ 2 ]);
-  center = 38 - (int)(str_len(buf) / 2);
+  center = 38 - (int)(strlen(buf) / 2);
 
   for (i = 0; i <= center; i++)
     strcat(wizlist, " ");
@@ -548,7 +549,7 @@ void build_player_index( ) {
   for (i = 0; i < list_wiz.number[ 2 ]; i++) {
     sprintf(buf, "%s %s\n\r", list_wiz.lookup[ 2 ].stuff[ i ].name,
             list_wiz.lookup[ 2 ].stuff[ i ].title);
-    center = 38 - (int)(str_len(buf) / 2);
+    center = 38 - (int)(strlen(buf) / 2);
     for (j = 0; j <= center; j++)
       strcat(wizlist, " ");
     strcat(wizlist, buf);
@@ -557,7 +558,7 @@ void build_player_index( ) {
   strcat(wizlist, "\n\r\n\r");
 
   sprintf(buf, "-* Immortals of Creation [%d/50] *-\n\r", list_wiz.number[ 1 ]);
-  center = 38 - (int)(str_len(buf) / 2);
+  center = 38 - (int)(strlen(buf) / 2);
 
   for (i = 0; i <= center; i++)
     strcat(wizlist, " ");
@@ -566,7 +567,7 @@ void build_player_index( ) {
   for (i = 0; i < list_wiz.number[ 1 ]; i++) {
     sprintf(buf, "%s %s\n\r", list_wiz.lookup[ 1 ].stuff[ i ].name,
             list_wiz.lookup[ 1 ].stuff[ i ].title);
-    center = 38 - (int)(str_len(buf) / 2);
+    center = 38 - (int)(strlen(buf) / 2);
     for (j = 0; j <= center; j++)
       strcat(wizlist, " ");
     strcat(wizlist, buf);
@@ -575,7 +576,7 @@ void build_player_index( ) {
   strcat(wizlist, "\n\r\n\r");
 
   sprintf(buf, "-* Immortals [%d/~] *-\n\r", list_wiz.number[ 0 ]);
-  center = 38 - (int)(str_len(buf) / 2);
+  center = 38 - (int)(strlen(buf) / 2);
 
   for (i = 0; i <= center; i++)
     strcat(wizlist, " ");
@@ -584,7 +585,7 @@ void build_player_index( ) {
   for (i = 0; i < list_wiz.number[ 0 ]; i++) {
     sprintf(buf, "%s %s\n\r", list_wiz.lookup[ 0 ].stuff[ i ].name,
             list_wiz.lookup[ 0 ].stuff[ i ].title);
-    center = 38 - (int)(str_len(buf) / 2);
+    center = 38 - (int)(strlen(buf) / 2);
     for (j = 0; j <= center; j++)
       strcat(wizlist, " ");
     strcat(wizlist, buf);
@@ -718,25 +719,25 @@ void load_one_room(FILE *fl, struct room_data *rp) {
     }
     rp->zone = zone;
   }
-  fscanf(fl, " %d ", &tmp);
+  fscanf(fl, " %ld ", &tmp);
   rp->room_flags = tmp;
-  fscanf(fl, " %d ", &tmp);
+  fscanf(fl, " %ld ", &tmp);
   rp->sector_type = tmp;
 
   if (tmp == -1) {
-    fscanf(fl, " %d", &tmp);
+    fscanf(fl, " %ld", &tmp);
     rp->tele_time = tmp;
-    fscanf(fl, " %d", &tmp);
+    fscanf(fl, " %ld", &tmp);
     rp->tele_targ = tmp;
-    fscanf(fl, " %d", &tmp);
+    fscanf(fl, " %ld", &tmp);
     rp->tele_mask = tmp;
     if (IS_SET(TELE_COUNT, rp->tele_mask)) {
-      fscanf(fl, "%d ", &tmp);
+      fscanf(fl, "%ld ", &tmp);
       rp->tele_cnt = tmp;
     } else {
       rp->tele_cnt = 0;
     }
-    fscanf(fl, " %d", &tmp);
+    fscanf(fl, " %ld", &tmp);
     rp->sector_type = tmp;
   } else {
     rp->tele_time = 0;
@@ -747,14 +748,14 @@ void load_one_room(FILE *fl, struct room_data *rp) {
 
   if (tmp == SECT_WATER_NOSWIM || tmp == SECT_UNDERWATER) { /* river */
     /* read direction and rate of flow */
-    fscanf(fl, " %d ", &tmp);
+    fscanf(fl, " %ld ", &tmp);
     rp->river_speed = tmp;
-    fscanf(fl, " %d ", &tmp);
+    fscanf(fl, " %ld ", &tmp);
     rp->river_dir = tmp;
   }
 
   if (rp->room_flags & TUNNEL) { /* read in mobile limit on tunnel */
-    fscanf(fl, " %d ", &tmp);
+    fscanf(fl, " %ld ", &tmp);
     rp->moblim = tmp;
   }
 
@@ -1047,10 +1048,10 @@ void boot_zones( ) {
       cc = 20;
 
     for (expand = 1;;) {
-      if (expand)
-        if (!cmd_no)
+      if (expand) {
+        if (!cmd_no) {
           CREATE(zone_table[ zon ].cmd, struct reset_com, cc);
-        else if (cmd_no >= cc) {
+        } else if (cmd_no >= cc) {
           cc += 5;
           if (!(zone_table[ zon ].cmd = (struct reset_com *)realloc(
                     zone_table[ zon ].cmd, (cc * sizeof(struct reset_com))))) {
@@ -1058,6 +1059,7 @@ void boot_zones( ) {
             assert(0);
           }
         }
+      }
 
       expand = 1;
 
@@ -1929,7 +1931,7 @@ void reset_zone(int zone) {
             } else {
               last_cmd = 0;
             }
-          } else if (obj = read_object(ZCMD.arg1, REAL)) {
+          } else if ((obj = read_object(ZCMD.arg1, REAL))) {
             sprintf(buf, "Error finding room #%d", ZCMD.arg3);
             debug(buf);
             last_cmd = 1;
@@ -2326,7 +2328,7 @@ int create_entry(char *name) {
   CREATE(player_table[ top_of_p_table ].name, char, strlen(name) + 1);
 
   /* copy lowercase equivalent of name to table field */
-  for (i = 0; *(player_table[ top_of_p_table ].name + i) = LOWER(*(name + i));
+  for (i = 0; (*(player_table[ top_of_p_table ].name + i) = LOWER(*(name + i)));
        i++)
     ;
 
@@ -2360,7 +2362,7 @@ void save_char(struct char_data *ch, sh_int load_room) {
     tmp = 0;
   }
 
-  if (expand = (ch->desc->pos > top_of_p_file)) {
+  if ((expand = (ch->desc->pos > top_of_p_file))) {
     strcpy(mode, "a");
     top_of_p_file++;
   } else
@@ -2424,7 +2426,7 @@ char *fread_string(FILE *f1) {
   if (i == MAX_STRING_LENGTH - 3) { /* We filled the buffer */
     buf[ i ] = '\0';
     debug("File too long (fread_string).");
-    while (tmp = fgetc(f1))
+    while ((tmp = fgetc(f1)))
       if (tmp == '~')
         break;
   }
@@ -2900,13 +2902,6 @@ int ObjRoomCount(int nr, struct room_data *rp) {
   return (count);
 }
 
-int str_len(char *buf) {
-  int i = 0;
-  for (i; buf[ i ] != '\0'; i++)
-    ;
-  return (i);
-}
-
 int load( ) { return (0); }
 
 void gr( ) { return; }
@@ -3018,7 +3013,7 @@ void InitScripts( ) {
       buf[ strlen(buf) - 1 ] = '\0';
 
     if (strlen(buf) < 4) { /* no way we can get a valid thing in less */
-      sprintf(buf, "%s read in, garbage.");
+      sprintf(buf, "%s read in, garbage.", buf);
       debug(buf);
     }
 
@@ -3209,7 +3204,7 @@ void SaveTheWorld( ) {
 #endif
 }
 
-int ReadTextZone(FILE *fl) {
+void ReadTextZone(FILE *fl) {
   while (1) {
     char c, buf[ 255 ], count = 0, last_cmd = 1;
     int i, j, k, tmp, zone = 0;
@@ -3301,7 +3296,7 @@ int ReadTextZone(FILE *fl) {
             } else {
               last_cmd = 0;
             }
-          } else if (obj = read_object(i, VIRTUAL)) {
+          } else if ((obj = read_object(i, VIRTUAL))) {
             sprintf(buf, "Error finding room #%d", k);
             debug(buf);
             last_cmd = 1;

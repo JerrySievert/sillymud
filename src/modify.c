@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+#include <stdlib.h>
 
 #include "protos.h"
 
@@ -55,7 +56,7 @@ void string_add(struct descriptor_data *d, char *str) {
 
   /* determine if this is the terminal string, and truncate if so */
   for (scan = str; *scan; scan++)
-    if (terminator = (*scan == '@')) {
+    if ((terminator = (*scan == '@'))) {
       *scan = '\0';
       break;
     }
@@ -120,7 +121,7 @@ void quad_arg(char *arg, int *type, char *name, int *field, char *string) {
   /* string */
   for (; isspace(*arg); arg++)
     ;
-  for (; *string = *arg; arg++, string++)
+  for (; (*string = *arg); arg++, string++)
     ;
 
   return;
@@ -348,7 +349,7 @@ void bisect_arg(char *arg, int *field, char *string) {
   /* string */
   for (; isspace(*arg); arg++)
     ;
-  for (; *string = *arg; arg++, string++)
+  for (; (*string = *arg); arg++, string++)
     ;
 
   return;
@@ -357,7 +358,7 @@ void bisect_arg(char *arg, int *field, char *string) {
 void do_edit(struct char_data *ch, char *arg, int cmd) {
   int field, dflags, dir, exroom, dkey, rspeed, rdir, tele_room, tele_time,
       tele_mask, moblim, tele_cnt;
-  unsigned r_flags;
+  int r_flags;
   int s_type;
   char name[ MAX_INPUT_LENGTH ], string[ 512 ], buf[ 132 ];
   struct extra_descr_data *ed, *tmp;
@@ -838,15 +839,17 @@ void night_watchman( ) {
   tc     = time(0);
   t_info = localtime(&tc);
 
-  if ((t_info->tm_hour == 8) && (t_info->tm_wday > 0) && (t_info->tm_wday < 6))
+  if ((t_info->tm_hour == 8) && (t_info->tm_wday > 0) && (t_info->tm_wday < 6)) {
     if (t_info->tm_min > 50) {
       debug("Leaving the scene for the serious folks.");
       send_to_all("Closing down. Thank you for flying DikuMUD.\n\r");
       mudshutdown = 1;
-    } else if (t_info->tm_min > 40)
+    } else if (t_info->tm_min > 40) {
       send_to_all("ATTENTION: DikuMUD will shut down in 10 minutes.\n\r");
-    else if (t_info->tm_min > 30)
+    } else if (t_info->tm_min > 30) {
       send_to_all("Warning: The game will close in 20 minutes.\n\r");
+    }
+  }
 }
 
 void check_reboot( ) {
@@ -855,13 +858,13 @@ void check_reboot( ) {
   char dummy;
   FILE *boot;
 
-  extern int mudshutdown, reboot;
+  extern int mudshutdown, restart;
 
   tc     = time(0);
   t_info = localtime(&tc);
 
   if ((t_info->tm_hour + 1) == REBOOT_AT && t_info->tm_min > 30)
-    if (boot = fopen("./reboot", "r")) {
+    if ((boot = fopen("./reboot", "r"))) {
       if (t_info->tm_min > 50) {
         debug("Reboot exists.");
         fread(&dummy, sizeof(dummy), 1, boot);
@@ -879,7 +882,7 @@ void check_reboot( ) {
         }
 
         send_to_all("Automatic reboot. Come back in a little while.\n\r");
-        mudshutdown = reboot = 1;
+        mudshutdown = restart = 1;
       } else if (t_info->tm_min > 40)
         send_to_all("ATTENTION: DikuMUD will reboot in 10 minutes.\n\r");
       else if (t_info->tm_min > 30)

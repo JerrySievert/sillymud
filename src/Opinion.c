@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+#include <stdlib.h>
 
 #include "protos.h"
 
@@ -18,7 +19,7 @@
 extern struct index_data *mob_index;
 extern struct room_data *world;
 
-int FreeHates(struct char_data *ch) {
+void FreeHates(struct char_data *ch) {
   struct char_list *k, *n;
 
   for (k = ch->hates.clist; k; k = n) {
@@ -27,7 +28,7 @@ int FreeHates(struct char_data *ch) {
   }
 }
 
-int FreeFears(struct char_data *ch) {
+void FreeFears(struct char_data *ch) {
   struct char_list *k, *n;
 
   for (k = ch->fears.clist; k; k = n) {
@@ -154,12 +155,16 @@ int AddHatred(struct char_data *ch, int parm_type, int parm) {
   if (!IS_SET(ch->specials.act, ACT_HATEFUL)) {
     SET_BIT(ch->specials.act, ACT_HATEFUL);
   }
+
+  return TRUE;
 }
 
 int RemHatred(struct char_data *ch, unsigned short bitv) {
   REMOVE_BIT(ch->hatefield, bitv);
   if (!ch->hatefield)
     REMOVE_BIT(ch->specials.act, ACT_HATEFUL);
+
+  return TRUE;
 }
 
 int Hates(struct char_data *ch, struct char_data *v) {
@@ -400,6 +405,8 @@ int AddFears(struct char_data *ch, int parm_type, int parm) {
   if (!IS_SET(ch->specials.act, ACT_AFRAID)) {
     SET_BIT(ch->specials.act, ACT_AFRAID);
   }
+
+  return TRUE;
 }
 
 struct char_data *FindAHatee(struct char_data *ch) {

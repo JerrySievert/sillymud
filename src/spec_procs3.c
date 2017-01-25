@@ -8,6 +8,7 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "protos.h"
 
@@ -626,6 +627,8 @@ int timnus(struct char_data *ch, int cmd, char *arg, struct char_data *mob,
       }
     }
   }
+
+  return FALSE;
 }
 
 int winger(struct char_data *ch, int cmd, char *arg, struct char_data *mob,

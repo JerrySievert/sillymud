@@ -6,6 +6,8 @@
 
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "protos.h"
 
@@ -267,7 +269,7 @@ void spell_fireball(byte level, struct char_data *ch, struct char_data *victim,
 	 }
       } else {
 	 if (tmp_victim->in_room != NOWHERE) {
-            if (real_roomp(ch->in_room)->zone == 
+            if (real_roomp(ch->in_room)->zone ==
 		real_roomp(tmp_victim->in_room)->zone) {
                 send_to_char("You feel a blast of hot air.\n\r", tmp_victim);
 	    }
@@ -2111,7 +2113,7 @@ void spell_identify(byte level, struct char_data *ch, struct char_data *victim,
           strcat(buf2, "\n\r");
           break;
         case APPLY_ATTACKS:
-          sprintf(buf2, "%f\n\r", obj->affected[ i ].modifier / 10);
+          sprintf(buf2, "%ld\n\r", obj->affected[ i ].modifier / 10);
           break;
         case APPLY_WEAPON_SPELL:
         case APPLY_EAT_SPELL:
@@ -2123,7 +2125,7 @@ void spell_identify(byte level, struct char_data *ch, struct char_data *victim,
           break;
 
         default:
-          sprintf(buf2, "%d\n\r", obj->affected[ i ].modifier);
+          sprintf(buf2, "%ld\n\r", obj->affected[ i ].modifier);
           break;
         }
         send_to_char(buf2, ch);

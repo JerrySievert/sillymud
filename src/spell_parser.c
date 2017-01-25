@@ -6,6 +6,8 @@
 
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "protos.h"
 
@@ -788,7 +790,7 @@ struct syllable syls[] = {
   { "y", "l" },        { "z", "k" },        { "", "" }
 };
 
-say_spell(struct char_data *ch, int si) {
+void say_spell(struct char_data *ch, int si) {
   char buf[ MAX_STRING_LENGTH ], splwd[ MAX_BUF_LENGTH ];
   char buf2[ MAX_STRING_LENGTH ];
 
@@ -1031,7 +1033,7 @@ void do_cast(struct char_data *ch, char *argument, int cmd) {
 
         if (*name) {
           if (IS_SET(skill_info[ spl ].targets, TAR_CHAR_ROOM)) {
-            if (tar_char = get_char_room_vis(ch, name)) {
+            if ((tar_char = get_char_room_vis(ch, name))) {
               if (tar_char == ch || tar_char == ch->specials.fighting ||
                   tar_char->attackers < 6 || tar_char->specials.fighting == ch)
                 target_ok = TRUE;
@@ -1045,20 +1047,20 @@ void do_cast(struct char_data *ch, char *argument, int cmd) {
             }
           }
           if (!target_ok && IS_SET(skill_info[ spl ].targets, TAR_CHAR_WORLD))
-            if (tar_char = get_char_vis(ch, name))
+            if ((tar_char = get_char_vis(ch, name)))
               target_ok = TRUE;
 
           if (!target_ok && IS_SET(skill_info[ spl ].targets, TAR_OBJ_INV))
-            if (tar_obj = get_obj_in_list_vis(ch, name, ch->carrying))
+            if ((tar_obj = get_obj_in_list_vis(ch, name, ch->carrying)))
               target_ok = TRUE;
 
           if (!target_ok && IS_SET(skill_info[ spl ].targets, TAR_OBJ_ROOM))
-            if (tar_obj = get_obj_in_list_vis(
-                    ch, name, real_roomp(ch->in_room)->contents))
+            if ((tar_obj = get_obj_in_list_vis(
+                    ch, name, real_roomp(ch->in_room)->contents)))
               target_ok = TRUE;
 
           if (!target_ok && IS_SET(skill_info[ spl ].targets, TAR_OBJ_WORLD))
-            if (tar_obj = get_obj_vis(ch, name))
+            if ((tar_obj = get_obj_vis(ch, name)))
               target_ok = TRUE;
 
           if (!target_ok && IS_SET(skill_info[ spl ].targets, TAR_OBJ_EQUIP)) {
@@ -2056,6 +2058,8 @@ int check_falling(struct char_data *ch) {
     do_look(ch, "", 0);
     return (FALSE);
   }
+
+  return FALSE;
 }
 
 void check_drowning(struct char_data *ch) {
@@ -2191,10 +2195,10 @@ void check_falling_obj(struct obj_data *obj, int room) {
   }
 }
 
-int check_nature(struct char_data *i) {
+void check_nature(struct char_data *i) {
 
   if (check_falling(i)) {
-    return (TRUE);
+    return;
   }
   check_drowning(i);
 }

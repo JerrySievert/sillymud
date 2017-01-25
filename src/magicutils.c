@@ -15,7 +15,7 @@ extern struct obj_data *object_list;
 extern struct char_data *character_list;
 extern struct skill_data skill_info[ MAX_SPL_LIST ];
 
-SwitchStuff(struct char_data *giver, struct char_data *taker) {
+void SwitchStuff(struct char_data *giver, struct char_data *taker) {
   struct obj_data *obj, *next;
   float ratio;
   int j;
@@ -86,7 +86,7 @@ SwitchStuff(struct char_data *giver, struct char_data *taker) {
   GET_ALIGNMENT(taker)         = GET_ALIGNMENT(giver);
 }
 
-FailCharm(struct char_data *victim, struct char_data *ch) {
+void FailCharm(struct char_data *victim, struct char_data *ch) {
   if (!IS_PC(victim)) {
 
     AddHated(victim, ch);
@@ -107,7 +107,7 @@ FailCharm(struct char_data *victim, struct char_data *ch) {
   }
 }
 
-FailSnare(struct char_data *victim, struct char_data *ch) {
+void FailSnare(struct char_data *victim, struct char_data *ch) {
   if (!IS_PC(victim)) {
     if (!victim->specials.fighting) {
       set_fighting(victim, ch);
@@ -117,7 +117,7 @@ FailSnare(struct char_data *victim, struct char_data *ch) {
   }
 }
 
-FailSleep(struct char_data *victim, struct char_data *ch) {
+void FailSleep(struct char_data *victim, struct char_data *ch) {
 
   send_to_char("You feel sleepy for a moment,but then you recover\n\r", victim);
   if (!IS_PC(victim)) {
@@ -136,7 +136,7 @@ FailSleep(struct char_data *victim, struct char_data *ch) {
   }
 }
 
-FailPara(struct char_data *victim, struct char_data *ch) {
+void FailPara(struct char_data *victim, struct char_data *ch) {
   send_to_char("You feel frozen for a moment,but then you recover\n\r", victim);
   if (!IS_PC(victim)) {
     AddHated(victim, ch);
@@ -154,7 +154,7 @@ FailPara(struct char_data *victim, struct char_data *ch) {
   }
 }
 
-FailCalm(struct char_data *victim, struct char_data *ch) {
+void FailCalm(struct char_data *victim, struct char_data *ch) {
   send_to_char("You feel happy and easygoing, but the effect soon fades.\n\r",
                victim);
   if (!IS_PC(victim))

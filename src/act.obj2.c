@@ -8,6 +8,7 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "protos.h"
 
@@ -38,11 +39,11 @@ void weight_change_object(struct obj_data *obj, int weight) {
 
   if (obj->in_room != NOWHERE) {
     GET_OBJ_WEIGHT(obj) += weight;
-  } else if (tmp_ch = obj->carried_by) {
+  } else if ((tmp_ch = obj->carried_by)) {
     obj_from_char(obj);
     GET_OBJ_WEIGHT(obj) += weight;
     obj_to_char(obj, tmp_ch);
-  } else if (tmp_obj = obj->in_obj) {
+  } else if ((tmp_obj = obj->in_obj)) {
     obj_from_obj(obj);
     GET_OBJ_WEIGHT(obj) += weight;
     obj_to_obj(obj, tmp_obj);
@@ -485,7 +486,7 @@ void do_taste(struct char_data *ch, char *argument, int cmd) {
 
 /* functions related to wear */
 
-perform_wear(struct char_data *ch, struct obj_data *obj_object, int keyword) {
+void perform_wear(struct char_data *ch, struct obj_data *obj_object, int keyword) {
   switch (keyword) {
   case 0:
     act("$n lights $p and holds it.", FALSE, ch, obj_object, 0, TO_ROOM);

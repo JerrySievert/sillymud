@@ -5,6 +5,8 @@
 */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "protos.h"
 
@@ -528,11 +530,11 @@ int find_path(int in_room, int (*predicate)( ), void *c_data, int depth,
 #else
   struct nodes x_room[ MAX_ROOMS ];
 #endif
-  int i, tmp_room, count = 0, thru_doors;
+  int tmp_room, count = 0, thru_doors;
   struct room_data *herep, *therep;
   struct room_data *startp;
   struct room_direction_data *exitp;
-
+  long i;
   /* If start = destination we are done */
   if ((predicate)(in_room, c_data))
     return (-69); /* <grin> couldn't return a direction */
@@ -635,11 +637,11 @@ int find_path(int in_room, int (*predicate)( ), void *c_data, int depth,
 }
 
 int choose_exit_global(int in_room, int tgt_room, int depth) {
-  return find_path(in_room, is_target_room_p, (void *)tgt_room, depth, 0);
+  return find_path(in_room, is_target_room_p, (void *)(long)tgt_room, depth, 0);
 }
 
 int choose_exit_in_zone(int in_room, int tgt_room, int depth) {
-  return find_path(in_room, is_target_room_p, (void *)tgt_room, depth, 1);
+  return find_path(in_room, is_target_room_p, (void *)(long)tgt_room, depth, 1);
 }
 
 int go_direction(struct char_data *ch, int dir) {
@@ -652,6 +654,8 @@ int go_direction(struct char_data *ch, int dir) {
     open_door(ch, dir);
     return 0;
   }
+
+  return 0;
 }
 
 void slam_into_wall(struct char_data *ch, struct room_direction_data *exitp) {
@@ -1257,7 +1261,7 @@ void do_palm(struct char_data *ch, char *arg, int cmd) {
             obj_from_room(obj_object);
             obj_to_char(obj_object, ch);
             act("You get $p.", 0, ch, obj_object, 0, TO_CHAR);
-            if ((obj_object->obj_flags.type_flag == ITEM_MONEY)) {
+            if (obj_object->obj_flags.type_flag == ITEM_MONEY) {
               if (obj_object->obj_flags.value[ 0 ] < 1)
                 obj_object->obj_flags.value[ 0 ] = 1;
               obj_from_char(obj_object);
@@ -1320,7 +1324,7 @@ void do_palm(struct char_data *ch, char *arg, int cmd) {
                   obj_to_char(obj_object, ch);
                   act("You get $p from $P.", 0, ch, obj_object, sub_object,
                       TO_CHAR);
-                  if ((obj_object->obj_flags.type_flag == ITEM_MONEY)) {
+                  if (obj_object->obj_flags.type_flag == ITEM_MONEY) {
                     if (obj_object->obj_flags.value[ 0 ] < 1)
                       obj_object->obj_flags.value[ 0 ] = 1;
                     obj_from_char(obj_object);
@@ -1562,7 +1566,7 @@ void do_makepotion(struct char_data *ch, char *argument, int cmd) {
 
   extract_obj(potion);
 
-  if (which_potion)
+  if (which_potion) {
     if (!max || GetMaxLevel(ch) < max) {
       send_to_char("This brew is beyond your powers.\n\r", ch);
       return;
@@ -1572,7 +1576,8 @@ void do_makepotion(struct char_data *ch, char *argument, int cmd) {
         return;
       }
     }
-
+  }
+  
   if (GET_ITEM_TYPE(o) == ITEM_CONTAINER) { /* it better be */
     /* our cauldron must contain ONLY the right ingredients */
     for (in_o = o->contains, i = 0, match = ingredients; in_o; in_o = next) {

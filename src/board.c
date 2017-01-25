@@ -7,6 +7,9 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <time.h>
+#include <string.h>
 
 #include "protos.h"
 
@@ -389,7 +392,7 @@ void board_load_board( ) {
     the_file              = fopen(save_file[ bnum ], "r");
     if (!the_file) {
       sprintf(buf, "Can't open message file for board %d.\n\r", bnum);
-      debug(buf, 0);
+      debug(buf);
       continue;
     }
 

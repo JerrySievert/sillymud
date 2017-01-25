@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "protos.h"
 
@@ -231,13 +232,16 @@ void do_backstab(struct char_data *ch, char *argument, int cmd) {
 
     if (ch->skills && ch->skills[ SKILL_BACKSTAB ].learned) {
       if (percent > ch->skills[ SKILL_BACKSTAB ].learned) {
-        if (AWAKE(victim))
-          if (!number(0, 1))
+        if (AWAKE(victim)) {
+          if (!number(0, 1)) {
             act("Drats, you meant to insert $p a little more to the left!",
                 FALSE, ch, ch->equipment[ WIELD ], 0, TO_CHAR);
-          else
+          } else {
             act("Drats, you meant to insert $p a little more to the right!",
                 FALSE, ch, ch->equipment[ WIELD ], 0, TO_CHAR);
+          }
+        }
+
         if (AWAKE(victim)) {
           damage(ch, victim, 0, SKILL_BACKSTAB);
           AddHated(victim, ch);
@@ -451,7 +455,7 @@ void do_flee(struct char_data *ch, char *argument, int cmd) {
             found = TRUE;
 
             if (RIDDEN(ch)) {
-              if ((die = MoveOne(RIDDEN(ch), attempt, FALSE)) == 1) {
+              if ((die = MoveOne(RIDDEN(ch), attempt)) == 1) {
                 /* The escape has succeded */
                 send_to_char("You flee head over heels.\n\r", ch);
                 break;
@@ -464,7 +468,7 @@ void do_flee(struct char_data *ch, char *argument, int cmd) {
                 /* return; */
               }
             } else {
-              if ((die = MoveOne(ch, attempt, FALSE)) == 1) {
+              if ((die = MoveOne(ch, attempt)) == 1) {
                 /* The escape has succeded */
                 send_to_char("You flee head over heels.\n\r", ch);
                 break;
@@ -665,7 +669,7 @@ void do_flee(struct char_data *ch, char *argument, int cmd) {
 
             found = TRUE;
             if (RIDDEN(ch)) {
-              if ((die = MoveOne(RIDDEN(ch), attempt, FALSE)) == 1) {
+              if ((die = MoveOne(RIDDEN(ch), attempt)) == 1) {
                 /* The escape has succeded */
                 send_to_char("You flee head over heels.\n\r", ch);
                 break;
@@ -678,7 +682,7 @@ void do_flee(struct char_data *ch, char *argument, int cmd) {
                 /* return; */
               }
             } else {
-              if ((die = MoveOne(ch, attempt, FALSE)) == 1) {
+              if ((die = MoveOne(ch, attempt)) == 1) {
                 /* The escape has succeded */
                 send_to_char("You flee head over heels.\n\r", ch);
                 break;
@@ -716,7 +720,7 @@ void do_flee(struct char_data *ch, char *argument, int cmd) {
           act("$n panics, and attempts to flee.", TRUE, ch, 0, 0, TO_ROOM);
 
           if (RIDDEN(ch)) {
-            if ((die = MoveOne(RIDDEN(ch), attempt, FALSE)) == 1) {
+            if ((die = MoveOne(RIDDEN(ch), attempt)) == 1) {
               /* The escape has succeded */
               send_to_char("You flee head over heels.\n\r", ch);
               return;
@@ -727,7 +731,7 @@ void do_flee(struct char_data *ch, char *argument, int cmd) {
               return;
             }
           } else {
-            if ((die = MoveOne(ch, attempt, FALSE)) == 1) {
+            if ((die = MoveOne(ch, attempt)) == 1) {
               /* The escape has succeded */
               send_to_char("You flee head over heels.\n\r", ch);
               return;
@@ -1264,7 +1268,7 @@ void do_wimp(struct char_data *ch, char *argument, int cmd) {
 
 extern struct breather breath_monsters[];
 extern struct index_data *mob_index;
-void (*bweapons[])( ) = { cast_geyser,      cast_fire_breath,
+void (*bweapons[])(byte, struct char_data *, char *, int, struct char_data *, struct obj_data *) = { cast_geyser,      cast_fire_breath,
                           cast_gas_breath,  cast_frost_breath,
                           cast_acid_breath, cast_lightning_breath };
 
@@ -1272,7 +1276,7 @@ void do_breath(struct char_data *ch, char *argument, int cmd) {
   struct char_data *victim;
   char buf[ MAX_STRING_LENGTH ], name[ MAX_STRING_LENGTH ];
   int count, manacost;
-  void (*weapon)( );
+  void (*weapon)(byte, struct char_data *, char *, int, struct char_data *, struct obj_data *);
 
   if (check_peaceful(ch, "That wouldn't be nice at all.\n\r"))
     return;
@@ -1305,7 +1309,7 @@ void do_breath(struct char_data *ch, char *argument, int cmd) {
       return;
     }
 
-    weapon   = scan->breaths[ dice(1, count) - 1 ];
+    weapon   = (void (*)(byte, struct char_data *, char *, int, struct char_data *, struct obj_data *)) scan->breaths[ dice(1, count) - 1 ];
     manacost = scan->cost;
     if (GET_MANA(ch) <= -3 * manacost) {
       weapon = NULL;
@@ -1325,7 +1329,7 @@ void do_breath(struct char_data *ch, char *argument, int cmd) {
     }
   }
 
-  breath_weapon(ch, victim, manacost, weapon);
+  breath_weapon(ch, victim, manacost, (void (*)()) weapon);
 
   WAIT_STATE(ch, PULSE_VIOLENCE * 2);
 }

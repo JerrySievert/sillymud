@@ -8,6 +8,7 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "protos.h"
 
@@ -53,7 +54,7 @@ int split_string(char *str, char *sep, char **argv)
     return 1;
   }
 
-  while (s = strtok(NULL, sep)) {
+  while ((s = strtok(NULL, sep))) {
     argv[ argc++ ] = s;
   }
   return argc;
@@ -634,8 +635,8 @@ void char_to_room(struct char_data *ch, int room) {
   rp->people       = ch;
   ch->in_room      = room;
 
-  if (ch->equipment[ WEAR_LIGHT ])
-    if (ch->equipment[ WEAR_LIGHT ]->obj_flags.type_flag == ITEM_LIGHT)
+  if (ch->equipment[ WEAR_LIGHT ]) {
+    if (ch->equipment[ WEAR_LIGHT ]->obj_flags.type_flag == ITEM_LIGHT) {
       if (rp->sector_type != SECT_UNDERWATER) {
         if (ch->equipment[ WEAR_LIGHT ]->obj_flags.value[ 2 ]) /* Light is ON */
           rp->light++;
@@ -651,6 +652,8 @@ void char_to_room(struct char_data *ch, int room) {
             rp->light = 1;
         }
       }
+    }
+  }
 
   if (IS_PC(ch)) {
     if (rp->tele_cnt > 0 && rp->tele_time == 0) {
@@ -1568,8 +1571,9 @@ struct char_data *get_char_vis(struct char_data *ch, char *name) {
   struct char_data *i;
 
   /* check location */
-  if (i = get_char_room_vis(ch, name))
+  if ((i = get_char_room_vis(ch, name))) {
     return (i);
+  }
 
   return get_char_vis_world(ch, name, NULL);
 }
@@ -1628,12 +1632,14 @@ struct obj_data *get_obj_vis(struct char_data *ch, char *name) {
   struct obj_data *i;
 
   /* scan items carried */
-  if (i = get_obj_in_list_vis(ch, name, ch->carrying))
+  if ((i = get_obj_in_list_vis(ch, name, ch->carrying))) {
     return (i);
+  }
 
   /* scan room */
-  if (i = get_obj_in_list_vis(ch, name, real_roomp(ch->in_room)->contents))
+  if ((i = get_obj_in_list_vis(ch, name, real_roomp(ch->in_room)->contents))) {
     return (i);
+  }
 
   return get_obj_vis_world(ch, name, NULL);
 }
@@ -1650,19 +1656,27 @@ struct obj_data *get_obj_vis_accessible(struct char_data *ch, char *name) {
     return (0);
 
   /* scan items carried */
-  for (i = ch->carrying, j = 1; i && j <= number; i = i->next_content)
-    if (isname(tmp, i->name) && CAN_SEE_OBJ(ch, i))
-      if (j == number)
+  for (i = ch->carrying, j = 1; i && j <= number; i = i->next_content) {
+    if (isname(tmp, i->name) && CAN_SEE_OBJ(ch, i)) {
+      if (j == number) {
         return (i);
-      else
+      } else {
         j++;
+      }
+    }
+  }
+
   for (i = real_roomp(ch->in_room)->contents; i && j <= number;
-       i = i->next_content)
-    if (isname(tmp, i->name) && CAN_SEE_OBJ(ch, i))
-      if (j == number)
+       i = i->next_content) {
+    if (isname(tmp, i->name) && CAN_SEE_OBJ(ch, i)) {
+      if (j == number) {
         return (i);
-      else
+      } else {
         j++;
+      }
+    }
+  }
+
   return 0;
 }
 
@@ -1771,13 +1785,13 @@ int generic_find(char *arg, int bitvector, struct char_data *ch,
   *tar_obj = 0;
 
   if (IS_SET(bitvector, FIND_CHAR_ROOM)) { /* Find person in room */
-    if (*tar_ch = get_char_room_vis(ch, name)) {
+    if ((*tar_ch = get_char_room_vis(ch, name))) {
       return (FIND_CHAR_ROOM);
     }
   }
 
   if (IS_SET(bitvector, FIND_CHAR_WORLD)) {
-    if (*tar_ch = get_char_vis(ch, name)) {
+    if ((*tar_ch = get_char_vis(ch, name))) {
       return (FIND_CHAR_WORLD);
     }
   }
@@ -1795,25 +1809,25 @@ int generic_find(char *arg, int bitvector, struct char_data *ch,
 
   if (IS_SET(bitvector, FIND_OBJ_INV)) {
     if (IS_SET(bitvector, FIND_OBJ_ROOM)) {
-      if (*tar_obj = get_obj_vis_accessible(ch, name)) {
+      if ((*tar_obj = get_obj_vis_accessible(ch, name))) {
         return (FIND_OBJ_INV);
       }
     } else {
-      if (*tar_obj = get_obj_in_list_vis(ch, name, ch->carrying)) {
+      if ((*tar_obj = get_obj_in_list_vis(ch, name, ch->carrying))) {
         return (FIND_OBJ_INV);
       }
     }
   }
 
   if (IS_SET(bitvector, FIND_OBJ_ROOM)) {
-    if (*tar_obj =
-            get_obj_in_list_vis(ch, name, real_roomp(ch->in_room)->contents)) {
+    if ((*tar_obj =
+            get_obj_in_list_vis(ch, name, real_roomp(ch->in_room)->contents))) {
       return (FIND_OBJ_ROOM);
     }
   }
 
   if (IS_SET(bitvector, FIND_OBJ_WORLD)) {
-    if (*tar_obj = get_obj_vis(ch, name)) {
+    if ((*tar_obj = get_obj_vis(ch, name))) {
       return (FIND_OBJ_WORLD);
     }
   }

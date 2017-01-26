@@ -54,7 +54,7 @@ char save_file[ NUM_BOARDS ][ 20 ] = { "mortal.board", "wiz.board",
 void board_write_msg(struct char_data *ch, char *arg, int bnum);
 int board_display_msg(struct char_data *ch, char *arg, int bnum);
 int board_remove_msg(struct char_data *ch, char *arg, int bnum);
-void board_save_board( );
+void board_save_board(int);
 void board_load_board( );
 int board_show_board(struct char_data *ch, char *arg, int bnum);
 int fwrite_string(char *buf, FILE *fl);
@@ -339,7 +339,7 @@ char *fix_returns(char *text_string) {
   return (localbuf);
 }
 
-void board_save_board(bnum) {
+void board_save_board(int bnum) {
 
   FILE *the_file;
   int ind;

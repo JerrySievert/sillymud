@@ -333,7 +333,7 @@ void do_beep(struct char_data *ch, char *argument, int cmd);
 void board_write_msg(struct char_data *ch, char *arg, int bnum);
 int board_display_msg(struct char_data *ch, char *arg, int bnum);
 int board_remove_msg(struct char_data *ch, char *arg, int bnum);
-void board_save_board();
+void board_save_board(int);
 void board_load_board();
 int board_show_board(struct char_data *ch, char *arg, int bnum);
 int fwrite_string(char *buf, FILE *fl);

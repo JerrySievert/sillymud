@@ -8,8 +8,15 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
-#include <stdlib.h>
+#ifdef linux
+#define _XOPEN_SOURCE
+#endif
 #include <unistd.h>
+#include <stdlib.h>
+
+#ifdef linux
+#include <crypt.h>
+#endif
 
 #include "protos.h"
 

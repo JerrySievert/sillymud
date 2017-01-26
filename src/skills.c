@@ -593,7 +593,7 @@ int find_path(int in_room, int (*predicate)( ), void *c_data, int depth,
 
               /* ancestor for first layer is the direction */
               hash_enter(&x_room, tmp_room,
-                         ((int)hash_find(&x_room, q_head->room_nr) == -1)
+                         ((long)hash_find(&x_room, q_head->room_nr) == -1)
                              ? (void *)(i + 1)
                              : hash_find(&x_room, q_head->room_nr));
             }
@@ -605,7 +605,7 @@ int find_path(int in_room, int (*predicate)( ), void *c_data, int depth,
               free(q_head);
             }
             /* return direction if first layer */
-            if ((int)hash_find(&x_room, tmp_room) == -1) {
+            if ((long)hash_find(&x_room, tmp_room) == -1) {
               if (x_room.buckets) { /* junk left over from a previous track */
                 destroy_hash_table(&x_room, donothing);
               }
@@ -613,7 +613,7 @@ int find_path(int in_room, int (*predicate)( ), void *c_data, int depth,
             } else { /* else return the ancestor */
               int i;
 
-              i = (int)hash_find(&x_room, tmp_room);
+              i = (int)(long)hash_find(&x_room, tmp_room);
               if (x_room.buckets) { /* junk left over from a previous track */
                 destroy_hash_table(&x_room, donothing);
               }
@@ -1577,7 +1577,7 @@ void do_makepotion(struct char_data *ch, char *argument, int cmd) {
       }
     }
   }
-  
+
   if (GET_ITEM_TYPE(o) == ITEM_CONTAINER) { /* it better be */
     /* our cauldron must contain ONLY the right ingredients */
     for (in_o = o->contains, i = 0, match = ingredients; in_o; in_o = next) {

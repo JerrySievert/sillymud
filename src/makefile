@@ -6,7 +6,7 @@ LD=$(CC)
 RM=rm
 ##
 ##  these are compile time constructs, that affect the running of the game.
-CPPFLAGS = -DIMPL_SECURITY -DNEW_RENT -DLEVEL_LOSS -DNEWEXP \
+CPPFLAGS = -DNEW_RENT -DLEVEL_LOSS -DNEWEXP \
  -DGROUP_NAMES
 ##  these are architecture dependent flags
 TITANFLAGS = -g -43 -vector_c -safe=ptrs -DTITAN

@@ -1371,8 +1371,8 @@ int baby_bear(struct char_data *ch, int cmd, char *arg, struct char_data *mob, i
 int timnus(struct char_data *ch, int cmd, char *arg, struct char_data *mob, int type);
 int winger(struct char_data *ch, int cmd, char *arg, struct char_data *mob, int type);
  int DeathRoom(int dt_room);
-int YouthPotion( struct char_data *ch, int cmd, char *arg, struct char_data *mob, int type);
-int warpstone(struct char_data *ch, int cmd, char *arg, struct char_data *mob, int type);
+int YouthPotion( struct char_data *ch, int cmd, char *arg, struct obj_data *obj, int type);
+int warpstone(struct char_data *ch, int cmd, char *arg, struct obj_data *obj, int type);
 int turbo_lift(struct char_data *ch, int cmd, char *arg, struct room_data *rp,
 int type);
 int entering_turbo_lift(struct char_data *ch, int cmd, char *arg, struct room_data *rp, int type);

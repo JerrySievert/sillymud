@@ -317,7 +317,7 @@ void build_player_index( ) {
   int center;
 
   struct wizlistgen list_wiz;
-  int number_level[ 9 ];
+  int number_level[ 10 ];
 
   for (j                 = 0; j <= 11; j++)
     list_wiz.number[ j ] = 0;

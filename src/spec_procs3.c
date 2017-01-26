@@ -709,11 +709,10 @@ int DeathRoom(int dt_room) {
   return (FALSE);
 }
 
-int YouthPotion(struct char_data *ch, int cmd, char *arg, struct char_data *mob,
+int YouthPotion(struct char_data *ch, int cmd, char *arg, struct obj_data *obj,
                 int type) {
   char obj_name[ 80 ], vict_name[ 80 ], buf[ MAX_INPUT_LENGTH ];
   /*   struct char_data *vict; */
-  struct obj_data *obj;
   int agepoints, negativeage, modifiedage;
   bool equipped;
 
@@ -765,7 +764,7 @@ int YouthPotion(struct char_data *ch, int cmd, char *arg, struct char_data *mob,
 
 #define WARPSTONE 29
 
-int warpstone(struct char_data *ch, int cmd, char *arg, struct char_data *mob,
+int warpstone(struct char_data *ch, int cmd, char *arg, struct obj_data *obj,
               int type) {
 
   char buf[ 100 ];

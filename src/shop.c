@@ -700,10 +700,14 @@ void boot_the_shops( ) {
 }
 
 void assign_the_shopkeepers( ) {
-  int temp1;
+  int temp1, idx;
 
-  for (temp1 = 0; temp1 < number_of_shops; temp1++)
-    mob_index[ shop_index[ temp1 ].keeper ].func = shop_keeper;
+  for (temp1 = 0; temp1 < number_of_shops; temp1++) {
+    idx = shop_index[ temp1 ].keeper;
+    if (idx != -1) {
+      mob_index[ idx ].func = shop_keeper;
+    }
+  }
 }
 
 int DoIHateYou(struct char_data *v) {

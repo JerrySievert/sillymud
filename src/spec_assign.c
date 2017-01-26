@@ -1086,27 +1086,40 @@ void assign_mobiles( ) {
   assign_the_shopkeepers( );
 }
 
+void assign_object(int id, int (*ptr)(struct char_data *, int, char *, struct obj_data *, int)) {
+  char buf[255];
+
+  int real_id = real_object(id);
+
+  if (real_id != -1) {
+    obj_index[ real_id ].func = ptr;
+  } else {
+    sprintf(buf, "Failed to assign object %d, it does not exist", id);
+    debug(buf);
+  }
+}
+
 /* assign special procedures to objects */
 void assign_objects( ) {
-  obj_index[ real_object(15) ].func    = SlotMachine;
-  obj_index[ real_object(29) ].func    = warpstone;
-  obj_index[ real_object(30) ].func    = scraps;
-  obj_index[ real_object(23) ].func    = jive_box;
-  obj_index[ real_object(31) ].func    = portal;
-  obj_index[ real_object(3092) ].func  = board;
-  obj_index[ real_object(3093) ].func  = board;
-  obj_index[ real_object(3094) ].func  = board;
-  obj_index[ real_object(3095) ].func  = board;
-  obj_index[ real_object(3096) ].func  = board;
-  obj_index[ real_object(3097) ].func  = board;
-  obj_index[ real_object(3098) ].func  = board;
-  obj_index[ real_object(3099) ].func  = board;
-  obj_index[ real_object(25102) ].func = board;
-  obj_index[ real_object(21122) ].func = nodrop;
-  obj_index[ real_object(21130) ].func = soap;
-  obj_index[ real_object(22698) ].func = YouthPotion;
+  assign_object(15, SlotMachine);
+  assign_object(29, warpstone);
+  assign_object(30, scraps);
+  assign_object(23, jive_box);
+  assign_object(31, portal);
+  assign_object(3092, board);
+  assign_object(3093, board);
+  assign_object(3094, board);
+  assign_object(3095, board);
+  assign_object(3096, board);
+  assign_object(3097, board);
+  assign_object(3098, board);
+  assign_object(3099, board);
+  assign_object(25102, board);
+  assign_object(21122, nodrop);
+  assign_object(21130, soap);
+  assign_object(22698, YouthPotion);
 #if EGO
-  obj_index[ real_object(40000) ].func = BitterBlade;
+  assign_object(40000, BitterBlade);
 #endif
 }
 

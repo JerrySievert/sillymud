@@ -690,7 +690,7 @@ void completely_cleanout_room(struct room_data *rp) {
 void load_one_room(FILE *fl, struct room_data *rp) {
   char chk[ 50 ];
   int bc = 0;
-  unsigned long int tmp;
+  unsigned long int tmp = 0;
 
   struct extra_descr_data *new_descr;
 
@@ -2339,7 +2339,7 @@ int create_entry(char *name) {
 
 /* write the vital data of a player to the player file */
 void save_char(struct char_data *ch, sh_int load_room) {
-  struct char_file_u st;
+  struct char_file_u st = {0};
   FILE *fl;
   char mode[ 4 ];
   int expand;

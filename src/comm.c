@@ -667,7 +667,7 @@ void flush_queues(struct descriptor_data *d) {
 int init_socket(int port) {
   socklen_t s;
   int c;
-  char *opt;
+  char *opt = {0};
   char hostname[ MAX_HOSTNAME + 1 ];
   struct sockaddr_in sa;
   struct hostent *hp;

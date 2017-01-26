@@ -1,6 +1,6 @@
 /*
   SillyMUD Distribution V1.1b             (c) 1993 SillyMUD Developement
- 
+
   See license.doc for distribution terms.   SillyMUD is based on DIKUMUD
 */
 
@@ -21,7 +21,7 @@ int CAN_SEE(struct char_data *s, struct char_data *o);
 
 #define UPPER(c) (((c)>='a'  && (c) <= 'z') ? ((c)+('A'-'a')) : (c) )
 
-#define ISNEWL(ch) ((ch) == '\n' || (ch) == '\r') 
+#define ISNEWL(ch) ((ch) == '\n' || (ch) == '\r')
 
 #define IS_WEAPON(o) (o->obj_flags.type_flag == ITEM_WEAPON)
 
@@ -32,6 +32,7 @@ int CAN_SEE(struct char_data *s, struct char_data *o);
 #define CREATE(result, type, number)  do {\
 	if (!((result) = (type *) calloc ((number), sizeof(type))))\
 		{ perror("malloc failure"); abort(); }\
+		memset(result, 0, sizeof(type)); \
 		} while(0)
 
 #define RECREATE(result,type,number) do {\
@@ -93,7 +94,7 @@ int CAN_SEE(struct char_data *s, struct char_data *o);
 	(((ch)->player.sex == 1) ? "he" : "she") : "it")
 
 #define HMHR(ch) ((ch)->player.sex ? 					\
-	(((ch)->player.sex == 1) ? "him" : "her") : "it")	
+	(((ch)->player.sex == 1) ? "him" : "her") : "it")
 
 #define ANA(obj) (index("aeiouyAEIOUY", *(obj)->name) ? "An" : "A")
 
@@ -292,4 +293,3 @@ int exit_ok(struct room_direction_data *, struct room_data **);
 
 #define SUNPROBLEM(ch) (GET_RACE(ch) == RACE_DROW || GET_RACE(ch) == \
 			RACE_MFLAYER)
-

@@ -256,11 +256,10 @@ void load_char_objs(struct char_data *ch) {
 
   if (!ReadObjs(fl, &st)) {
     debug("No objects found");
-    fclose(fl);
     return;
   }
 
-  if (str_cmp(st.owner, GET_NAME(ch)) != 0) {
+  if (strcmp(st.owner, GET_NAME(ch)) != 0) {
     debug("Hmm.. bad item-file write. someone is losing thier objects");
     fclose(fl);
     return;

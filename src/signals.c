@@ -61,7 +61,7 @@ void shutdown_request(int sig) {
 /* kick out players etc */
 void hupsig(int sig) {
   int i;
-  extern int mudshutdown, reboot;
+  extern int mudshutdown, restart;
 
   debug("Received SIGHUP, SIGINT, or SIGTERM. Shutting down");
 
@@ -70,7 +70,7 @@ void hupsig(int sig) {
   for (i = 0; i < 30; i++) {
     SaveTheWorld( );
   }
-  mudshutdown = reboot = 1;
+  mudshutdown = restart = 1;
 }
 
 void logsig(int sig) { debug("Signal received. Ignoring."); }

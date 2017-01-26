@@ -20,6 +20,7 @@
 #include <sys/wait.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <time.h>
 
 #include "protos.h"
 
@@ -253,8 +254,8 @@ void game_loop(int s) {
   char comm[ MAX_INPUT_LENGTH ];
   char promptbuf[ 80 ];
   struct descriptor_data *point, *next_point;
-  int mask;
   struct room_data *rm;
+  sigset_t mask;
 
   extern struct descriptor_data *descriptor_list;
   extern int pulse;
@@ -265,15 +266,23 @@ void game_loop(int s) {
 
   opt_time.tv_usec = OPT_USEC; /* Init time values */
   opt_time.tv_sec  = 0;
-  gettimeofday(&last_time, (struct timeval *)0);
+  gettimeofday(&last_time, NULL);
 
   maxdesc = s;
   /* !! Change if more needed !! */
   avail_descs = getdtablesize( ) - 2;
 
-  mask = sigmask(SIGUSR1) | sigmask(SIGUSR2) | sigmask(SIGINT) |
-         sigmask(SIGPIPE) | sigmask(SIGALRM) | sigmask(SIGTERM) |
-         sigmask(SIGURG) | sigmask(SIGXCPU) | sigmask(SIGHUP);
+  /* and the mask we want to block against */
+  sigemptyset(&mask);
+  sigaddset(&mask, SIGUSR1);
+  sigaddset(&mask, SIGUSR2);
+  sigaddset(&mask, SIGINT);
+  sigaddset(&mask, SIGPIPE);
+  sigaddset(&mask, SIGALRM);
+  sigaddset(&mask, SIGTERM);
+  sigaddset(&mask, SIGURG);
+  sigaddset(&mask, SIGXCPU);
+  sigaddset(&mask, SIGHUP);
 
   /* Main loop */
   while (!mudshutdown) {
@@ -318,7 +327,7 @@ void game_loop(int s) {
 #endif
 
     /* check out the time */
-    gettimeofday(&now, (struct timeval *)0);
+    gettimeofday(&now, NULL);
     timespent         = timediff(&now, &last_time);
     timeout           = timediff(&opt_time, &timespent);
     last_time.tv_sec  = now.tv_sec + timeout.tv_sec;
@@ -328,7 +337,7 @@ void game_loop(int s) {
       last_time.tv_sec++;
     }
 
-    sigsetmask(mask);
+    sigprocmask(SIG_BLOCK, &mask, NULL);
 
     if (select(maxdesc + 1, &input_set, &output_set, &exc_set, &null_time) <
         0) {
@@ -345,7 +354,7 @@ void game_loop(int s) {
       /*assert(0);*/
     }
 
-    sigsetmask(0);
+    sigprocmask(SIG_UNBLOCK, &mask, NULL);
 
     /* Respond to whatever might be happening */
 
@@ -1113,15 +1122,26 @@ void coma(int s) {
   fd_set input_set;
   static struct timeval timeout = { 60, 0 };
   int conn;
+  sigset_t mask;
 
   int workhours(void);
   int load(void);
 
   debug("Entering comatose state.");
 
-  sigsetmask(sigmask(SIGUSR1) | sigmask(SIGUSR2) | sigmask(SIGINT) |
-             sigmask(SIGPIPE) | sigmask(SIGALRM) | sigmask(SIGTERM) |
-             sigmask(SIGURG) | sigmask(SIGXCPU) | sigmask(SIGHUP));
+  /* and the mask we want to block against */
+  sigemptyset(&mask);
+  sigaddset(&mask, SIGUSR1);
+  sigaddset(&mask, SIGUSR2);
+  sigaddset(&mask, SIGINT);
+  sigaddset(&mask, SIGPIPE);
+  sigaddset(&mask, SIGALRM);
+  sigaddset(&mask, SIGTERM);
+  sigaddset(&mask, SIGURG);
+  sigaddset(&mask, SIGXCPU);
+  sigaddset(&mask, SIGHUP);
+
+  sigprocmask(SIG_BLOCK, &mask, NULL);
 
   while (descriptor_list)
     close_socket(descriptor_list);
@@ -1136,7 +1156,7 @@ void coma(int s) {
     if (FD_ISSET(s, &input_set)) {
       if (load( ) < 6) {
         debug("Leaving coma with visitor.");
-        sigsetmask(0);
+        sigprocmask(SIG_UNBLOCK, &mask, NULL);
         return;
       }
       if ((conn = new_connection(s)) >= 0) {
@@ -1154,7 +1174,7 @@ void coma(int s) {
   } while (load( ) >= 6);
 
   debug("Leaving coma.");
-  sigsetmask(0);
+  sigprocmask(SIG_UNBLOCK, &mask, NULL);
 }
 
 /* ****************************************************************

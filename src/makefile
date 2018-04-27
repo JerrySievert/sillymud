@@ -1,21 +1,33 @@
 ##
 CC=gcc
 ##
-LD=$(CC)
 ##
 RM=rm
 ##
 ##  these are compile time constructs, that affect the running of the game.
-CPPFLAGS = -DNEW_RENT -DLEVEL_LOSS -DNEWEXP \
- -DGROUP_NAMES
+CFLAGS = -DNEW_RENT -DLEVEL_LOSS -DNEWEXP -DGROUP_NAMES
+
 ##  these are architecture dependent flags
-TITANFLAGS = -g -43 -vector_c -safe=ptrs -DTITAN
-OSXFLAGS = -g -Werror 
-LINUXFLAGS = -g -fPIC
-LINUXLDFLAGS = -lcrypt -fPIC
-##
-CFLAGS = $(OSXFLAGS) $(CPPFLAGS)
-LDFLAGS = $(OSXFLAGS)
+ifeq ($(OS),Windows_NT)
+	# noop for now
+else
+	SHLIB_LINK += -L$(AUTOV8_OUT)
+	UNAME_S := $(shell uname -s)
+	ifeq ($(UNAME_S),Darwin)
+		CFLAGS += -g -Werror -Wall
+		LDFLAGS ?= -g -Werror -Wall
+		CC = clang
+	endif
+	ifeq ($(UNAME_S),Linux)
+		CFLAGS += -g -Werror -Wall -fPIC
+		LDFLAGS ?= -g -Werror -Wall -lcrypt -fPIC
+	endif
+endif
+
+LD=$(CC)
+
+#TITANFLAGS = -g -43 -vector_c -safe=ptrs -DTITAN
+
 ##
 ##
 ##  For lower exp loss at lower levels -DNEWEXP
@@ -86,62 +98,17 @@ dmserver : ${OBJS}
 ## if you want to add debugging stuff, uncomment the following, and comment
 ##  out the line after that
 ##	$(LD) -o $@ -g ${OBJS} /local/lib/gnu/gcc-gnulib /usr/lib/debug/malloc.o
-	$(LD) -o $@ -g ${OBJS} -fsanitize=address
+	$(LD) -o $@ -g ${OBJS}
 ##	$(LD) -o $@  ${OBJS}
 ##
-depend :
-	makedepend ${SRCS}
 
-clean :
-	$(RM) *.o dmserver
+depend: .depend
 
-# DO NOT DELETE THIS LINE -- make depend depends on it.
+.depend: $(SRCS) $(TEST_SRCS)
+	$(RM) -f ./.depend
+	$(CC) $(CFLAGS) -MM $^>>./.depend
 
-comm.o: protos.h
-act.comm.o: protos.h
-act.move.o: protos.h
-act.off.o: protos.h
-act.obj1.o: protos.h
-act.obj2.o: protos.h
-act.info.o: protos.h
-act.other.o: protos.h
-act.social.o: protos.h
-act.wizard.o: protos.h
-handler.o: protos.h
-db.o: protos.h
-interpreter.o: protos.h
-utility.o: protos.h
-spec_assign.o: protos.h
-shop.o: protos.h
-limits.o: protos.h
-mobact.o: protos.h
-fight.o: protos.h
-modify.o: protos.h
-weather.o: protos.h
-spells1.o: protos.h
-spells2.o: protos.h
-spell_parser.o: protos.h
-reception.o: protos.h
-constants.o: protos.h
-spec_procs.o: protos.h
-signals.o: protos.h
-board.o: protos.h
-magic.o: protos.h
-magic2.o: protos.h
-magic3.o: protos.h
-magicutils.o: protos.h
-multiclass.o: protos.h
-skills.o: protos.h
-Opinion.o: protos.h
-Trap.o: protos.h
-hash.o: protos.h
-Sound.o: protos.h
-Heap.o: protos.h
-spec_procs2.o: protos.h
-spec_procs3.o: protos.h
-security.o:
-create.o: protos.h
-bsd.o:
-parser.o: protos.h
+clean:
+	$(RM) -f $(OBJS) dmserver
 
-intrinsics.o: protos.h
+include .depend

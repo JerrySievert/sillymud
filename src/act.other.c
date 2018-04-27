@@ -24,8 +24,6 @@ extern struct time_info_data time_info;
 void do_gain(struct char_data *ch, char *argument, int cmd) {}
 
 void do_guard(struct char_data *ch, char *argument, int cmd) {
-  char comm[ 100 ];
-
   if (!IS_NPC(ch) || IS_SET(ch->specials.act, ACT_POLYSELF)) {
     send_to_char("Sorry. you can't just put your brain on autopilot!\n\r", ch);
     return;
@@ -193,7 +191,7 @@ void do_save(struct char_data *ch, char *argument, int cmd) {
   struct obj_cost cost;
   struct char_data *tmp;
   struct obj_data *tl, *f;
-  struct obj_data *teq[ MAX_WEAR ], *eq[ MAX_WEAR ], *o;
+  struct obj_data *teq[ MAX_WEAR ], *o;
   int i;
   struct follow_type *fol;
 
@@ -343,7 +341,7 @@ void do_sneak(struct char_data *ch, char *argument, int cmd) {
     percent = MIN(1, percent - 35); /* much easier when silenced */
 
   if (percent >
-      ch->skills[ SKILL_SNEAK ].learned + dex_app_skill[ GET_DEX(ch) ].sneak) {
+      ch->skills[ (int) SKILL_SNEAK ].learned + dex_app_skill[ (int) GET_DEX(ch) ].sneak) {
     LearnFromMistake(ch, SKILL_SNEAK, 1, 90);
     WAIT_STATE(ch, PULSE_VIOLENCE / 2);
     return;
@@ -382,7 +380,7 @@ void do_hide(struct char_data *ch, char *argument, int cmd) {
     return;
 
   if (percent >
-      ch->skills[ SKILL_HIDE ].learned + dex_app_skill[ GET_DEX(ch) ].hide) {
+      ch->skills[ (int) SKILL_HIDE ].learned + dex_app_skill[ (int) GET_DEX(ch) ].hide) {
     LearnFromMistake(ch, SKILL_HIDE, 1, 90);
     WAIT_STATE(ch, PULSE_VIOLENCE * 1);
     return;
@@ -450,7 +448,7 @@ void do_steal(struct char_data *ch, char *argument, int cmd) {
     return;
 
   /* 101% is a complete failure */
-  percent = number(1, 101) - dex_app_skill[ GET_DEX(ch) ].p_pocket;
+  percent = number(1, 101) - dex_app_skill[ (int) GET_DEX(ch) ].p_pocket;
 
   if (GET_POS(victim) < POSITION_SLEEPING)
     percent = -1; /* ALWAYS SUCCESS */
@@ -1538,7 +1536,6 @@ void Dismount(struct char_data *ch, struct char_data *h, int pos) {
 }
 
 void do_mount(struct char_data *ch, char *arg, int cmd) {
-  char buf[ 256 ];
   char name[ 112 ];
   int check;
   struct char_data *horse;

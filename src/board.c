@@ -87,7 +87,6 @@ directly
 int board(struct char_data *ch, int cmd, char *arg, struct obj_data *obj,
           int type) {
   static int has_loaded = 0;
-  char buf[ 80 ];
   int bnum = -1;
   int obj_num;
 
@@ -343,7 +342,6 @@ void board_save_board(int bnum) {
 
   FILE *the_file;
   int ind;
-  char buf[ 256 ];
   char *temp_add;
 
   /* We're assuming the board number is valid since it was passed by
@@ -419,7 +417,7 @@ void board_load_board( ) {
 }
 
 int board_display_msg(struct char_data *ch, char *arg, int bnum) {
-  char buf[ 512 ], number[ MAX_INPUT_LENGTH ], buffer[ MAX_STRING_LENGTH ];
+  char number[ MAX_INPUT_LENGTH ], buffer[ MAX_STRING_LENGTH ];
   int tmessage;
 
   one_argument(arg, number);

@@ -253,7 +253,6 @@ void mobile_activity(struct char_data *ch) {
   struct char_data *tmp_ch;
 
   int k;
-  char buf[ 80 ];
   extern int no_specials;
 
   void do_move(struct char_data * ch, char *argument, int cmd);
@@ -680,7 +679,7 @@ void PulseMobiles(int type) {
 
 void DoScript(struct char_data *ch) {
   int i, check = 0;
-  char buf[ 255 ], buf2[ 255 ], buf3[ 255 ], *s;
+  char buf[ 255 ], buf2[ 255 ], *s;
 
   strcpy(buf, script_data[ ch->script ].script[ ch->commandp ].line);
 
@@ -797,7 +796,6 @@ void sgoto(char *arg, struct char_data *ch) {
       room = atoi(arg);
     }
   } else {
-    char buf3[ 150 ];
     sprintf(buf, "Error in script %s, no destination for goto",
             script_data[ ch->script ].filename);
     debug(buf);

@@ -176,7 +176,7 @@ int BestMagicClass(struct char_data *ch) {
 int GetSecMaxLev(struct char_data *ch) { return (GetALevel(ch, 2)); }
 
 int GetALevel(struct char_data *ch, int which) {
-  byte ind[ MAX_CLASS ], j, k, i;
+  int ind[ MAX_CLASS ], j, k, i;
 
   for (i = 0; i < MAX_CLASS; i++) {
     ind[ i ] = GET_LEVEL(ch, i);

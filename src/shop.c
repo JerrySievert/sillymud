@@ -161,7 +161,7 @@ void shopping_buy(char *arg, struct char_data *ch, struct char_data *keeper,
     return;
   }
 
-  perc = 100.0 + chr_apply[ GET_CHR(ch) ].reaction;
+  perc = 100.0 + chr_apply[ (int) GET_CHR(ch) ].reaction;
   perc /= 100.0;
 
   if (shop_index[ shop_nr ].profit_buy < 1.0)
@@ -302,7 +302,7 @@ void shopping_sell(char *arg, struct char_data *ch, struct char_data *keeper,
     return;
   }
 
-  perc = 100.0 + chr_apply[ GET_CHR(ch) ].reaction;
+  perc = 100.0 + chr_apply[ (int) GET_CHR(ch) ].reaction;
   perc /= 100.0;
 
   cost = (temp1->obj_flags.cost * mult) *
@@ -433,7 +433,7 @@ void shopping_value(char *arg, struct char_data *ch, struct char_data *keeper,
     return;
   }
 
-  perc = 100.0 + chr_apply[ GET_CHR(ch) ].reaction;
+  perc = 100.0 + chr_apply[ (int) GET_CHR(ch) ].reaction;
   perc /= 100.0;
 
   cost = (temp1->obj_flags.cost * mult) *
@@ -484,7 +484,7 @@ void shopping_list(char *arg, struct char_data *ch, struct char_data *keeper,
       if ((CAN_SEE_OBJ(ch, temp1)) && (temp1->obj_flags.cost > 0)) {
         found_obj = TRUE;
 
-        perc = 100.0 + chr_apply[ GET_CHR(ch) ].reaction;
+        perc = 100.0 + chr_apply[ (int) GET_CHR(ch) ].reaction;
         perc /= 100.0;
 
         if (shop_index[ shop_nr ].profit_buy < 1.0)
@@ -544,7 +544,7 @@ void shopping_kill(char *arg, struct char_data *ch, struct char_data *keeper,
 }
 
 int shop_keeper(struct char_data *ch, int cmd, char *arg, char *mob, int type) {
-  char argm[ 100 ], buf[ MAX_STRING_LENGTH ];
+  char argm[ 100 ];
   struct char_data *temp_char;
   struct char_data *keeper;
   int shop_nr;

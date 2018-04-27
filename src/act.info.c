@@ -1630,7 +1630,7 @@ void do_time(struct char_data *ch, char *argument, int cmd) {
     suf = "th";
 
   sprintf(buf, "The %d%s Day of the %s, Year %d.\n\r", day, suf,
-          month_name[ time_info.month ], time_info.year);
+          month_name[ (int) time_info.month ], time_info.year);
 
   send_to_char(buf, ch);
 }
@@ -2221,8 +2221,7 @@ void do_where(struct char_data *ch, char *argument, int cmd) {
 void do_levels(struct char_data *ch, char *argument, int cmd) {
   int i, RaceMax, class;
   char buf[ MAX_STRING_LENGTH ];
-  char buf2[ MAX_STRING_LENGTH ];
-
+  
   extern const struct title_type titles[ MAX_CLASS ][ ABS_MAX_LVL ];
 
   if (IS_NPC(ch)) {

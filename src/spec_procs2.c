@@ -498,7 +498,6 @@ int magic_user(struct char_data *ch, int cmd, char *arg, struct char_data *mob,
   struct char_data *vict;
 
   byte lspell;
-  char buf[ 200 ];
 
   if (cmd || !AWAKE(ch) || IS_AFFECTED(ch, AFF_PARALYSIS))
     return (FALSE);
@@ -1253,7 +1252,7 @@ int Teacher(struct char_data *ch, int cmd, char *arg, struct char_data *mob,
     send_to_char("'We will now begin practicing.'\n\r", ch);
     ch->specials.spells_to_learn--;
 
-    percent = ch->skills[ number ].learned + int_app[ GET_INT(ch) ].learn;
+    percent = ch->skills[ number ].learned + int_app[ (int) GET_INT(ch) ].learn;
     ch->skills[ number ].learned = MIN(95, percent);
 
     /* these things take time ya know... */
@@ -1900,7 +1899,7 @@ int MakeQuest(struct char_data *ch, struct char_data *gm, int Class, char *arg,
     }
     if (vict == gm) {
       if (obj_index[ obj->item_number ].virtual ==
-          QuestList[ Class ][ GET_LEVEL(ch, Class) ].item) {
+          QuestList[ Class ][ (int) GET_LEVEL(ch, Class) ].item) {
         act("$n graciously takes your gift of $p", FALSE, gm, obj, ch, TO_VICT);
         obj_from_char(obj);
         extract_obj(obj);
@@ -1933,7 +1932,7 @@ int MakeQuest(struct char_data *ch, struct char_data *gm, int Class, char *arg,
       quest = TRUE; /* quest every level from 40th to 50th */
 
     if (quest) {
-      if (QuestList[ Class ][ GET_LEVEL(ch, Class) ].item) {
+      if (QuestList[ Class ][ (int) GET_LEVEL(ch, Class) ].item) {
         act("$n shakes $s head", FALSE, gm, 0, 0, TO_ROOM);
         act("$n tells you 'First you must prove your mastery of knowledge'",
             FALSE, gm, 0, ch, TO_VICT);
@@ -1941,18 +1940,18 @@ int MakeQuest(struct char_data *ch, struct char_data *gm, int Class, char *arg,
             FALSE, gm, 0, ch, TO_VICT);
         act("$n tells you 'And you shall have your level'\n\r", FALSE, gm, 0,
             ch, TO_VICT);
-        send_to_char(QuestList[ Class ][ GET_LEVEL(ch, Class) ].where, ch);
+        send_to_char(QuestList[ Class ][ (int) GET_LEVEL(ch, Class) ].where, ch);
         send_to_char("\n\rGood luck", ch);
         /*
           fix to handle limited items:
           Dunno how it will turn out.. but hopefully it should be ok.
           */
         if (obj_index[ real_object(
-                           QuestList[ Class ][ GET_LEVEL(ch, Class) ].item) ]
+                           QuestList[ Class ][ (int) GET_LEVEL(ch, Class) ].item) ]
                     .number > 5 &&
             GET_LEVEL(ch, Class) < 40)
           obj_index[ real_object(
-                         QuestList[ Class ][ GET_LEVEL(ch, Class) ].item) ]
+                         QuestList[ Class ][ (int) GET_LEVEL(ch, Class) ].item) ]
               .number = 0;
         return (FALSE);
       }
@@ -3009,7 +3008,7 @@ int druid_challenge_room(struct char_data *ch, int cmd, char *arg,
         do_return(ch, "", 0);
       }
       GET_EXP(ch) =
-          MIN(titles[ DRUID_LEVEL_IND ][ GET_LEVEL(ch, DRUID_LEVEL_IND) ].exp,
+          MIN(titles[ DRUID_LEVEL_IND ][ (int) GET_LEVEL(ch, DRUID_LEVEL_IND) ].exp,
               GET_EXP(ch));
       send_to_char("Go home\n\r", ch);
       char_from_room(ch);
@@ -3099,7 +3098,7 @@ int monk_challenge_room(struct char_data *ch, int cmd, char *arg,
         do_return(ch, "", 0);
       }
       GET_EXP(ch) =
-          MIN(titles[ MONK_LEVEL_IND ][ GET_LEVEL(ch, MONK_LEVEL_IND) ].exp,
+          MIN(titles[ MONK_LEVEL_IND ][ (int) GET_LEVEL(ch, MONK_LEVEL_IND) ].exp,
               GET_EXP(ch));
       send_to_char("Go home.\n\r", ch);
       char_from_room(ch);
@@ -3805,7 +3804,6 @@ extern float shop_multiplier;
 
 int DwarvenMiners(struct char_data *ch, int cmd, char *arg,
                   struct char_data *mob, int type) {
-  char buf[ 255 ];
   void do_emote(struct char_data * ch, char *arg, int cmd);
   void do_stand(struct char_data * ch, char *arg, int cmd);
   void do_sit(struct char_data * ch, char *arg, int cmd);

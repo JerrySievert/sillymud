@@ -309,8 +309,6 @@ void build_player_index( ) {
   struct char_file_u dummy;
   FILE *fl;
 
-  char tempbuf[ 255 ];
-  char title[ 255 ], tmp2[ 255 ], blank[ 255 ];
   char buf[ MAX_STRING_LENGTH * 2 ];
 
   register int max = 0, j;
@@ -1113,7 +1111,7 @@ struct char_data *read_mobile(int nr, int type) {
   int i;
   int tmp, tmp2, tmp3, bc = 0;
   struct char_data *mob;
-  char buf[ 100 ], buffer[ 255 ];
+  char buf[ 100 ];
   char letter;
 
   extern int mob_tick_count;
@@ -2692,7 +2690,7 @@ void reset_char(struct char_data *ch) {
     affect_modify(ch, af->location, (int)af->modifier, af->bitvector, TRUE);
 
   if (!HasClass(ch, CLASS_MONK))
-    GET_AC(ch) += dex_app[ GET_DEX(ch) ].defensive;
+    GET_AC(ch) += dex_app[ (int) GET_DEX(ch) ].defensive;
   if (GET_AC(ch) > 100)
     GET_AC(ch) = 100;
 
@@ -2909,11 +2907,6 @@ void gr( ) { return; }
 int workhours( ) { return (0); }
 
 void reboot_text(struct char_data *ch, char *arg, int cmd) {
-  char buffer[ 100 ];
-  /*   struct char_data *p;
-  int i;
-  */
-
   if (IS_NPC(ch))
     return;
 
@@ -3208,7 +3201,7 @@ void ReadTextZone(FILE *fl) {
   while (1) {
     char c, buf[ 255 ], count = 0, last_cmd = 1;
     int i, j, k, tmp, zone = 0;
-    struct char_data *mob, *master;
+    struct char_data *mob = NULL, *master = NULL;
     struct room_data *rp;
     struct obj_data *obj, *obj_to;
 

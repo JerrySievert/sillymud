@@ -539,7 +539,6 @@ void AddExitToRoom(struct room_data *rp, struct char_data *ch, char *arg,
 void ChangeExitNumber(struct room_data *rp, struct char_data *ch, char *arg,
                       int type) {
   int dir, update;
-  char buf[ 255 ];
 
   switch (ch->specials.edit) {
   case CHANGE_NUMBER_NORTH:
@@ -604,7 +603,6 @@ void ChangeExitNumber(struct room_data *rp, struct char_data *ch, char *arg,
 void ChangeKeyNumber(struct room_data *rp, struct char_data *ch, char *arg,
                      int type) {
   int dir, update;
-  char buf[ 255 ];
 
   switch (ch->specials.edit) {
   case CHANGE_KEY_NORTH:

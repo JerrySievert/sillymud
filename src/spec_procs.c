@@ -360,7 +360,7 @@ int Guildmaster(struct char_data *ch, int cmd, char *arg, struct char_data *mob,
     ch->specials.spells_to_learn--;
 
     SET_BIT(ch->skills[ number ].flags, SKILL_KNOWN);
-    percent = ch->skills[ number ].learned + int_app[ GET_RINT(ch) ].learn;
+    percent = ch->skills[ number ].learned + int_app[ (int) GET_RINT(ch) ].learn;
     ch->skills[ number ].learned = MIN(95, percent);
 
     if (ch->skills[ number ].learned >= 95) {
@@ -3016,7 +3016,6 @@ int zombie_master(struct char_data *ch, int cmd, char *arg,
 {
   struct obj_data *temp1;
   struct char_data *zmaster;
-  char buf[ 240 ];
   int dir;
 
   zmaster = find_mobile_here_with_spec_proc(zombie_master, ch->in_room);
@@ -3810,6 +3809,7 @@ int jugglernaut(struct char_data *ch, int cmd, char *arg, struct char_data *mob,
   return (FALSE);
 }
 
+#if 0
 static char *elf_comm[] = {
   "wake",
   "yawn",
@@ -3868,7 +3868,7 @@ static char *elf_comm[] = {
   "rest",
   "$"
 };
-
+#endif
 int delivery_elf(struct char_data *ch, int cmd, char *arg,
                  struct char_data *mob, int type) {
 #define ELF_INIT 0

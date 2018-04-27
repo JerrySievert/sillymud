@@ -248,7 +248,9 @@ void game_loop(int s) {
   fd_set tin, tout, tex;
   fd_set mtin, mtout, mtex;
 #endif
+#if TITAN
   static int cap;
+#endif
   struct timeval last_time, now, timespent, timeout, null_time;
   static struct timeval opt_time;
   char comm[ MAX_INPUT_LENGTH ];
@@ -665,12 +667,15 @@ void flush_queues(struct descriptor_data *d) {
 ****************************************************************** */
 
 int init_socket(int port) {
-  socklen_t s;
   int c;
   char *opt = {0};
+#if 0
   char hostname[ MAX_HOSTNAME + 1 ];
+#endif
   struct sockaddr_in sa;
+#if 0
   struct hostent *hp;
+#endif
   struct linger ld;
 
   bzero(&sa, sizeof(struct sockaddr_in));
@@ -709,7 +714,9 @@ int new_connection(int s) {
 #endif
   socklen_t i;
   int t;
+#if 0
   char buf[ 100 ];
+#endif
 
   i = sizeof(isa);
 #if 0
@@ -739,7 +746,7 @@ int new_connection(int s) {
 #endif
   return (t);
 }
-
+#if 0
 /* print an internet host address prettily */
 static void printhost(addr, buf) struct in_addr *addr;
 char *buf;
@@ -769,6 +776,7 @@ char *buf;
 
   strcpy(buf, s);
 }
+#endif
 
 int new_descriptor(int s) {
 

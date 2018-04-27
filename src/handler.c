@@ -128,7 +128,6 @@ void destroy_string_block(struct string_block *sb) {
 void affect_modify(struct char_data *ch, byte loc, long mod, long bitv,
                    bool add) {
   int i;
-  char buff[ 200 ];
 
   if (loc == APPLY_IMMUNE) {
     if (add) {
@@ -424,7 +423,6 @@ void affect_modify(struct char_data *ch, byte loc, long mod, long bitv,
 void affect_total(struct char_data *ch) {
   struct affected_type *af;
   int i, j;
-  char buff[ 200 ];
 
   for (i = 0; i < MAX_WEAR; i++) {
     if (ch->equipment[ i ])
@@ -1237,7 +1235,7 @@ void extract_obj(struct obj_data *obj) {
       /*
        **  set players equipment slot to 0; that will avoid the garbage items.
        */
-      obj->equipped_by->equipment[ obj->eq_pos ] = 0;
+      obj->equipped_by->equipment[ (int) obj->eq_pos ] = 0;
 
     } else {
       debug("Extract on equipped item in slot -1 on:");

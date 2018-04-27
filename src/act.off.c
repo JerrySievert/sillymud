@@ -277,7 +277,6 @@ void do_backstab(struct char_data *ch, char *argument, int cmd) {
 void do_order(struct char_data *ch, char *argument, int cmd) {
   char name[ 100 ], message[ 256 ];
   char buf[ 256 ];
-  char tbuf[ 80 ];
   bool found = FALSE;
   int org_room;
   struct char_data *victim;
@@ -800,6 +799,8 @@ void do_flee(struct char_data *ch, char *argument, int cmd) {
                        (GetSecMaxLev(ch->specials.fighting) / 2) +
                        (GetThirdMaxLev(ch->specials.fighting) / 3);
               loose *= GetMaxLevel(ch);
+            } else {
+              loose = 0;
             }
           } else {
             loose = 0;
@@ -926,8 +927,8 @@ void do_bash(struct char_data *ch, char *argument, int cmd) {
   percent = number(1, 101); /* 101% is a complete failure */
 
   /* some modifications to account for dexterity, and level */
-  percent -= dex_app[ GET_DEX(ch) ].reaction * 10;
-  percent += dex_app[ GET_DEX(victim) ].reaction * 10;
+  percent -= dex_app[ (int) GET_DEX(ch) ].reaction * 10;
+  percent += dex_app[ (int) GET_DEX(victim) ].reaction * 10;
   if (GetMaxLevel(victim) > 12) {
     percent += ((GetMaxLevel(victim) - 10) * 5);
   }

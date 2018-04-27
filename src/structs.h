@@ -1442,7 +1442,7 @@ struct skill_data {
 
   byte minimum_position;	/* Position for usage                  */
   ubyte min_usesmana;		/* Amount of mana used by a spell      */
-  byte beats;			/* Heartbeats until ready for next     */
+  ubyte beats;			/* Heartbeats until ready for next     */
 
   byte min_level[MIN_LEVEL_NUM];/* minimum usage level (spells) */
   sh_int targets;		/* See below for use with TAR_XXX      */

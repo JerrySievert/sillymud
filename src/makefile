@@ -10,7 +10,7 @@ CPPFLAGS = -DNEW_RENT -DLEVEL_LOSS -DNEWEXP \
  -DGROUP_NAMES
 ##  these are architecture dependent flags
 TITANFLAGS = -g -43 -vector_c -safe=ptrs -DTITAN
-OSXFLAGS = -g -Werror
+OSXFLAGS = -g -Werror 
 LINUXFLAGS = -g -fPIC
 LINUXLDFLAGS = -lcrypt -fPIC
 ##
@@ -86,7 +86,7 @@ dmserver : ${OBJS}
 ## if you want to add debugging stuff, uncomment the following, and comment
 ##  out the line after that
 ##	$(LD) -o $@ -g ${OBJS} /local/lib/gnu/gcc-gnulib /usr/lib/debug/malloc.o
-	$(LD) -o $@ -g ${OBJS}
+	$(LD) -o $@ -g ${OBJS} -fsanitize=address
 ##	$(LD) -o $@  ${OBJS}
 ##
 depend :

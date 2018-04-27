@@ -315,13 +315,9 @@ void build_player_index( ) {
   int center;
 
   struct wizlistgen list_wiz;
-  int number_level[ 10 ];
 
   for (j                 = 0; j <= 11; j++)
     list_wiz.number[ j ] = 0;
-
-  for (i              = 0; i <= 9; i++)
-    number_level[ i ] = 0;
 
   if (!(fl = fopen(PLAYER_FILE, "rb+"))) {
     perror("build player index");

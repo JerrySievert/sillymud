@@ -19,8 +19,8 @@ else
 		CC = clang
 	endif
 	ifeq ($(UNAME_S),Linux)
-		CFLAGS += -g -Werror -Wall -fPIC
-		LDFLAGS ?= -g -Werror -Wall -lcrypt -fPIC
+		CFLAGS += -g -Wall -fPIC
+		LDFLAGS ?= -g -Wall -lcrypt -fPIC
 	endif
 endif
 
@@ -98,7 +98,7 @@ dmserver : ${OBJS}
 ## if you want to add debugging stuff, uncomment the following, and comment
 ##  out the line after that
 ##	$(LD) -o $@ -g ${OBJS} /local/lib/gnu/gcc-gnulib /usr/lib/debug/malloc.o
-	$(LD) -o $@ -g ${OBJS}
+	$(LD) -o $@ -g ${OBJS} $(LDFLAGS)
 ##	$(LD) -o $@  ${OBJS}
 ##
 

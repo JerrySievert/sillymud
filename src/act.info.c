@@ -1456,8 +1456,6 @@ void do_score(struct char_data *ch, char *argument, int cmd) {
   struct time_info_data playing_time;
   static char buf[ 100 ], buf2[ 100 ];
   struct time_info_data my_age;
-  extern const struct title_type titles[ MAX_CLASS ][ ABS_MAX_LVL ];
-  extern char *RaceNames[];
 
   struct time_info_data real_time_passed(time_t t2, time_t t1);
 
@@ -2221,7 +2219,7 @@ void do_where(struct char_data *ch, char *argument, int cmd) {
 void do_levels(struct char_data *ch, char *argument, int cmd) {
   int i, RaceMax, class;
   char buf[ MAX_STRING_LENGTH ];
-  
+
   extern const struct title_type titles[ MAX_CLASS ][ ABS_MAX_LVL ];
 
   if (IS_NPC(ch)) {
@@ -2529,7 +2527,6 @@ void do_spells(struct char_data *ch, char *argument, int cmd) {
   int spl, i;
   char buf[ MAX_EXIST_SPELL * 80 ];
   extern char *spells[];
-  extern int spell_status[];
   extern struct skill_data skill_info[ MAX_SKILLS + 10 ];
 
   if (IS_NPC(ch)) {
@@ -2821,10 +2818,7 @@ void do_value(struct char_data *ch, char *argument, int cmd) {
   /* For Objects */
   extern char *item_types[];
   extern char *extra_bits[];
-  extern char *apply_types[];
   extern char *affected_bits[];
-  extern char *affected_bits2[];
-  extern char *immunity_names[];
 
   if (!HasClass(ch, CLASS_THIEF) && !IsIntrinsic(ch, SKILL_EVALUATE)) {
     send_to_char("Sorry, you can't do that here", ch);
